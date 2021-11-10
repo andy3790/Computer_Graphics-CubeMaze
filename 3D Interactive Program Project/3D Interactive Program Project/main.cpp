@@ -1,6 +1,7 @@
 #include "includer.h"
 #include "shader_program.h"
 #include "Figure.h"
+#include "util.h"
 #define WIN_WIDTH 800	// 윈도우 가로 크기
 #define WIN_HIGHT 800	// 윈도우 세로 크기
 
@@ -30,6 +31,7 @@ glm::vec3 cameraUp; //--- 카메라 위쪽 방향
 int window1; // use destroy
 
 Figure line;
+Figure temp;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -61,6 +63,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); //--- 카메라 위쪽 방향
 
 	line.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	temp.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0);
+	temp.Translate(2.0f, 2.0f, -2.0f);
+
+
+	glutTimerFunc(10, Timer, 1);
 
 	glutDisplayFunc(drawScene); // 출력 콜백함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백함수 지정
@@ -99,8 +106,9 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 
 
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(line.GetTransformMat()));
+		//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(line.GetTransformMat()));
 		line.Draw(transformLocation);
+		temp.Draw(transformLocation);
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -112,6 +120,12 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+	case 'w': temp.Translate('y', 0.1f); break;
+	case 's': temp.Translate('y', -0.1f); break;
+	case 'a': temp.Translate('x', -0.1f); break;
+	case 'd': temp.Translate('x', +0.1f); break;
+	case 'z': temp.Translate('z', 0.1f); break;
+	case 'x': temp.Translate('z', -0.1f); break;
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
@@ -137,6 +151,14 @@ GLvoid Motion(int x, int y)
 
 GLvoid Timer(int value)
 {
+	glm::vec4 temp1(0.0f, 0.0f, 0.0f, 1.0f);
+	temp1 = temp.GetTransformMat() * temp1;
+
+
+	//std::cout << temp1.x << ' ' << temp1.y << ' ' << temp1.z << '\n';
+	if (CrashCheck_AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, temp1.x, temp1.y, temp1.z, 1.0, 1.0, 1.0)) {
+		std::cout << "충돌!\n";
+	}
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
