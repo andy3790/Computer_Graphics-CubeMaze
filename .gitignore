@@ -36,3 +36,9 @@
 *.bin
 *.tlog
 *.log
+*.command
+*.read
+*.write
+*.idb
+*.pdb
+*.ilk
