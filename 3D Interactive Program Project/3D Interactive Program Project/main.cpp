@@ -16,6 +16,7 @@ GLvoid Keyboard_up(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 GLvoid Motion(int x, int y);
 GLvoid Special(int key, int x, int y);
+GLvoid Special_up(int key, int x, int y);
 GLvoid Timer(int value);
 
 GLuint s_program;
@@ -71,6 +72,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutKeyboardFunc(Keyboard); // 키보드 입력 콜백함수 지정
 	glutKeyboardUpFunc(Keyboard_up); // 키보드 입력 콜백함수 지정
 	glutSpecialFunc(Special); // 특수 키 입력 콜백함수 지정
+	glutSpecialUpFunc(Special_up); // 특수 키 입력 콜백함수 지정
 	glutMouseFunc(Mouse); // 마우스 입력 콜백함수 지정
 	glutMotionFunc(Motion);
 	glutMainLoop(); // 이벤트 처리 시작
@@ -123,11 +125,19 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 GLvoid Keyboard_up(unsigned char key, int x, int y)
 {
 	switch (key) {
+
 	}
 }
 GLvoid Special(int key, int x, int y)
 {
 	switch (key) {
+
+	}
+}
+GLvoid Special_up(int key, int x, int y)
+{
+	switch (key) {
+
 	}
 }
 

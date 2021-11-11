@@ -1,0 +1,13 @@
+﻿  main.cpp
+C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(10,54): warning C4305: '인수': 'double'에서 '_Ty'(으)로 잘립니다.
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(36,1): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(126,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(131,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+  shader_program.cpp
+  util.cpp
+  코드를 생성하고 있습니다...
+LINK : fatal error LNK1104: 'glew32.lib' 파일을 열 수 없습니다.
