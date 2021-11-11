@@ -20,17 +20,10 @@ bool CrashCheck_AABB(float a_midx, float a_midy, float a_midz, float a_sizex, fl
 	b_max[1] = b_midy + b_sizey;
 	b_max[2] = b_midz + b_sizez;
 
-	bool checker[3];
 	for (int i = 0; i < 3; i++) {
-		checker[i] = false;
 		if (a_min[i] > b_max[i] || a_max[i] < b_min[i]) {
-			std::cout << i;
 			return false;
 		}
-	}
-	std::cout << '\n';
-	if (checker[0] || checker[1] || checker[2]) {
-		return false;
 	}
 	return true;
 }
