@@ -36,6 +36,7 @@ bool lightOn;
 
 int window1; // use destroy
 
+Figure line;
 Figure cube;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
@@ -69,10 +70,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	lightT = glm::mat4(1.0f);
 	lightR = glm::mat4(1.0f);
-	lightT = glm::translate(lightT, glm::vec3(0.0f, 5.0f, 10.0f));
+	lightT = glm::translate(lightT, glm::vec3(0.0f, 2.0f, 4.0f));
 	lightPos = glm::vec4(0.0, 0.0, 0.0, 1.0);
 	lightOn = true;
 
+	line.MakeLine();
 	cube.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 
 	glutTimerFunc(10, Timer, 1);
@@ -124,9 +126,12 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projMat));
 
 
-
+		line.Draw(transformLocation);
 		//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(line.GetTransformMat()));
 		cube.Draw(transformLocation);
+
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(lightR * lightT * glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2))));
+		cube.Draw();
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -178,6 +183,7 @@ GLvoid Timer(int value)
 {
 	// 광원 회전 코드
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
+	cube.Rotate('b', 'y', -1.0f);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
