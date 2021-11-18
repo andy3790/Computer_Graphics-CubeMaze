@@ -37,8 +37,7 @@ bool lightOn;
 int window1; // use destroy
 
 Figure line;
-Figure cube;
-Block test;
+Figure flashlight;
 Cube test2;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
@@ -77,8 +76,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	lightOn = true;
 
 	line.MakeLine(5.0f);
-	cube.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
-	test.MakeBlock(3, 3, 3, -1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0);
+	flashlight.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 	test2.MakeCube(3, 3, 3, 3, 3, 3);
 
 	glutTimerFunc(10, Timer, 1);
@@ -135,10 +133,9 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		//cube.Draw(transformLocation);
 
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(lightR * lightT * glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2))));
-		cube.Draw();
+		flashlight.Draw();
 
-		//test.Draw(transformLocation);
-		test2.Draw(transformLocation);
+		test2.Draw_Use_CubeMat(transformLocation);
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -150,11 +147,6 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	// 물체 이동 테스트 코드
-	case 'a': cube.Translate('x', -0.1f); break;
-	case 'd': cube.Translate('x', 0.1f); break;
-	case 'w': cube.Translate('z', -0.1f); break;
-	case 's': cube.Translate('z', 0.1f); break;
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
@@ -190,10 +182,8 @@ GLvoid Timer(int value)
 {
 	// 광원 회전 코드
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
-	//cube.Rotate('b', 'y', -1.0f);
-	//test.Rotate('b', 'y', -1.0f);
-	//test.Rotate('b', 'x', -1.0f);
-	//test2.Rotate('c', 'x', -1.0f);
+
+	test2.Rotate_Cube('y', -1.0f);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

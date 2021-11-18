@@ -988,6 +988,19 @@ public:
 			glDrawArrays(GL_TRIANGLES, sel * 3, 3);
 		}
 	}
+	GLvoid Draw(unsigned int transformLocation, glm::mat4 afterMat) {
+		glBindVertexArray(VAO);
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(afterMat * TR));
+		if (Shape == 1) {
+			glDrawArrays(GL_LINES, 0, countOfData);
+		}
+		else if (Shape == 2) {
+			glDrawArrays(GL_TRIANGLES, 0, countOfData);
+		}
+		else if (Shape == 3) {
+			glDrawArrays(GL_TRIANGLES, 0, countOfData);
+		}
+	}
 
 	GLvoid MakeTransformMat() {
 		//--- 변환 행렬 만들기
@@ -1053,6 +1066,7 @@ private:
 	const int x = 0;
 	const int y = 1;
 	const int z = 2;
+	glm::mat4 blockRot;
 public:
 	Block() {
 		blocks = NULL;
@@ -1062,6 +1076,7 @@ public:
 		blockSize[x] = 0.0;
 		blockSize[y] = 0.0;
 		blockSize[z] = 0.0;
+		blockRot = glm::mat4(1.0f);
 	}
 	GLvoid MakeBlock() {
 		SettingBlocks(1, 1, 1, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
@@ -1198,12 +1213,33 @@ public:
 			}
 		}
 	}
+	void Rotate_Block(const char type, float degree) {
+		// 원점 기준 회전
+		if (type == 'x') {
+			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(1.0, 0.0, 0.0)); //--- x축에대하여 회전
+		}
+		else if (type == 'y') {
+			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 1.0, 0.0)); //--- y축에대하여 회전
+		}
+		else if (type == 'z') {
+			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)); //--- z축에대하여 회전
+		}
+	}
 
 	GLvoid Draw(unsigned int transformLocation) {
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
 					blocks[i][j][k].Draw(transformLocation);
+				}
+			}
+		}
+	}
+	GLvoid Draw(unsigned int transformLocation, glm::mat4 afterMat) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
 				}
 			}
 		}
@@ -1270,6 +1306,7 @@ private:
 	const int x = 0;
 	const int y = 1;
 	const int z = 2;
+	glm::mat4 cubeRot;
 public:
 	Cube() {
 		cube_blocks = NULL;
@@ -1279,6 +1316,13 @@ public:
 		cube_blockSize[x] = 0.0;
 		cube_blockSize[y] = 0.0;
 		cube_blockSize[z] = 0.0;
+		blockCount[x] = 0;
+		blockCount[y] = 0;
+		blockCount[z] = 0;
+		blockSize[x] = 0.0;
+		blockSize[y] = 0.0;
+		blockSize[z] = 0.0;
+		cubeRot = glm::mat4(1.0f);
 	}
 	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz) {
 		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
@@ -1371,12 +1415,33 @@ public:
 			}
 		}
 	}
+	void Rotate_Cube(const char type, float degree) {
+		// 원점 기준 회전
+		if (type == 'x') {
+			cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), glm::vec3(1.0, 0.0, 0.0)); //--- x축에대하여 회전
+		}
+		else if (type == 'y') {
+			cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 1.0, 0.0)); //--- y축에대하여 회전
+		}
+		else if (type == 'z') {
+			cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)); //--- z축에대하여 회전
+		}
+	}
 
 	GLvoid Draw(unsigned int transformLocation) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				for (int k = 0; k < cube_blockCount[x]; k++) {
 					cube_blocks[i][j][k].Draw(transformLocation);
+				}
+			}
+		}
+	}
+	GLvoid Draw_Use_CubeMat(unsigned int transformLocation) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Draw(transformLocation, cubeRot);
 				}
 			}
 		}
