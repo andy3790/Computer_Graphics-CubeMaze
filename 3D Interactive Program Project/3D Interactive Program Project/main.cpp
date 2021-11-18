@@ -29,9 +29,14 @@ glm::vec3 cameraPos; //--- 카메라 위치
 glm::vec3 cameraDirection; //--- 카메라 바라보는 방향
 glm::vec3 cameraUp; //--- 카메라 위쪽 방향
 
+glm::vec4 lightPos;
+glm::mat4 lightT;
+glm::mat4 lightR;
+bool lightOn;
+
 int window1; // use destroy
 
-Figure line;
+Figure cube;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -62,10 +67,15 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cameraDirection = cameraStartDir; //--- 카메라 바라보는 방향
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); //--- 카메라 위쪽 방향
 
-	line.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
+	lightT = glm::mat4(1.0f);
+	lightR = glm::mat4(1.0f);
+	lightT = glm::translate(lightT, glm::vec3(0.0f, 5.0f, 10.0f));
+	lightPos = glm::vec4(0.0, 0.0, 0.0, 1.0);
+	lightOn = true;
 
+	cube.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 
-	//glutTimerFunc(10, Timer, 1);
+	glutTimerFunc(10, Timer, 1);
 
 	glutDisplayFunc(drawScene); // 출력 콜백함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백함수 지정
@@ -91,6 +101,16 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	unsigned int colorLocation = glGetUniformLocation(s_program, "model_color");
 	glUniform3f(colorLocation, -1.0, -1.0, -1.0);
 
+	unsigned int lightPosLocation = glGetUniformLocation(s_program, "lightPos");
+	unsigned int lightColorLocation = glGetUniformLocation(s_program, "lightColor");
+	unsigned int lightOnLocation = glGetUniformLocation(s_program, "lightOn");
+	unsigned int viewPosLocation = glGetUniformLocation(s_program, "viewPos");
+	glm::vec4 tlight = lightR * lightT * lightPos;
+	glUniform3f(lightPosLocation, tlight.x, tlight.y, tlight.z);
+	glUniform1i(lightOnLocation, lightOn);
+	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
+	glUniform3f(viewPosLocation, cameraPos.x, cameraPos.y, cameraPos.z);
+
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projMat = glm::mat4(1.0f);
 	view =glm::lookAt(cameraPos, cameraDirection, cameraUp);
@@ -106,7 +126,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 
 		//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(line.GetTransformMat()));
-		line.Draw(transformLocation);
+		cube.Draw(transformLocation);
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -118,6 +138,11 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+	// 물체 이동 테스트 코드
+	case 'a': cube.Translate('x', -0.1f); break;
+	case 'd': cube.Translate('x', 0.1f); break;
+	case 'w': cube.Translate('z', -0.1f); break;
+	case 's': cube.Translate('z', 0.1f); break;
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
@@ -151,7 +176,8 @@ GLvoid Motion(int x, int y)
 
 GLvoid Timer(int value)
 {
-
+	// 광원 회전 코드
+	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

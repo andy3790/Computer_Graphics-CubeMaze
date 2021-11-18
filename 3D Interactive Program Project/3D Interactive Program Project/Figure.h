@@ -8,7 +8,7 @@ extern std::uniform_real_distribution<float> F_urd;
 class Figure {
 private:
 	GLfloat point[8][6];
-	GLfloat vertex[36][6];
+	GLfloat vertex[36][9];
 	GLuint VAO;
 	GLuint VBO;
 	int countOfData;
@@ -41,7 +41,7 @@ public:
 			}
 		}
 		for (int i = 0; i < 36; i++) {
-			for (int j = 0; j < 6; j++) {
+			for (int j = 0; j < 9; j++) {
 				vertex[i][j] = 0.0f;
 			}
 		}
@@ -284,6 +284,7 @@ public:
 			vertex[4 + 6 * 5][i] = point[2 + back][i];
 			vertex[5 + 6 * 5][i] = point[2 + front][i];
 		}
+		InitCubeNormal();
 		//for (int i = 0; i < 3; i++) {
 		//	for (int j = 0; j < 6; j++) {
 		//		float tempcolor = urd(dre);
@@ -378,6 +379,7 @@ public:
 			vertex[4 + 6 * 5][i] = point[2 + back][i];
 			vertex[5 + 6 * 5][i] = point[2 + front][i];
 		}
+		InitCubeNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -468,6 +470,7 @@ public:
 			vertex[4 + 6 * 5][i] = point[2 + back][i];
 			vertex[5 + 6 * 5][i] = point[2 + front][i];
 		}
+		InitCubeNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -563,7 +566,7 @@ public:
 				}
 			}
 		}
-
+		InitCubeNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -628,6 +631,7 @@ public:
 			vertex[1 + 3 * 5][i] = point[2][i];
 			vertex[2 + 3 * 5][i] = point[1][i];
 		}
+		InitPyramidNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -691,8 +695,88 @@ public:
 			vertex[1 + 3 * 5][i] = point[2][i];
 			vertex[2 + 3 * 5][i] = point[1][i];
 		}
+		InitPyramidNormal();
 		MakeTransformMat();
 		InitBuffer();
+	}
+
+	glm::vec3 calNormal(int sv, int sel, int vcount)
+	{
+		float v1[3], v2[3], t[3];
+		static const int x = 0;
+		static const int y = 1;
+		static const int z = 2;
+
+		v1[x] = vertex[sv + 0 + vcount * sel][x] - vertex[sv + 1 + vcount * sel][x];
+		v1[y] = vertex[sv + 0 + vcount * sel][y] - vertex[sv + 1 + vcount * sel][y];
+		v1[z] = vertex[sv + 0 + vcount * sel][z] - vertex[sv + 1 + vcount * sel][z];
+
+		v2[x] = vertex[sv + 1 + vcount * sel][x] - vertex[sv + 2 + vcount * sel][x];
+		v2[y] = vertex[sv + 1 + vcount * sel][y] - vertex[sv + 2 + vcount * sel][y];
+		v2[z] = vertex[sv + 1 + vcount * sel][z] - vertex[sv + 2 + vcount * sel][z];
+
+		t[x] = v1[y] * v2[z] - v1[z] * v2[y];
+		t[y] = v1[z] * v2[x] - v1[x] * v2[z];
+		t[z] = v1[x] * v2[y] - v1[y] * v2[x];
+
+		float tlen = (float)sqrt(t[x] * t[x] + t[y] * t[y] + t[z] * t[z]);
+
+		return glm::vec3(t[x] / tlen, t[y] / tlen, t[z] / tlen);
+	}
+	void InitCubeNormal() {
+		glm::vec3 t[6];
+		for (int i = 0; i < 6; i++) {
+			t[i] = calNormal(0, i, 6);
+		}
+
+		for (int i = 0; i < 6; i++) {	// 노멀 저장
+			for (int j = 0; j < 3; j++) {
+				//앞면
+				vertex[i + 6 * 0][j + 6] = t[0][j];
+				//뒷면
+				vertex[i + 6 * 1][j + 6] = t[1][j];
+				//오른쪽 면
+				vertex[i + 6 * 2][j + 6] = t[2][j];
+				//왼쪽 면
+				vertex[i + 6 * 3][j + 6] = t[3][j];
+				//위쪽 면
+				vertex[i + 6 * 4][j + 6] = t[4][j];
+				//아래쪽 면
+				vertex[i + 6 * 5][j + 6] = t[5][j];
+			}
+		}
+	}
+	void InitPyramidNormal() {
+		glm::vec3 t[5];
+		for (int i = 0; i < 5; i++) {
+			t[i] = calNormal(0, i + 1, 3);
+		}
+
+		for (int i = 0; i < 3; i++) {
+			//밑면
+			vertex[0 + 3 * 0][6 + i] = t[0][i];
+			vertex[1 + 3 * 0][6 + i] = t[0][i];
+			vertex[2 + 3 * 0][6 + i] = t[0][i];
+			vertex[0 + 3 * 1][6 + i] = t[0][i];
+			vertex[1 + 3 * 1][6 + i] = t[0][i];
+			vertex[2 + 3 * 1][6 + i] = t[0][i];
+			//앞면
+			vertex[0 + 3 * 2][6 + i] = t[1][i];
+			vertex[1 + 3 * 2][6 + i] = t[1][i];
+			vertex[2 + 3 * 2][6 + i] = t[1][i];
+			//뒷면
+			vertex[0 + 3 * 3][6 + i] = t[2][i];
+			vertex[1 + 3 * 3][6 + i] = t[2][i];
+			vertex[2 + 3 * 3][6 + i] = t[2][i];
+			//왼쪽 면
+			vertex[0 + 3 * 4][6 + i] = t[3][i];
+			vertex[1 + 3 * 4][6 + i] = t[3][i];
+			vertex[2 + 3 * 4][6 + i] = t[3][i];
+			//오른쪽 면
+			vertex[0 + 3 * 5][6 + i] = t[4][i];
+			vertex[1 + 3 * 5][6 + i] = t[4][i];
+			vertex[2 + 3 * 5][6 + i] = t[4][i];
+		}
 	}
 
 	void Reset() {
@@ -948,11 +1032,13 @@ public:
 
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, (countOfData * 6) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
+		glBufferData(GL_ARRAY_BUFFER, (countOfData * 9) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(2);
 
 		return VAO;
 	}
