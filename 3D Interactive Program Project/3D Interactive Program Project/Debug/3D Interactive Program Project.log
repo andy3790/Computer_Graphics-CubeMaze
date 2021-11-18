@@ -1,11 +1,2 @@
-﻿  main.cpp
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(10,54): warning C4305: '인수': 'double'에서 '_Ty'(으)로 잘립니다.
-          with
-          [
-              _Ty=float
-          ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(44,1): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(158,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(164,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(170,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-  3D Interactive Program Project.vcxproj -> C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\Debug\3D Interactive Program Project.exe
+﻿  make_maze.cpp
+  3D Interactive Program Project.vcxproj -> C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\Debug\3D Interactive Program Project.exe

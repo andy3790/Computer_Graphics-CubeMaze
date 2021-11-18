@@ -2,6 +2,7 @@
 #include "shader_program.h"
 #include "Figure.h"
 #include "util.h"
+#include"make_maze.h"
 #define WIN_WIDTH 800	// 윈도우 가로 크기
 #define WIN_HIGHT 800	// 윈도우 세로 크기
 
@@ -147,6 +148,8 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+	case 'g': case 'G': get_size_of_maze(5, 2); break; // 미로 크기 재설정
+	case 'm': case 'M': make_maze_wilson(); print_maze(); break; // 미로 재생성
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
