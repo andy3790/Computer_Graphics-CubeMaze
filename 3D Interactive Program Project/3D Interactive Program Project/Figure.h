@@ -1043,3 +1043,395 @@ public:
 		return VAO;
 	}
 };
+
+
+class Block {
+private:
+	Figure*** blocks;
+	int blockCount[3];
+	float blockSize[3];
+	const int x = 0;
+	const int y = 1;
+	const int z = 2;
+public:
+	Block() {
+		blocks = NULL;
+		blockCount[x] = 0;
+		blockCount[y] = 0;
+		blockCount[z] = 0;
+		blockSize[x] = 0.0;
+		blockSize[y] = 0.0;
+		blockSize[z] = 0.0;
+	}
+	GLvoid MakeBlock() {
+		SettingBlocks(1, 1, 1, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f);
+
+		blocks[0][0][0].MakeCube(0.0, 0.0, 0.0, blockSize[x], blockSize[y], blockSize[z]);
+	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z) {
+		SettingBlocks(count_x, count_y, count_z, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].MakeCube(-1.0f + blockSize[x] * (float)k * 2.0f + blockSize[x],
+											 -1.0f + blockSize[y] * (float)j * 2.0f + blockSize[y],
+											 -1.0f + blockSize[z] * (float)i * 2.0f + blockSize[z],
+											 blockSize[x], blockSize[y], blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz) {
+		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, 1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].MakeCube(-1.0f + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+						-1.0f + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+						-1.0f + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+						blockSize[x], blockSize[y], blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
+		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+						-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+						-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+						blockSize[x], blockSize[y], blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, float colorR, float colorG, float colorB) {
+		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+						-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+						-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+						blockSize[x], blockSize[y], blockSize[z], colorR, colorG, colorB);
+				}
+			}
+		}
+	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, int type) {
+		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+
+		if (type == 0) { // 정점별 랜덤 색
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z]);
+					}
+				}
+			}
+		}
+		else if (type == 1) { // 면별 랜덤 색
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z], 1);
+					}
+				}
+			}
+		}
+		else if (type == 2) { // 도형별 랜덤 색
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z], F_urd(dre), F_urd(dre), F_urd(dre));
+					}
+				}
+			}
+		}
+		else if (type == 3) { // 그래이 스케일
+			float tempColor;
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						tempColor = F_urd(dre);
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z], tempColor, tempColor, tempColor);
+					}
+				}
+			}
+		}
+	}
+
+	void Translate(float xVal, float yVal, float zVal) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].Translate(xVal, yVal, zVal);
+				}
+			}
+		}
+	}
+
+	void Rotate(const char type, const char type2, float degree) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].Rotate(type, type2, degree);
+				}
+			}
+		}
+	}
+
+	GLvoid Draw(unsigned int transformLocation) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].Draw(transformLocation);
+				}
+			}
+		}
+	}
+
+	void SettingBlocks(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
+		if (blockCount[x] != 0 || blockCount[y] != 0 || blockCount[z] != 0) { ClearBlocks(); }
+		blockCount[x] = count_x;
+		blockCount[y] = count_y;
+		blockCount[z] = count_z;
+
+		blocks = new Figure * *[blockCount[z]];
+		for (int i = 0; i < blockCount[z]; i++) {
+			blocks[i] = new Figure * [blockCount[y]];
+			for (int j = 0; j < blockCount[y]; j++) {
+				blocks[i][j] = new Figure[blockCount[x]];
+			}
+		}
+
+		blockSize[x] = size_x / (float)blockCount[x];
+		blockSize[y] = size_y / (float)blockCount[y];
+		blockSize[z] = size_z / (float)blockCount[z];
+	}
+	void ClearBlocks() {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				delete[] blocks[i][j];
+			}
+			delete[] blocks[i];
+		}
+		delete[] blocks;
+		blockCount[x] = 0;
+		blockCount[y] = 0;
+		blockCount[z] = 0;
+	}
+	void Reset() {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].Reset();
+				}
+			}
+		}
+	}
+
+	~Block() {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				delete[] blocks[i][j];
+			}
+			delete[] blocks[i];
+		}
+		delete[] blocks;
+	}
+};
+
+class Cube {
+private:
+	Block*** cube_blocks;
+	int cube_blockCount[3];
+	float cube_blockSize[3];
+	int blockCount[3];
+	float blockSize[3];
+	const int x = 0;
+	const int y = 1;
+	const int z = 2;
+public:
+	Cube() {
+		cube_blocks = NULL;
+		cube_blockCount[x] = 0;
+		cube_blockCount[y] = 0;
+		cube_blockCount[z] = 0;
+		cube_blockSize[x] = 0.0;
+		cube_blockSize[y] = 0.0;
+		cube_blockSize[z] = 0.0;
+	}
+	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz) {
+		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -1.0f + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x],
+						-1.0f + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y],
+						-1.0f + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z],
+						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz) {
+		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, midx, midy, midz, 1.0f, 1.0f, 1.0f);
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -1.0f + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+						-1.0f + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+						-1.0f + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
+		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, midx, midy, midz, size_x, size_y, size_z);
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+						-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+						-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z]);
+				}
+			}
+		}
+	}
+	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z, float colorR, float colorG, float colorB) {
+		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, midx, midy, midz, size_x, size_y, size_z);
+
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+						-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+						-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], colorR, colorG, colorB);
+				}
+			}
+		}
+	}
+	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z, int type) {
+		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, midx, midy, midz, size_x, size_y, size_z);
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+						-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+						-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], 1);
+				}
+			}
+		}
+	}
+
+	void Translate(float xVal, float yVal, float zVal) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Translate(xVal, yVal, zVal);
+				}
+			}
+		}
+	}
+
+	void Rotate(const char type, const char type2, float degree) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Rotate(type, type2, degree);
+				}
+			}
+		}
+	}
+
+	GLvoid Draw(unsigned int transformLocation) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Draw(transformLocation);
+				}
+			}
+		}
+	}
+
+	void SettingCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
+		if (cube_blockCount[x] != 0 || cube_blockCount[y] != 0 || cube_blockCount[z] != 0) { ClearBlocks(); }
+		cube_blockCount[x] = count_x;
+		cube_blockCount[y] = count_y;
+		cube_blockCount[z] = count_z;
+		blockCount[x] = bCountx;
+		blockCount[y] = bCounty;
+		blockCount[z] = bCountz;
+
+		cube_blocks = new Block**[cube_blockCount[z]];
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			cube_blocks[i] = new Block*[cube_blockCount[y]];
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				cube_blocks[i][j] = new Block[cube_blockCount[x]];
+			}
+		}
+
+		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
+		cube_blockSize[y] = size_y / (float)cube_blockCount[y];
+		cube_blockSize[z] = size_z / (float)cube_blockCount[z];
+	}
+	void ClearBlocks() {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				delete[] cube_blocks[i][j];
+			}
+			delete[] cube_blocks[i];
+		}
+		delete[] cube_blocks;
+		cube_blockCount[x] = 0;
+		cube_blockCount[y] = 0;
+		cube_blockCount[z] = 0;
+	}
+	void Reset() {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Reset();
+				}
+			}
+		}
+	}
+
+	~Cube() {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				delete[] cube_blocks[i][j];
+			}
+			delete[] cube_blocks[i];
+		}
+		delete[] cube_blocks;
+	}
+};
