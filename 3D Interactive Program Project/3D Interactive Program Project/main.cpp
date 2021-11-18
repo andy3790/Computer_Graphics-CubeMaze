@@ -41,6 +41,11 @@ Figure line;
 Figure flashlight;
 Cube test2;
 
+glm::mat4 cameraRot;
+
+extern bool*** maze;
+int t;
+
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
 	//--- 윈도우 생성하기
@@ -59,6 +64,9 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	else
 		std::cout << "GLEW Initialized\n";
 
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//glEnable(GL_BLEND);
+
 	InitShader();
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -72,13 +80,16 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	lightT = glm::mat4(1.0f);
 	lightR = glm::mat4(1.0f);
-	lightT = glm::translate(lightT, glm::vec3(0.0f, 2.0f, 4.0f));
+	lightT = glm::translate(lightT, glm::vec3(0.0f, 5.0f, -10.0f));
 	lightPos = glm::vec4(0.0, 0.0, 0.0, 1.0);
 	lightOn = true;
 
 	line.MakeLine(5.0f);
 	flashlight.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
-	test2.MakeCube(3, 3, 3, 3, 3, 3);
+	test2.MakeCube(5, 5, 5, 3, 3, 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 6);
+
+	cameraRot = glm::mat4(1.0f);
+	t = -1;
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -116,6 +127,10 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
 	glUniform3f(viewPosLocation, cameraPos.x, cameraPos.y, cameraPos.z);
 
+	glm::vec4 tcamera(cameraStartPos, 1.0f);
+	tcamera = cameraRot * tcamera;
+	cameraPos = tcamera;
+
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projMat = glm::mat4(1.0f);
 	view =glm::lookAt(cameraPos, cameraDirection, cameraUp);
@@ -134,7 +149,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		//cube.Draw(transformLocation);
 
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(lightR * lightT * glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2))));
-		flashlight.Draw();
+		//flashlight.Draw();
 
 		test2.Draw_Use_CubeMat(transformLocation);
 	}
@@ -148,8 +163,14 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'g': case 'G': get_size_of_maze(5, 2); break; // 미로 크기 재설정
-	case 'm': case 'M': make_maze_wilson(); print_maze(); break; // 미로 재생성
+	case '1':case '2':case '3':case '4':case '5':case '0': t = key - '0'; test2.Reset(); break;
+	case 'c': case 'C': t = 6; break;
+	case 'v': case 'V': t = -1; break;
+
+	case 'x': case 'X': cameraRot = cameraRot * glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
+	case 'y': case 'Y': cameraRot = cameraRot * glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
+	case 'g': case 'G': get_size_of_maze(30, 4); break; // 미로 크기 재설정
+	case 'm': case 'M': make_maze_wilson(); print_maze(); test2.InputMaze(maze); break; // 미로 재생성
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
@@ -186,13 +207,32 @@ GLvoid Timer(int value)
 	// 광원 회전 코드
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
 
-	test2.Rotate_Cube('y', -1.0f);
-	test2.Rotate_Specific_Side(0, 1.0f);
-	test2.Rotate_Specific_Side(1, 1.0f);
-	test2.Rotate_Specific_Side(2, 1.0f);
-	test2.Rotate_Specific_Side(3, 1.0f);
-	test2.Rotate_Specific_Side(4, 1.0f);
-	test2.Rotate_Specific_Side(5, 1.0f);
+	//test2.Rotate_Cube('y', -1.0f);
+	if (t == 6) {
+		//test2.Rotate_Specific_Side(0, 1.0f);
+		//test2.Rotate_Specific_Side(1, 1.0f);
+		//test2.Rotate_Specific_Side(2, 1.0f);
+		//test2.Rotate_Specific_Side(3, 1.0f);
+		//test2.Rotate_Specific_Side(4, 1.0f);
+		//test2.Rotate_Specific_Side(5, 1.0f);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (j % 2 != 0) {
+					test2.Rotate_Specific_Side(i, j, 1.0f);
+				}
+				else {
+					test2.Rotate_Specific_Side(i, j, -1.0f);
+				}
+			}
+		}
+	}
+	else if (t == -1) {
+	}
+	else {
+		test2.Rotate_Specific_Side(t, -1.0f);
+	}
+
+
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

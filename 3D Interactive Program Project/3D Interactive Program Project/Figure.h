@@ -1194,6 +1194,21 @@ public:
 				}
 			}
 		}
+		else if (type == 6) { // 그라데이션
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z], 
+							(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx + size_x) / (size_x * 2.0f),
+							(-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy + size_y) / (size_y * 2.0f),
+							(-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz + size_z) / (size_z * 2.0f));
+					}
+				}
+			}
+		}
 	}
 
 	void Translate(float xVal, float yVal, float zVal) {
@@ -1241,7 +1256,7 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					if (mazeWall[i][j][k]) {
+					if (!mazeWall[i][j][k]) {
 						blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
 					}
 				}
@@ -1253,7 +1268,7 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					mazeWall[i][j][k] = maze[startZ + i][startY + j][startX + k];
+					mazeWall[i][j][k] = maze[startZ * blockCount[z] + i][startY * blockCount[y] + j][startX * blockCount[x] + k];
 				}
 			}
 		}
@@ -1416,13 +1431,54 @@ public:
 	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z, int type) {
 		SettingCube(count_x, count_y, count_z, bCountx, bCounty, bCountz, midx, midy, midz, size_x, size_y, size_z);
 
-		for (int i = 0; i < cube_blockCount[z]; i++) {
-			for (int j = 0; j < cube_blockCount[y]; j++) {
-				for (int k = 0; k < cube_blockCount[x]; k++) {
-					cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
-						-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
-						-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
-						cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], 1);
+		if (type < 4) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], type);
+					}
+				}
+			}
+		}
+		else if (type == 4) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], F_urd(dre), F_urd(dre), F_urd(dre));
+					}
+				}
+			}
+		}
+		else if (type == 5) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], 
+							(-size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx + size_x) / (size_x * 2.0f),
+							(-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy + size_y) / (size_y * 2.0f),
+							(-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz + size_z) / (size_z * 2.0f));
+					}
+				}
+			}
+		}
+		else if (type == 6) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], type);
+					}
 				}
 			}
 		}
@@ -1508,6 +1564,29 @@ public:
 			}
 		}
 	}
+	void Rotate_Specific_Side(int sel, int line, float degree) {
+		if(sel == 0){ // z
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[line][i][j].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) { // y
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[i][line][j].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 2) { // x
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[i][j][line].Rotate_Block('x', degree);
+				}
+			}
+		}
+	}
 
 	GLvoid Draw(unsigned int transformLocation) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
@@ -1532,7 +1611,7 @@ public:
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				for (int k = 0; k < cube_blockCount[x]; k++) {
-					cube_blocks[i][j][k].InputMaze(maze, i, j, k);
+					cube_blocks[i][j][k].InputMaze(maze, k, j, i);
 				}
 			}
 		}
