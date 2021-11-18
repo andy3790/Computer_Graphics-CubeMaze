@@ -4,8 +4,8 @@ C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Inte
           [
               _Ty=float
           ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(44,1): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(158,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(164,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(170,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(46,1): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(163,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(169,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(175,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
   3D Interactive Program Project.vcxproj -> C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\Debug\3D Interactive Program Project.exe

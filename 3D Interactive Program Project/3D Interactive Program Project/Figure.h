@@ -1061,6 +1061,7 @@ public:
 class Block {
 private:
 	Figure*** blocks;
+	bool*** mazeWall;
 	int blockCount[3];
 	float blockSize[3];
 	const int x = 0;
@@ -1070,6 +1071,7 @@ private:
 public:
 	Block() {
 		blocks = NULL;
+		mazeWall = NULL;
 		blockCount[x] = 0;
 		blockCount[y] = 0;
 		blockCount[z] = 0;
@@ -1239,7 +1241,19 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+					if (mazeWall[i][j][k]) {
+						blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+					}
+				}
+			}
+		}
+	}
+
+	void InputMaze(bool*** maze, int startX, int startY, int startZ) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					mazeWall[i][j][k] = maze[startZ + i][startY + j][startX + k];
 				}
 			}
 		}
@@ -1251,11 +1265,22 @@ public:
 		blockCount[y] = count_y;
 		blockCount[z] = count_z;
 
-		blocks = new Figure * *[blockCount[z]];
+		blocks = new Figure**[blockCount[z]];
+		mazeWall = new bool**[blockCount[z]];
 		for (int i = 0; i < blockCount[z]; i++) {
-			blocks[i] = new Figure * [blockCount[y]];
+			blocks[i] = new Figure*[blockCount[y]];
+			mazeWall[i] = new bool*[blockCount[y]];
 			for (int j = 0; j < blockCount[y]; j++) {
 				blocks[i][j] = new Figure[blockCount[x]];
+				mazeWall[i][j] = new bool[blockCount[x]];
+			}
+		}
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					mazeWall[i][j][k] = true;
+				}
 			}
 		}
 
@@ -1267,10 +1292,13 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				delete[] blocks[i][j];
+				delete[] mazeWall[i][j];
 			}
 			delete[] blocks[i];
+			delete[] mazeWall[i];
 		}
 		delete[] blocks;
+		delete[] mazeWall;
 		blockCount[x] = 0;
 		blockCount[y] = 0;
 		blockCount[z] = 0;
@@ -1283,16 +1311,20 @@ public:
 				}
 			}
 		}
+		blockRot = glm::mat4(1.0f);
 	}
 
 	~Block() {
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				delete[] blocks[i][j];
+				delete[] mazeWall[i][j];
 			}
 			delete[] blocks[i];
+			delete[] mazeWall[i];
 		}
 		delete[] blocks;
+		delete[] mazeWall;
 	}
 };
 
@@ -1496,6 +1528,16 @@ public:
 		}
 	}
 
+	void InputMaze(bool*** maze) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].InputMaze(maze, i, j, k);
+				}
+			}
+		}
+	}
+
 	void SettingCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
 		if (cube_blockCount[x] != 0 || cube_blockCount[y] != 0 || cube_blockCount[z] != 0) { ClearBlocks(); }
 		cube_blockCount[x] = count_x;
@@ -1537,6 +1579,7 @@ public:
 				}
 			}
 		}
+		cubeRot = glm::mat4(1.0f);
 	}
 
 	~Cube() {
