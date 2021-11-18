@@ -184,6 +184,12 @@ GLvoid Timer(int value)
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
 
 	test2.Rotate_Cube('y', -1.0f);
+	test2.Rotate_Specific_Side(0, 1.0f);
+	test2.Rotate_Specific_Side(1, 1.0f);
+	test2.Rotate_Specific_Side(2, 1.0f);
+	test2.Rotate_Specific_Side(3, 1.0f);
+	test2.Rotate_Specific_Side(4, 1.0f);
+	test2.Rotate_Specific_Side(5, 1.0f);
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

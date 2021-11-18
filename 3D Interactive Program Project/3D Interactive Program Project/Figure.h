@@ -1427,6 +1427,55 @@ public:
 			cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)); //--- z축에대하여 회전
 		}
 	}
+	void Rotate_Specific_Block(int sel_x, int sel_y, int sel_z, const char type, float degree) {
+		cube_blocks[sel_z][sel_y][sel_x].Rotate_Block(type, degree);
+	}
+	void Rotate_Specific_Side(int sel, float degree) {
+		// 0  1  2  3  4  5
+		// 앞 뒤 왼 오 위 밑
+		if (sel == 0) {
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_blockCount[z] - 1][i][j].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) {
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[0][i][j].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 2) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[i][j][0].Rotate_Block('x', degree);
+				}
+			}
+		}
+		else if (sel == 3) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[i][j][cube_blockCount[x] - 1].Rotate_Block('x', degree);
+				}
+			}
+		}
+		else if (sel == 4) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[i][cube_blockCount[y] - 1][j].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 5) {
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[i][0][j].Rotate_Block('y', degree);
+				}
+			}
+		}
+	}
 
 	GLvoid Draw(unsigned int transformLocation) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
