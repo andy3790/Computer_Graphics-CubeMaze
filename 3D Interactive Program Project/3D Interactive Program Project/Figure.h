@@ -1,5 +1,27 @@
 #pragma once
 #include "includer.h"
+// Cube Rotate Type List
+#define CUBE_X 'x'
+#define CUBE_Y 'y'
+#define CUBE_Z 'z'
+#define CUBE_ROT_T_ORIGIN 'a'
+#define CUBE_ROT_T_INDPEN_SELF 'b'
+#define CUBE_ROT_T_DPEN_SELF 'c'
+#define CUBE_SCALE_T_ORIGIN 'o'
+#define CUBE_SCALE_T_SELF 'm'
+
+// Cube MakeCube Type List
+#define CUBE_COLOR_POINT_RAND 0
+#define CUBE_COLOR_SIDE_RAND 1
+#define CUBE_COLOR_FIGURE_RAND 2
+#define CUBE_COLOR_FIGURE_GRAY 3
+#define CUBE_COLOR_BLOCK_RAND 4
+#define CUBE_COLOR_BLOCK_SMOOTH 5
+#define CUBE_COLOR_FIGURE_SMOOTH 6
+
+// Cube Print Type List
+#define CUBE_PRINT_WALL 0
+#define CUBE_PRINT_ROAD 1
 
 extern std::random_device rd;
 extern std::default_random_engine dre;
@@ -1263,6 +1285,30 @@ public:
 			}
 		}
 	}
+	GLvoid Draw(unsigned int transformLocation, glm::mat4 afterMat, int printType) {
+		if (printType == CUBE_PRINT_ROAD) {
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						if (!mazeWall[i][j][k]) {
+							blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+						}
+					}
+				}
+			}
+		}
+		else if (printType == CUBE_PRINT_WALL) {
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						if (mazeWall[i][j][k]) {
+							blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	void InputMaze(bool*** maze, int startX, int startY, int startZ) {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1602,6 +1648,15 @@ public:
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				for (int k = 0; k < cube_blockCount[x]; k++) {
 					cube_blocks[i][j][k].Draw(transformLocation, cubeRot);
+				}
+			}
+		}
+	}
+	GLvoid Draw_Use_CubeMat(unsigned int transformLocation, int printType) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_blocks[i][j][k].Draw(transformLocation, cubeRot, printType);
 				}
 			}
 		}
