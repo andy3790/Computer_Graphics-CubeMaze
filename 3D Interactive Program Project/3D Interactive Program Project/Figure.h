@@ -1647,19 +1647,15 @@ public:
 		nowRotDegree += degree;
 		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
 			int* temp;
-			std::cout << sel << ' ' << line << '\n' << '\n';
 			if (nowRotDegree >= 90.0f) {
 				degree += 90.0f - nowRotDegree;
-				std::cout << degree << '\n';
 				Arr_Rotate(sel, line, 0);
 			}
 			else {
 				degree += nowRotDegree + 90.0f;
-				std::cout << degree << '\n';
 				Arr_Rotate(sel, line, 1);
 			}
 			nowRotDegree = 0.0f;
-			PrintBlockPos();
 			reVal = true;
 		}
 		if (sel == 0) { // z

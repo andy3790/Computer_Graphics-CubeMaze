@@ -47,6 +47,7 @@ extern bool*** maze;
 extern int maze_size;
 int t;
 int drawType;
+bool cube_rotate_flag;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -93,6 +94,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cameraRot = glm::mat4(1.0f);
 	t = -1;
 	drawType = 0;
+	cube_rotate_flag = true;
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -162,8 +164,8 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case '1':case '2':case '3':case '4':case '5':case '0': t = key - '0'; break;
-	case 'c': case 'C': t = 6; break;
+	case '1':case '2':case '3':case '4':case '5':case '6': if (cube_rotate_flag) { t = key - '0'; cube_rotate_flag = !cube_rotate_flag; } break;
+	case 'c': case 'C': t = 7; break;
 	case 'v': case 'V': t = -1; break;
 
 	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
@@ -173,7 +175,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'i': case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
 	case 'o': case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
-	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_FIGURE_SMOOTH); test2.PrintBlockPos(); break; // 미로 크기 재설정
+	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_BLOCK_RAND); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break; // 미로 크기 재설정
 	case 'm': case 'M': make_maze_wilson(); print_maze(); test2.InputMaze(maze); break; // 미로 재생성
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
@@ -212,7 +214,7 @@ GLvoid Timer(int value)
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
 
 	//test2.Rotate_Cube(CUBE_Y, -1.0f);
-	if (t == 6) {
+	if (t == 7) {
 		//test2.Rotate_Specific_Side(0, 1.0f);
 		//test2.Rotate_Specific_Side(1, 1.0f);
 		//test2.Rotate_Specific_Side(2, 1.0f);
@@ -233,7 +235,7 @@ GLvoid Timer(int value)
 	else if (t == -1) {
 	}
 	else {
-		if (test2.Rotate_Specific_Side_Check_Rot(t / 2, t % 2 + t % 2, 1.0f)) {
+		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, 1.0f)) {
 			t = -1;
 		}
 	}
