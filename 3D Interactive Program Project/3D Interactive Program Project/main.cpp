@@ -162,7 +162,7 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case '1':case '2':case '3':case '4':case '5':case '0': t = key - '0'; test2.Reset(); break;
+	case '1':case '2':case '3':case '4':case '5':case '0': t = key - '0'; break;
 	case 'c': case 'C': t = 6; break;
 	case 'v': case 'V': t = -1; break;
 
@@ -173,7 +173,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'i': case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
 	case 'o': case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
-	case 'g': case 'G': get_size_of_maze(30, 4); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_FIGURE_SMOOTH); break; // 미로 크기 재설정
+	case 'g': case 'G': get_size_of_maze(30, 4); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_FIGURE_SMOOTH); test2.PrintBlockPos(); break; // 미로 크기 재설정
 	case 'm': case 'M': make_maze_wilson(); print_maze(); test2.InputMaze(maze); break; // 미로 재생성
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
@@ -211,7 +211,7 @@ GLvoid Timer(int value)
 	// 광원 회전 코드
 	lightR = glm::rotate(lightR, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0));
 
-	test2.Rotate_Cube(CUBE_Y, -1.0f);
+	//test2.Rotate_Cube(CUBE_Y, -1.0f);
 	if (t == 6) {
 		//test2.Rotate_Specific_Side(0, 1.0f);
 		//test2.Rotate_Specific_Side(1, 1.0f);
@@ -220,12 +220,12 @@ GLvoid Timer(int value)
 		//test2.Rotate_Specific_Side(4, 1.0f);
 		//test2.Rotate_Specific_Side(5, 1.0f);
 		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 5; j++) {
+			for (int j = 0; j < 3; j++) {
 				if (j % 2 != 0) {
-					test2.Rotate_Specific_Side(i, j, 1.0f);
+					test2.Rotate_Specific_Side_Check_Rot(i, j, 1.0f);
 				}
 				else {
-					test2.Rotate_Specific_Side(i, j, -1.0f);
+					test2.Rotate_Specific_Side_Check_Rot(i, j, -1.0f);
 				}
 			}
 		}
@@ -233,7 +233,9 @@ GLvoid Timer(int value)
 	else if (t == -1) {
 	}
 	else {
-		test2.Rotate_Specific_Side(t, -1.0f);
+		if (test2.Rotate_Specific_Side_Check_Rot(t / 2, t % 2 + t % 2, 1.0f)) {
+			t = -1;
+		}
 	}
 
 

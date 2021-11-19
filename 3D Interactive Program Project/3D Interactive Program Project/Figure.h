@@ -1392,6 +1392,7 @@ public:
 class Cube {
 private:
 	Block*** cube_blocks;
+	int**** cube_block_pos;
 	int cube_blockCount[3];
 	float cube_blockSize[3];
 	int blockCount[3];
@@ -1403,6 +1404,7 @@ private:
 public:
 	Cube() {
 		cube_blocks = NULL;
+		cube_block_pos = NULL;
 		cube_blockCount[x] = 0;
 		cube_blockCount[y] = 0;
 		cube_blockCount[z] = 0;
@@ -1633,6 +1635,111 @@ public:
 			}
 		}
 	}
+	bool Rotate_Specific_Side_Check_Rot(int sel, int line, float degree) {
+		static float nowRotDegree = 0.0f;
+		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
+		bool reVal = false;
+		nowRotDegree += degree;
+		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
+			int temp = 0;
+			std::cout << sel << ' ' << line << '\n' << '\n';
+			if (nowRotDegree >= 90.0f) {
+				degree += 90.0f - nowRotDegree;
+				std::cout << degree << '\n';
+
+				if (sel == 0) { // z
+					for (int i = 0; i < cube_blockCount[y]; i++) {
+						for (int j = 0; j < cube_blockCount[x]; j++) {
+							float tempx = cube_block_pos[line][i][j][x] - tempSize;
+							float tempy = cube_block_pos[line][i][j][y] - tempSize;
+							cube_block_pos[line][i][j][x] = (int)(tempy + tempSize);
+							cube_block_pos[line][i][j][y] = (int)(-tempx + tempSize);
+						}
+					}
+				}
+				else if (sel == 1) { // y
+					for (int i = 0; i < cube_blockCount[z]; i++) {
+						for (int j = 0; j < cube_blockCount[x]; j++) {
+							float tempx = cube_block_pos[i][line][j][x] - tempSize;
+							float tempz = cube_block_pos[i][line][j][z] - tempSize;
+							cube_block_pos[i][line][j][x] = (int)(tempz + tempSize);
+							cube_block_pos[i][line][j][z] = (int)(-tempx + tempSize);
+						}
+					}
+				}
+				else if (sel == 2) { // x
+					for (int i = 0; i < cube_blockCount[z]; i++) {
+						for (int j = 0; j < cube_blockCount[y]; j++) {
+							float tempy = cube_block_pos[i][j][line][y] - tempSize;
+							float tempz = cube_block_pos[i][j][line][z] - tempSize;
+							cube_block_pos[i][j][line][y] = (int)(-tempz + tempSize);
+							cube_block_pos[i][j][line][z] = (int)(tempy + tempSize);
+						}
+					}
+				}
+			}
+			else {
+				degree += nowRotDegree + 90.0f;
+				std::cout << degree << '\n';
+
+				if (sel == 0) { // z
+					for (int i = 0; i < cube_blockCount[y]; i++) {
+						for (int j = 0; j < cube_blockCount[x]; j++) {
+							float tempx = cube_block_pos[line][i][j][x] - tempSize;
+							float tempy = cube_block_pos[line][i][j][y] - tempSize;
+							cube_block_pos[line][i][j][x] = (int)(-tempy + tempSize);
+							cube_block_pos[line][i][j][y] = (int)(tempx + tempSize);
+						}
+					}
+				}
+				else if (sel == 1) { // y
+					for (int i = 0; i < cube_blockCount[z]; i++) {
+						for (int j = 0; j < cube_blockCount[x]; j++) {
+							float tempx = cube_block_pos[i][line][j][x] - tempSize;
+							float tempz = cube_block_pos[i][line][j][z] - tempSize;
+							cube_block_pos[i][line][j][x] = (int)(tempz + tempSize);
+							cube_block_pos[i][line][j][z] = (int)(-tempx + tempSize);
+						}
+					}
+				}
+				else if (sel == 2) { // x
+					for (int i = 0; i < cube_blockCount[z]; i++) {
+						for (int j = 0; j < cube_blockCount[y]; j++) {
+							float tempy = cube_block_pos[i][j][line][y] - tempSize;
+							float tempz = cube_block_pos[i][j][line][z] - tempSize;
+							cube_block_pos[i][j][line][y] = (int)(-tempz + tempSize);
+							cube_block_pos[i][j][line][z] = (int)(tempy + tempSize);
+						}
+					}
+				}
+			}
+			nowRotDegree = 0.0f;
+			PrintBlockPos();
+			reVal = true;
+		}
+		if (sel == 0) { // z
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) { // y
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 2) { // x
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+				}
+			}
+		}
+		return reVal;
+	}
 
 	GLvoid Draw(unsigned int transformLocation) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
@@ -1688,11 +1795,47 @@ public:
 				cube_blocks[i][j] = new Block[cube_blockCount[x]];
 			}
 		}
+		cube_block_pos = new int*** [cube_blockCount[z]];
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			cube_block_pos[i] = new int** [cube_blockCount[y]];
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				cube_block_pos[i][j] = new int* [cube_blockCount[x]];
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_block_pos[i][j][k] = new int[3];
+				}
+			}
+		}
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					cube_block_pos[i][j][k][x] = k;
+					cube_block_pos[i][j][k][y] = j;
+					cube_block_pos[i][j][k][z] = i;
+				}
+			}
+		}
 
 		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
 		cube_blockSize[y] = size_y / (float)cube_blockCount[y];
 		cube_blockSize[z] = size_z / (float)cube_blockCount[z];
 	}
+
+	void PrintBlockPos() {
+		for (int i = cube_blockCount[z] - 1; i >= 0; i--) {
+			for (int j = cube_blockCount[y] - 1; j >= 0; j--) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					//for (int s = 0; s < 3; s++) {
+					//	std::cout << cube_block_pos[i][j][k][s] << ' ';
+					//}
+					std::cout << cube_block_pos[i][j][k][0] + cube_block_pos[i][j][k][1] * 3 + cube_block_pos[i][j][k][2] * 9;
+					std::cout << '\t';
+				}
+				std::cout << '\n';
+			}
+			std::cout << '\n';
+		}
+	}
+
 	void ClearBlocks() {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = 0; j < cube_blockCount[y]; j++) {
@@ -1701,6 +1844,18 @@ public:
 			delete[] cube_blocks[i];
 		}
 		delete[] cube_blocks;
+
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					delete[] cube_block_pos[i][j][k];
+				}
+				delete[] cube_block_pos[i][j];
+			}
+			delete[] cube_block_pos[i];
+		}
+		delete[] cube_block_pos;
+
 		cube_blockCount[x] = 0;
 		cube_blockCount[y] = 0;
 		cube_blockCount[z] = 0;
@@ -1717,12 +1872,6 @@ public:
 	}
 
 	~Cube() {
-		for (int i = 0; i < cube_blockCount[z]; i++) {
-			for (int j = 0; j < cube_blockCount[y]; j++) {
-				delete[] cube_blocks[i][j];
-			}
-			delete[] cube_blocks[i];
-		}
-		delete[] cube_blocks;
+		ClearBlocks();
 	}
 };
