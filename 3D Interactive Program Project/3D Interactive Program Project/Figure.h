@@ -1654,6 +1654,8 @@ public:
 							float tempy = cube_block_pos[line][i][j][y] - tempSize;
 							cube_block_pos[line][i][j][x] = (int)(tempy + tempSize);
 							cube_block_pos[line][i][j][y] = (int)(-tempx + tempSize);
+							//cube_block_pos[line][i][j][x] = cube_block_pos[line][j][-i + cube_blockCount[x] - 1][x];
+
 						}
 					}
 				}

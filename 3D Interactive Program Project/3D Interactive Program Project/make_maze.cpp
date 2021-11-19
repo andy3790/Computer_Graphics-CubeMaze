@@ -17,16 +17,18 @@ void get_size_of_maze(int max_size, int min_size)
 			delete[] maze[z];
 		}
 		delete[] maze;
+		maze = NULL;
 	}
 	if (maze_wilson != NULL)
 	{
-		for (int z = 0; z < maze_size; z++)
+		for (int z = 0; z < maze_size / 2; z++)
 		{
-			for (int y = 0; y < maze_size; y++)
+			for (int y = 0; y < maze_size / 2; y++)
 				delete[] maze_wilson[z][y];
 			delete[] maze_wilson[z];
 		}
 		delete[] maze_wilson;
+		maze_wilson = NULL;
 	}
 	// 값 입력
 	std::cout << "미로의 사이즈정합니다" << std::endl;
