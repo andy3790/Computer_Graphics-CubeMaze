@@ -1260,13 +1260,13 @@ public:
 	void Rotate_Block(const char type, float degree) {
 		// 원점 기준 회전
 		if (type == 'x') {
-			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(1.0, 0.0, 0.0)); //--- x축에대하여 회전
+			blockRot = glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(degree), glm::vec3(1.0, 0.0, 0.0)) * blockRot; //--- x축에대하여 회전
 		}
 		else if (type == 'y') {
-			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 1.0, 0.0)); //--- y축에대하여 회전
+			blockRot = glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(degree), glm::vec3(0.0, 1.0, 0.0)) * blockRot; //--- y축에대하여 회전
 		}
 		else if (type == 'z') {
-			blockRot = glm::rotate(blockRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)); //--- z축에대하여 회전
+			blockRot = glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)) * blockRot; //--- z축에대하여 회전
 		}
 	}
 
