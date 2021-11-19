@@ -130,13 +130,9 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glUniform3f(lightColorLocation, 1.0, 1.0, 1.0);
 	glUniform3f(viewPosLocation, cameraPos.x, cameraPos.y, cameraPos.z);
 
-	glm::vec4 tcamera(cameraStartPos, 1.0f);
-	tcamera = cameraRot * tcamera;
-	cameraPos = tcamera;
-
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projMat = glm::mat4(1.0f);
-	view =glm::lookAt(cameraPos, cameraDirection, cameraUp);
+	view =glm::lookAt(cameraPos, cameraDirection, cameraUp) * cameraRot;
 
 	projMat = glm::perspective((GLfloat)glm::radians(45.0f), (float)WIN_WIDTH / (float)WIN_HIGHT, 0.1f, 50.0f);
 	projMat = glm::translate(projMat, glm::vec3(0.0, 0.0, -5.0));
@@ -170,8 +166,10 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'c': case 'C': t = 6; break;
 	case 'v': case 'V': t = -1; break;
 
-	case 'x': case 'X': cameraRot = cameraRot * glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
-	case 'y': case 'Y': cameraRot = cameraRot * glm::rotate(glm::mat4(1.0f), (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
+	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
+	case 'X': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
+	case 'y': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
+	case 'Y': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
 	case 'i': case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
 	case 'o': case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
