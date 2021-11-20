@@ -1710,6 +1710,10 @@ public:
 			cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), glm::vec3(0.0, 0.0, 1.0)); //--- z축에대하여 회전
 		}
 	}
+	void Rotate_Cube(const char type, float degree, glm::vec3 shaft) {
+		// 원점 기준 회전
+		cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), shaft); //--- x축에대하여 회전
+	}
 	void Rotate_Specific_Block(int sel_x, int sel_y, int sel_z, const char type, float degree) {
 		cube_blocks[sel_z][sel_y][sel_x].Rotate_Block(type, degree);
 	}
