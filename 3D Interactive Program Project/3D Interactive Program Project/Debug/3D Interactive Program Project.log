@@ -9,4 +9,5 @@ C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer
 C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(191,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
 C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(197,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
 C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(203,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(245,19): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   3D Interactive Program Project.vcxproj -> C:\Users\user\Desktop\2021-2\컴퓨터 그래픽스\최종 프로젝트\Computer_Graphics-CubeMaze\3D Interactive Program Project\Debug\3D Interactive Program Project.exe

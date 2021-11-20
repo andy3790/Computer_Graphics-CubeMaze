@@ -233,18 +233,19 @@ GLvoid Motion(int x, int y)
 		glm::vec3 axis_vec3;
 		glm::vec4 axis_vec4;
 		glm::mat4 TM_of_axis_of_rotation = cameraRot;
-		// 회전을 하기 전에 먼저 현재 각도로 rotate 함수 뒤에서 받는 vec3를 역회전? 회전? 시키고 계산
 
-		// 회전 부분은 x 값의 범위에 따라서 달라져야한다.
-		// 따라서 rotate 함수 뒤에서 받는 vec3를 회전시킨다. 이건 복잡해지니까 보류.
-		if (x < WIN_WIDTH / 3) axis_vec4 = glm::vec4(1.0 / sqrt(2), 0.0, 1.0 / sqrt(2), 1.0);
-		else if (x < WIN_WIDTH / 3 * 2) axis_vec4 = glm::vec4(1.0 / sqrt(2), 0.0, -1.0 / sqrt(2), 1.0);
-		else axis_vec4 = glm::vec4(-1.0 / sqrt(2), 0.0, -1.0 / sqrt(2), 1.0);
+		//if (x < WIN_WIDTH / 3)			axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+		/*else if (x < WIN_WIDTH / 3 * 2) */axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+		//else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
 		axis_vec3 = glm::vec3(axis_vec4);
 		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
 
-		axis_vec4 = glm::vec4(0.0, 1.0, 0.0, 1.0);
+		float tmp_vec_x = -cameraStartPos[0];
+		float tmp_vec_y = (pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)) / cameraStartPos[1];
+		float tmp_vec_z = -cameraStartPos[2];
+
+		axis_vec4 = glm::vec4(tmp_vec_x, tmp_vec_y, tmp_vec_z, sqrt(pow(tmp_vec_x, 2) + pow(tmp_vec_y, 2) + pow(tmp_vec_z, 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
 		axis_vec3 = glm::vec3(axis_vec4);
 		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
