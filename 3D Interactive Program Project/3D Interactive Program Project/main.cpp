@@ -50,6 +50,12 @@ int drawType;
 bool cube_rotate_flag;
 bool suffle_Flag;
 
+bool is_left_butten_up;
+bool is_right_butten_up;
+int mouse_x;
+int mouse_y;
+float max_rotation_magnification; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
+
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
 	//--- 윈도우 생성하기
@@ -97,6 +103,12 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	drawType = 0;
 	cube_rotate_flag = true;
 	suffle_Flag = false;
+
+	is_left_butten_up = true;
+	is_right_butten_up = true;
+	mouse_x = 0;	// 상관없음
+	mouse_y = 0;	// 상관없음
+	max_rotation_magnification = 180.0f; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -202,10 +214,7 @@ GLvoid Special_up(int key, int x, int y)
 
 	}
 }
-bool is_left_butten_up;
-int tmp_x;
-int tmp_y;
-float max_rotation_magnification = 180.0f; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
+
 GLvoid Mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON)
@@ -213,22 +222,35 @@ GLvoid Mouse(int button, int state, int x, int y)
 		if (state == GLUT_DOWN)
 		{
 			is_left_butten_up = false;
-			tmp_x = x;
-			tmp_y = y;
+			mouse_x = x;
+			mouse_y = y;
 		}
 		else if (state == GLUT_UP)
 		{
 			is_left_butten_up = true;
 		}
 	}
+	if (button == GLUT_RIGHT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			is_right_butten_up = false;
+			mouse_x = x;
+			mouse_y = y;
+		}
+		else if (state == GLUT_UP)
+		{
+			is_right_butten_up = true;
+		}
+	}
 }
 
 GLvoid Motion(int x, int y)
 {
-	if (!is_left_butten_up)
+	if (!is_left_butten_up || !is_right_butten_up)
 	{
-		float x_angle = (float)(x - tmp_x) / WIN_WIDTH * max_rotation_magnification;
-		float y_angle = (float)(y - tmp_y) / WIN_HIGHT * max_rotation_magnification;
+		float x_angle = (float)(x - mouse_x) / WIN_WIDTH * max_rotation_magnification;
+		float y_angle = (float)(y - mouse_y) / WIN_HIGHT * max_rotation_magnification;
 
 		glm::vec3 axis_vec3;
 		glm::vec4 axis_vec4;
@@ -239,7 +261,10 @@ GLvoid Motion(int x, int y)
 		//else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
 		axis_vec3 = glm::vec3(axis_vec4);
-		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
+		if (!is_left_butten_up)
+			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
+		if(!is_right_butten_up)
+			test2.Rotate_Cube(axis_vec3, y_angle);
 
 		float tmp_vec_x = -cameraStartPos[0];
 		float tmp_vec_y = (pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)) / cameraStartPos[1];
@@ -248,10 +273,13 @@ GLvoid Motion(int x, int y)
 		axis_vec4 = glm::vec4(tmp_vec_x, tmp_vec_y, tmp_vec_z, sqrt(pow(tmp_vec_x, 2) + pow(tmp_vec_y, 2) + pow(tmp_vec_z, 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
 		axis_vec3 = glm::vec3(axis_vec4);
-		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
+		if (!is_left_butten_up)
+			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
+		if (!is_right_butten_up)
+			test2.Rotate_Cube(axis_vec3, x_angle);
 
-		tmp_x = x;
-		tmp_y = y;
+		mouse_x = x;
+		mouse_y = y;
 	}
 }
 
