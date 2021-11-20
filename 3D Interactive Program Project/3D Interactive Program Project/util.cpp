@@ -27,3 +27,35 @@ bool CrashCheck_AABB(float a_midx, float a_midy, float a_midz, float a_sizex, fl
 	}
 	return true;
 }
+
+bool Shuffle_Cube(Cube* cube, int cubeSize) {
+	static std::random_device rd;
+	static std::default_random_engine dre(rd());
+	static std::uniform_int_distribution<> uid;
+
+	static int suffleCount = uid(dre) % 10 + 25;
+	static bool rotFlag = true;
+	static int select = uid(dre) % 3;
+	static int line = uid(dre) % cubeSize;
+	static float rotdegree = 5.0f;
+
+	rotFlag = cube->Rotate_Specific_Side_Check_Rot(select, line, rotdegree);
+	if (rotFlag) {
+		select = uid(dre) % 3;
+		line = uid(dre) % cubeSize;
+		suffleCount -= 1;
+		if (uid(dre) % 2 == 0) {
+			rotdegree = 5.0f;
+		}
+		else {
+			rotdegree = -5.0f;
+		}
+	}
+
+	if (suffleCount <= 0) {
+		suffleCount = uid(dre) % 10 + 25;
+		return false;
+	}
+
+	return true;
+}

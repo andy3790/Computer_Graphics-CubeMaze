@@ -48,6 +48,7 @@ extern int maze_size;
 int t;
 int drawType;
 bool cube_rotate_flag;
+bool suffle_Flag;
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -95,6 +96,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	t = -1;
 	drawType = 0;
 	cube_rotate_flag = true;
+	suffle_Flag = false;
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -167,6 +169,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case '1':case '2':case '3':case '4':case '5':case '6': if (cube_rotate_flag) { t = key - '0'; cube_rotate_flag = !cube_rotate_flag; } break;
 	case 'c': case 'C': t = 7; break;
 	case 'v': case 'V': t = -1; break;
+	case '`': suffle_Flag = true; break;
 
 	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
@@ -238,6 +241,10 @@ GLvoid Timer(int value)
 		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, 1.0f)) {
 			t = -1;
 		}
+	}
+
+	if (suffle_Flag) {
+		suffle_Flag = Shuffle_Cube(&test2, 3);
 	}
 
 
