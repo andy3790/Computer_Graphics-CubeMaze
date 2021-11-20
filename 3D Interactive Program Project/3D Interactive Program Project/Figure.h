@@ -12,12 +12,13 @@
 
 // Cube MakeCube Type List
 #define CUBE_COLOR_POINT_RAND 0
-#define CUBE_COLOR_SIDE_RAND 1
+#define CUBE_COLOR_FIGURE_SIDE_RAND 1
 #define CUBE_COLOR_FIGURE_RAND 2
 #define CUBE_COLOR_FIGURE_GRAY 3
+#define CUBE_COLOR_FIGURE_SMOOTH 6
 #define CUBE_COLOR_BLOCK_RAND 4
 #define CUBE_COLOR_BLOCK_SMOOTH 5
-#define CUBE_COLOR_FIGURE_SMOOTH 6
+#define CUBE_COLOR_CUBE_SIDE_DEFAULT 7
 
 // Cube Print Type List
 #define CUBE_PRINT_WALL 0
@@ -491,6 +492,94 @@ public:
 			vertex[3 + 6 * 5][i] = point[3 + front][i];
 			vertex[4 + 6 * 5][i] = point[2 + back][i];
 			vertex[5 + 6 * 5][i] = point[2 + front][i];
+		}
+		InitCubeNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR[6], float colorG[6], float colorB[6]) {
+		int front = 0;
+		int back = 4;
+		Shape = 2;
+		countOfData = 36;
+		rotate_val_x = 0.0f;
+		rotate_val_y = 0.0f;
+		T_val[0] = 0.0f;
+		T_val[1] = 0.0f;
+		T_val[2] = 0.0f;
+
+		point[0][0] = midx - sizex;
+		point[0][1] = midy + sizey;
+		point[0][2] = midz + sizez;
+
+		point[1][0] = midx + sizex;
+		point[1][1] = midy + sizey;
+		point[1][2] = midz + sizez;
+
+		point[2][0] = midx + sizex;
+		point[2][1] = midy - sizey;
+		point[2][2] = midz + sizez;
+
+		point[3][0] = midx - sizex;
+		point[3][1] = midy - sizey;
+		point[3][2] = midz + sizez;
+
+		for (int i = 0; i < 4; i++) {
+			point[i + 4][0] = point[i][0];
+			point[i + 4][1] = point[i][1];
+			point[i + 4][2] = point[i][2] - (sizez * 2);
+		}
+
+		for (int i = 0; i < 3; i++) {
+			// 앞면
+			vertex[0 + 6 * 0][i] = point[0 + front][i];
+			vertex[1 + 6 * 0][i] = point[3 + front][i];
+			vertex[2 + 6 * 0][i] = point[2 + front][i];
+			vertex[3 + 6 * 0][i] = point[0 + front][i];
+			vertex[4 + 6 * 0][i] = point[2 + front][i];
+			vertex[5 + 6 * 0][i] = point[1 + front][i];
+			//뒷면
+			vertex[0 + 6 * 1][i] = point[1 + back][i];
+			vertex[1 + 6 * 1][i] = point[2 + back][i];
+			vertex[2 + 6 * 1][i] = point[3 + back][i];
+			vertex[3 + 6 * 1][i] = point[1 + back][i];
+			vertex[4 + 6 * 1][i] = point[3 + back][i];
+			vertex[5 + 6 * 1][i] = point[0 + back][i];
+			//오른쪽 면
+			vertex[0 + 6 * 2][i] = point[1 + front][i];
+			vertex[1 + 6 * 2][i] = point[2 + front][i];
+			vertex[2 + 6 * 2][i] = point[2 + back][i];
+			vertex[3 + 6 * 2][i] = point[1 + front][i];
+			vertex[4 + 6 * 2][i] = point[2 + back][i];
+			vertex[5 + 6 * 2][i] = point[1 + back][i];
+			//왼쪽 면
+			vertex[0 + 6 * 3][i] = point[0 + back][i];
+			vertex[1 + 6 * 3][i] = point[3 + back][i];
+			vertex[2 + 6 * 3][i] = point[3 + front][i];
+			vertex[3 + 6 * 3][i] = point[0 + back][i];
+			vertex[4 + 6 * 3][i] = point[3 + front][i];
+			vertex[5 + 6 * 3][i] = point[0 + front][i];
+			//위쪽 면
+			vertex[0 + 6 * 4][i] = point[0 + back][i];
+			vertex[1 + 6 * 4][i] = point[0 + front][i];
+			vertex[2 + 6 * 4][i] = point[1 + front][i];
+			vertex[3 + 6 * 4][i] = point[0 + back][i];
+			vertex[4 + 6 * 4][i] = point[1 + front][i];
+			vertex[5 + 6 * 4][i] = point[1 + back][i];
+			//아래쪽 면
+			vertex[0 + 6 * 5][i] = point[3 + front][i];
+			vertex[1 + 6 * 5][i] = point[3 + back][i];
+			vertex[2 + 6 * 5][i] = point[2 + back][i];
+			vertex[3 + 6 * 5][i] = point[3 + front][i];
+			vertex[4 + 6 * 5][i] = point[2 + back][i];
+			vertex[5 + 6 * 5][i] = point[2 + front][i];
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = colorR[i];
+				vertex[j + 6 * i][4] = colorG[i];
+				vertex[j + 6 * i][5] = colorB[i];
+			}
 		}
 		InitCubeNormal();
 		MakeTransformMat();
@@ -1237,6 +1326,20 @@ public:
 			}
 		}
 	}
+	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, float colorR[6], float colorG[6], float colorB[6]) {
+		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+						-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+						-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+						blockSize[x], blockSize[y], blockSize[z], colorR, colorG, colorB);
+				}
+			}
+		}
+	}
 
 	void Translate(float xVal, float yVal, float zVal) {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1496,7 +1599,7 @@ public:
 				}
 			}
 		}
-		else if (type == 4) {
+		else if (type == 4) { // 블럭별 랜덤 색
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1508,7 +1611,7 @@ public:
 				}
 			}
 		}
-		else if (type == 5) {
+		else if (type == 5) { // 블럭 단위 그라데이션
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1523,7 +1626,7 @@ public:
 				}
 			}
 		}
-		else if (type == 6) {
+		else if (type == 6) { // Figure 단위 그라데이션
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1531,6 +1634,28 @@ public:
 							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
 							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
 							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], type);
+					}
+				}
+			}
+		}
+		else if (type == 7) { // 큐브 면 단위 같은 색
+			float colorR[6] = { 0 };
+			float colorG[6] = { 0 };
+			float colorB[6] = { 0 };
+			colorR[0] = 1.0f;
+			colorR[1] = 1.0f; colorG[1] = 0.5f;
+			colorG[2] = 1.0f;
+			colorB[3] = 1.0f;
+			colorR[4] = 1.0f; colorG[4] = 1.0f;
+			colorR[5] = 1.0f; colorG[5] = 1.0f; colorB[5] = 1.0f;
+
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], colorR, colorG, colorB);
 					}
 				}
 			}

@@ -178,7 +178,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'i': case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
 	case 'o': case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
-	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_BLOCK_RAND); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break; // 미로 크기 재설정
+	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break; // 미로 크기 재설정
 	case 'm': case 'M': make_maze_wilson(); print_maze(); test2.InputMaze(maze); break; // 미로 재생성
 	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
 	}
