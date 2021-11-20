@@ -249,6 +249,7 @@ GLvoid Motion(int x, int y)
 {
 	if (!is_left_butten_up || !is_right_butten_up)
 	{
+		// 마우스 조작으로 인해 회전해야할 각
 		float x_angle = (float)(x - mouse_x) / WIN_WIDTH * max_rotation_magnification;
 		float y_angle = (float)(y - mouse_y) / WIN_HIGHT * max_rotation_magnification;
 
@@ -256,27 +257,38 @@ GLvoid Motion(int x, int y)
 		glm::vec4 axis_vec4;
 		glm::mat4 TM_of_axis_of_rotation = cameraRot;
 
+		// 세로 회전
+
+		// 회전축 지정
 		//if (x < WIN_WIDTH / 3)			axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		/*else if (x < WIN_WIDTH / 3 * 2) */axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		//else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+
+		// 카메라와 객체의 회전 상태를 적용하기위해 각자의 회전행렬을 곱한다.
 		axis_vec4 = axis_vec4 * cameraRot;
 		if(!is_right_butten_up)
 			axis_vec4 = axis_vec4 * test2.get_cubeRot();
 		axis_vec3 = glm::vec3(axis_vec4);
+		// 마우스 조작 크기만큼 회전
 		if (!is_left_butten_up)
 			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
 		if(!is_right_butten_up)
 			test2.Rotate_Cube(axis_vec3, y_angle);
 
+
+		// 가로 회전
+
+		// 회전축 지정
 		float tmp_vec_x = -cameraStartPos[0];
 		float tmp_vec_y = (pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)) / cameraStartPos[1];
 		float tmp_vec_z = -cameraStartPos[2];
-
 		axis_vec4 = glm::vec4(tmp_vec_x, tmp_vec_y, tmp_vec_z, sqrt(pow(tmp_vec_x, 2) + pow(tmp_vec_y, 2) + pow(tmp_vec_z, 2)));
+		// 카메라와 객체의 회전 상태를 적용하기위해 각자의 회전행렬을 곱한다.
 		axis_vec4 = axis_vec4 * cameraRot;
 		if (!is_right_butten_up)
 			axis_vec4 = axis_vec4 * test2.get_cubeRot();
 		axis_vec3 = glm::vec3(axis_vec4);
+		// 마우스 조작 크기만큼 회전
 		if (!is_left_butten_up)
 			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
 		if (!is_right_butten_up)
