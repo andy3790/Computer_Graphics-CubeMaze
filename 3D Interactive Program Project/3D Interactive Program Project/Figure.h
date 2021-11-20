@@ -2040,6 +2040,9 @@ public:
 		}
 		cubeRot = glm::mat4(1.0f);
 	}
+	glm::mat4 get_cubeRot() {
+		return cubeRot;
+	}
 
 	~Cube() {
 		ClearBlocks();

@@ -260,6 +260,8 @@ GLvoid Motion(int x, int y)
 		/*else if (x < WIN_WIDTH / 3 * 2) */axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		//else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
+		if(!is_right_butten_up)
+			axis_vec4 = axis_vec4 * test2.get_cubeRot();
 		axis_vec3 = glm::vec3(axis_vec4);
 		if (!is_left_butten_up)
 			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
@@ -272,6 +274,8 @@ GLvoid Motion(int x, int y)
 
 		axis_vec4 = glm::vec4(tmp_vec_x, tmp_vec_y, tmp_vec_z, sqrt(pow(tmp_vec_x, 2) + pow(tmp_vec_y, 2) + pow(tmp_vec_z, 2)));
 		axis_vec4 = axis_vec4 * cameraRot;
+		if (!is_right_butten_up)
+			axis_vec4 = axis_vec4 * test2.get_cubeRot();
 		axis_vec3 = glm::vec3(axis_vec4);
 		if (!is_left_butten_up)
 			cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
