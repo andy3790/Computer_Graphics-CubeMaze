@@ -20,6 +20,8 @@
 #define CUBE_COLOR_BLOCK_SMOOTH 5
 #define CUBE_COLOR_CUBE_SIDE_DEFAULT 7
 
+#define CUBE_COLORTYPE_BLOCK 4
+
 // Cube Print Type List
 #define CUBE_PRINT_WALL 0
 #define CUBE_PRINT_ROAD 1
@@ -1177,12 +1179,14 @@ public:
 class Block {
 private:
 	Figure*** blocks;
+	Figure myFigure;
 	bool*** mazeWall;
 	int blockCount[3];
 	float blockSize[3];
 	const int x = 0;
 	const int y = 1;
 	const int z = 2;
+	int figureType;
 	glm::mat4 blockRot;
 public:
 	Block() {
@@ -1194,6 +1198,7 @@ public:
 		blockSize[x] = 0.0;
 		blockSize[y] = 0.0;
 		blockSize[z] = 0.0;
+		figureType = -1;
 		blockRot = glm::mat4(1.0f);
 	}
 	GLvoid MakeBlock() {
@@ -1245,7 +1250,7 @@ public:
 	}
 	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, float colorR, float colorG, float colorB) {
 		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
-
+		figureType = CUBE_COLORTYPE_BLOCK;
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
@@ -1256,9 +1261,11 @@ public:
 				}
 			}
 		}
+		myFigure.MakeCube(midx, midy, midz, blockSize[x] * blockCount[x], blockSize[y] * blockCount[y], blockSize[z] * blockCount[z], colorR, colorG, colorB);
 	}
 	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, int type) {
 		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+		figureType = type;
 
 		if (type == 0) { // 정점별 랜덤 색
 			for (int i = 0; i < blockCount[z]; i++) {
@@ -1328,6 +1335,7 @@ public:
 	}
 	GLvoid MakeBlock(int count_x, int count_y, int count_z, float midx, float midy, float midz, float size_x, float size_y, float size_z, float colorR[6], float colorG[6], float colorB[6]) {
 		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
+		figureType = CUBE_COLORTYPE_BLOCK;
 
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
@@ -1339,6 +1347,7 @@ public:
 				}
 			}
 		}
+		myFigure.MakeCube(midx, midy, midz, blockSize[x] * blockCount[x], blockSize[y] * blockCount[y], blockSize[z] * blockCount[z], colorR, colorG, colorB);
 	}
 
 	void Translate(float xVal, float yVal, float zVal) {
@@ -1406,11 +1415,16 @@ public:
 			}
 		}
 		else if (printType == CUBE_PRINT_WALL) {
-			for (int i = 0; i < blockCount[z]; i++) {
-				for (int j = 0; j < blockCount[y]; j++) {
-					for (int k = 0; k < blockCount[x]; k++) {
-						if (mazeWall[i][j][k]) {
-							blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+			if (figureType == CUBE_COLORTYPE_BLOCK) {
+				myFigure.Draw(transformLocation, afterMat * blockRot);
+			}
+			else {
+				for (int i = 0; i < blockCount[z]; i++) {
+					for (int j = 0; j < blockCount[y]; j++) {
+						for (int k = 0; k < blockCount[x]; k++) {
+							if (mazeWall[i][j][k]) {
+								blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
+							}
 						}
 					}
 				}
@@ -1456,6 +1470,8 @@ public:
 		blockSize[x] = size_x / (float)blockCount[x];
 		blockSize[y] = size_y / (float)blockCount[y];
 		blockSize[z] = size_z / (float)blockCount[z];
+
+		myFigure.MakeCube(midx, midy, midz, size_x, size_y, size_z);
 	}
 	void ClearBlocks() {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1471,6 +1487,7 @@ public:
 		blockCount[x] = 0;
 		blockCount[y] = 0;
 		blockCount[z] = 0;
+		figureType = -1;
 	}
 	void Reset() {
 		for (int i = 0; i < blockCount[z]; i++) {
