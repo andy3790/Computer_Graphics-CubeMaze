@@ -202,13 +202,56 @@ GLvoid Special_up(int key, int x, int y)
 
 	}
 }
-
+bool is_left_butten_up;
+int tmp_x;
+int tmp_y;
+float max_rotation_magnification = 180.0f; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
 GLvoid Mouse(int button, int state, int x, int y)
 {
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			is_left_butten_up = false;
+			tmp_x = x;
+			tmp_y = y;
+		}
+		else if (state == GLUT_UP)
+		{
+			is_left_butten_up = true;
+		}
+	}
 }
 
 GLvoid Motion(int x, int y)
 {
+	if (!is_left_butten_up)
+	{
+		float x_angle = (float)(x - tmp_x) / WIN_WIDTH * max_rotation_magnification;
+		float y_angle = (float)(y - tmp_y) / WIN_HIGHT * max_rotation_magnification;
+
+		glm::vec3 axis_vec3;
+		glm::vec4 axis_vec4;
+		glm::mat4 TM_of_axis_of_rotation = cameraRot;
+		// 회전을 하기 전에 먼저 현재 각도로 rotate 함수 뒤에서 받는 vec3를 역회전? 회전? 시키고 계산
+
+		// 회전 부분은 x 값의 범위에 따라서 달라져야한다.
+		// 따라서 rotate 함수 뒤에서 받는 vec3를 회전시킨다. 이건 복잡해지니까 보류.
+		if (x < WIN_WIDTH / 3) axis_vec4 = glm::vec4(1.0 / sqrt(2), 0.0, 1.0 / sqrt(2), 1.0);
+		else if (x < WIN_WIDTH / 3 * 2) axis_vec4 = glm::vec4(1.0 / sqrt(2), 0.0, -1.0 / sqrt(2), 1.0);
+		else axis_vec4 = glm::vec4(-1.0 / sqrt(2), 0.0, -1.0 / sqrt(2), 1.0);
+		axis_vec4 = axis_vec4 * cameraRot;
+		axis_vec3 = glm::vec3(axis_vec4);
+		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(y_angle), axis_vec3);
+
+		axis_vec4 = glm::vec4(0.0, 1.0, 0.0, 1.0);
+		axis_vec4 = axis_vec4 * cameraRot;
+		axis_vec3 = glm::vec3(axis_vec4);
+		cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(x_angle), axis_vec3);
+
+		tmp_x = x;
+		tmp_y = y;
+	}
 }
 
 GLvoid Timer(int value)
