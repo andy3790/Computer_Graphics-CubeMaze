@@ -1712,7 +1712,7 @@ public:
 	}
 	void Rotate_Cube(glm::vec3 shaft, float degree) {
 		// 원점 기준 회전
-		cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), shaft); //--- x축에대하여 회전
+		cubeRot = glm::rotate(cubeRot, (GLfloat)glm::radians(degree), shaft); //--- 임의의 축에 대하여 회전
 	}
 	void Rotate_Specific_Block(int sel_x, int sel_y, int sel_z, const char type, float degree) {
 		cube_blocks[sel_z][sel_y][sel_x].Rotate_Block(type, degree);
