@@ -205,7 +205,11 @@ GLvoid Keyboard_up(unsigned char key, int x, int y)
 GLvoid Special(int key, int x, int y)
 {
 	switch (key) {
-
+	case GLUT_KEY_F1: cameraStartPos = glm::vec3(5.0f, 5.0f, 5.0f); cameraPos = cameraStartPos;  cameraRot = glm::mat4(1.0f); break;
+	//case GLUT_KEY_RIGHT: cameraStartPos = glm::vec3(5.0f * sqrt(3), 0.0f, 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
+	//case GLUT_KEY_LEFT: cameraStartPos = glm::vec3(-5.0f * sqrt(3), 0.0f, 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
+	//case GLUT_KEY_UP: cameraStartPos = glm::vec3(0.0f, 5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
+	//case GLUT_KEY_DOWN: cameraStartPos = glm::vec3(0.0f, -5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
 	}
 }
 GLvoid Special_up(int key, int x, int y)
