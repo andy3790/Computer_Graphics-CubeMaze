@@ -11,6 +11,7 @@ extern bool*** maze;
 extern int*** maze_wilson;
 
 void get_size_of_maze(int max_size, int min_size);
+void get_size_of_maze(int mazeSize); // 시스템으로 부터 입력 받기
 void print_maze();
 void print_maze_wilson();
 void init_maze();

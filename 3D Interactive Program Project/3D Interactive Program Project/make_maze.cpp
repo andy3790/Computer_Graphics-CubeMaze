@@ -68,6 +68,58 @@ void get_size_of_maze(int max_size, int min_size)
 		}
 	}
 }
+void get_size_of_maze(int mazeSize)
+{
+	// 할당 해제
+	if (maze != NULL)
+	{
+		for (int z = 0; z < maze_size; z++)
+		{
+			for (int y = 0; y < maze_size; y++)
+				delete[] maze[z][y];
+			delete[] maze[z];
+		}
+		delete[] maze;
+		maze = NULL;
+	}
+	if (maze_wilson != NULL)
+	{
+		for (int z = 0; z < maze_size / 2; z++)
+		{
+			for (int y = 0; y < maze_size / 2; y++)
+				delete[] maze_wilson[z][y];
+			delete[] maze_wilson[z];
+		}
+		delete[] maze_wilson;
+		maze_wilson = NULL;
+	}
+	maze_size = mazeSize;
+
+	// 할당 시작
+	if (maze_wilson == NULL)
+	{
+		maze_wilson = new int** [maze_size];
+		for (int z = 0; z < maze_size; z++)
+		{
+			maze_wilson[z] = new int* [maze_size];
+			for (int y = 0; y < maze_size; y++)
+				maze_wilson[z][y] = new int[maze_size];
+		}
+	}
+
+	maze_size = maze_size * 2 + 1;
+
+	if (maze == NULL)
+	{
+		maze = new bool** [maze_size];
+		for (int z = 0; z < maze_size; z++)
+		{
+			maze[z] = new bool* [maze_size];
+			for (int y = 0; y < maze_size; y++)
+				maze[z][y] = new bool[maze_size];
+		}
+	}
+}
 
 void print_maze()
 {

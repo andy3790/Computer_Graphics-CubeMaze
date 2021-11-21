@@ -24,31 +24,31 @@ GLuint s_program;
 GLuint vertexShader;
 GLuint fragmentShader;
 
-glm::vec3 cameraStartPos;
-glm::vec3 cameraStartDir;
-glm::vec3 cameraPos; //--- 카메라 위치
-glm::vec3 cameraDirection; //--- 카메라 바라보는 방향
+glm::vec3 cameraStartPos; // 카메라 초기 위치
+glm::vec3 cameraStartDir; // 카메라 초기 바라보는 방향
+glm::vec3 cameraPos; //--- 카메라 현재 위치
+glm::vec3 cameraDirection; //--- 카메라 현재 바라보는 방향
 glm::vec3 cameraUp; //--- 카메라 위쪽 방향
+glm::mat4 cameraRot; // 카메라 회전 행렬
 
-glm::vec4 lightPos;
-glm::mat4 lightT;
-glm::mat4 lightR;
-bool lightOn;
+glm::vec4 lightPos; // 빛의 위치
+glm::mat4 lightT; // 빛의 이동행렬
+glm::mat4 lightR; // 빛의 회전행렬
+bool lightOn; // 빛 활성화/비활성화
 
 int window1; // use destroy
 
-Figure line;
-Figure flashlight;
-Cube test2;
 
-glm::mat4 cameraRot;
+Figure line; // xyz 축 출력
+Figure flashlight; // 빛 오브젝트 출력
+Cube test2; // 메인오브젝트
 
 extern bool*** maze;
 extern int maze_size;
-int t;
-int drawType;
-bool cube_rotate_flag;
-bool suffle_Flag;
+int t; // 큐브 면 선택 변수
+int drawType; // 큐브 길 출력 or 벽 출력
+bool cube_rotate_flag; // 큐브 면 회전용 flag
+bool suffle_Flag; // 큐브 섞기 flag
 
 bool is_left_butten_up;
 bool is_right_butten_up;
@@ -87,6 +87,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cameraPos = cameraStartPos; //--- 카메라 위치
 	cameraDirection = cameraStartDir; //--- 카메라 바라보는 방향
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); //--- 카메라 위쪽 방향
+	cameraRot = glm::mat4(1.0f);
 
 	lightT = glm::mat4(1.0f);
 	lightR = glm::mat4(1.0f);
@@ -98,7 +99,6 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	flashlight.MakeCube(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0);
 	test2.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
 
-	cameraRot = glm::mat4(1.0f);
 	t = -1;
 	drawType = 0;
 	cube_rotate_flag = true;
@@ -210,6 +210,10 @@ GLvoid Special(int key, int x, int y)
 	//case GLUT_KEY_LEFT: cameraStartPos = glm::vec3(-5.0f * sqrt(3), 0.0f, 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
 	//case GLUT_KEY_UP: cameraStartPos = glm::vec3(0.0f, 5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
 	//case GLUT_KEY_DOWN: cameraStartPos = glm::vec3(0.0f, -5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
+	case GLUT_KEY_F2: get_size_of_maze(7); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
+	case GLUT_KEY_F3: get_size_of_maze(13); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
+	case GLUT_KEY_F4: get_size_of_maze(19); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
+
 	}
 }
 GLvoid Special_up(int key, int x, int y)
