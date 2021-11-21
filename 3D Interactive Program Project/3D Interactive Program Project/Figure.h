@@ -225,6 +225,34 @@ public:
 		MakeTransformMat();
 		InitBuffer();
 	}
+	void MakeLine_N(float sx, float sy, float sz, float ex, float ey, float ez) {
+		Shape = 1;
+		countOfData = 2;
+		rotate_val_x = 0.0f;
+		rotate_val_y = 0.0f;
+		T_val[0] = 0.0f;
+		T_val[1] = 0.0f;
+		T_val[2] = 0.0f;
+
+		vertex[0][0] = sx;
+		vertex[0][1] = sy;
+		vertex[0][2] = sz;
+		vertex[1][0] = ex;
+		vertex[1][1] = ey;
+		vertex[1][2] = ez;
+
+		for (int i = 0; i < countOfData; i++) {
+			for (int j = 0; j < 3; j++) {
+				vertex[i][j + 3] = F_urd(dre);
+			}
+			for (int j = 0; j < 3; j++) {
+				vertex[i][j + 6] = vertex[1][j] - vertex[0][j];
+			}
+		}
+
+		MakeTransformMat();
+		InitBuffer();
+	}
 	void MakeCube() {
 		int front = 0;
 		int back = 4;
@@ -986,6 +1014,10 @@ public:
 		}
 		ChangeTransformMat();
 	}
+	void Rotate(glm::vec3 shaft, float degree) {
+		SelfRxy = glm::rotate(SelfRxy, (GLfloat)glm::radians(degree), shaft); //--- 임의의 축에 대하여 회전
+		ChangeTransformMat();
+	}
 
 	void Rotate_Reset(const char type, const char type2, float degree) {
 		if (type == 'a') { // 원점 기준 회전
@@ -1526,6 +1558,7 @@ private:
 	const int y = 1;
 	const int z = 2;
 	glm::mat4 cubeRot;
+	Figure gravity;
 public:
 	Cube() {
 		cube_blocks = NULL;
@@ -1937,6 +1970,10 @@ public:
 				}
 			}
 		}
+		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
+	}
+	GLvoid DrawGravityVec(unsigned int transformLocation) {
+		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
 	}
 
 	void InputMaze(bool*** maze) {
@@ -1988,6 +2025,7 @@ public:
 		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
 		cube_blockSize[y] = size_y / (float)cube_blockCount[y];
 		cube_blockSize[z] = size_z / (float)cube_blockCount[z];
+		gravity.MakeLine_N(0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
 	}
 
 	void PrintBlockPos() {
@@ -2042,6 +2080,9 @@ public:
 	}
 	glm::mat4 get_cubeRot() {
 		return cubeRot;
+	}
+	glm::vec4 get_gravityMat() {
+		return glm::transpose(cubeRot) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 	}
 
 	~Cube() {

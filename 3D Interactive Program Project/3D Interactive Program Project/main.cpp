@@ -159,7 +159,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projMat));
 
 
-		line.Draw(transformLocation);
+		//line.Draw(transformLocation);
 		//glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(line.GetTransformMat()));
 		//cube.Draw(transformLocation);
 
