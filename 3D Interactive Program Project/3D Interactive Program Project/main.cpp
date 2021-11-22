@@ -253,14 +253,25 @@ GLvoid Mouse(int button, int state, int x, int y)
 	}
 }
 
+
 GLvoid Motion(int x, int y)
 {
 	if (!is_left_butten_up || !is_right_butten_up)
 	{
 		// 마우스 조작으로 인해 회전해야할 각
-		float x_angle = (float)(x - mouse_x) / WIN_WIDTH * max_rotation_magnification;
-		float y_angle = (float)(y - mouse_y) / WIN_HIGHT * max_rotation_magnification;
-
+		int mod = glutGetModifiers();
+		float x_angle = 0;
+		float y_angle = 0;
+		if (mod == GLUT_ACTIVE_CTRL)
+		{
+			x_angle = (float)(x - mouse_x) / WIN_WIDTH * (max_rotation_magnification / 10);
+			y_angle = (float)(y - mouse_y) / WIN_HIGHT * (max_rotation_magnification / 10);
+		}
+		else
+		{
+			x_angle = (float)(x - mouse_x) / WIN_WIDTH * max_rotation_magnification;
+			y_angle = (float)(y - mouse_y) / WIN_HIGHT * max_rotation_magnification;
+		}
 		glm::vec3 axis_vec3;
 		glm::vec4 axis_vec4;
 		glm::mat4 TM_of_axis_of_rotation = cameraRot;
@@ -304,6 +315,10 @@ GLvoid Motion(int x, int y)
 
 		mouse_x = x;
 		mouse_y = y;
+		//glm::vec4 test3 = test2.get_gravityMat();
+		//std::cout << test3.x << ' ';
+		//std::cout << test3.y << ' ';
+		//std::cout << test3.z << '\n';
 	}
 }
 
