@@ -38,10 +38,12 @@ bool lightOn; // 빛 활성화/비활성화
 
 int window1; // use destroy
 
+void SetObject(int size);
 
 Figure line; // xyz 축 출력
 Figure flashlight; // 빛 오브젝트 출력
 Cube test2; // 메인오브젝트
+Figure character;
 
 extern bool*** maze;
 extern int maze_size;
@@ -155,6 +157,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 
 	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projMat));
 
@@ -167,6 +170,10 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		//flashlight.Draw();
 
 		test2.Draw_Use_CubeMat(transformLocation, drawType);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(test2.get_cubeRot() * character.GetTransformMat()));
+		character.Draw();
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -210,9 +217,9 @@ GLvoid Special(int key, int x, int y)
 	//case GLUT_KEY_LEFT: cameraStartPos = glm::vec3(-5.0f * sqrt(3), 0.0f, 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
 	//case GLUT_KEY_UP: cameraStartPos = glm::vec3(0.0f, 5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
 	//case GLUT_KEY_DOWN: cameraStartPos = glm::vec3(0.0f, -5.0f * sqrt(3), 0.0f); cameraPos = cameraStartPos; cameraRot = glm::mat4(1.0f); break;
-	case GLUT_KEY_F2: get_size_of_maze(7); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
-	case GLUT_KEY_F3: get_size_of_maze(13); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
-	case GLUT_KEY_F4: get_size_of_maze(19); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); make_maze_wilson(); test2.InputMaze(maze); break;
+	case GLUT_KEY_F2: SetObject(7); break;
+	case GLUT_KEY_F3: SetObject(13); break;
+	case GLUT_KEY_F4: SetObject(19); break;
 
 	}
 }
@@ -358,8 +365,23 @@ GLvoid Timer(int value)
 		suffle_Flag = Shuffle_Cube(&test2, 3);
 	}
 
+	glm::vec4 gravity = test2.get_gravityMat();
+	character.Translate(gravity.x / 100.0, gravity.y / 100.0, gravity.z / 100.0);
+	if (test2.CrashCheck(&character)) {
+		character.Translate(-gravity.x / 100.0, -gravity.y / 100.0, -gravity.z / 100.0);
+	}
 
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
+}
+
+void SetObject(int size) {
+	get_size_of_maze(size); 
+	test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_FIGURE_GRAY);
+	character.Reset();
+	character.MakeCube(0.0, 0.0, 0.0, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 3.0 / maze_size / 2);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+	make_maze_wilson(); 
+	test2.InputMaze(maze);
 }

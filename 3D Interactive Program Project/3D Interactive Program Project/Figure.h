@@ -34,6 +34,8 @@ class Figure {
 private:
 	GLfloat point[8][6];
 	GLfloat vertex[36][9];
+	GLfloat midPoint[3];
+	GLfloat size[3];
 	GLuint VAO;
 	GLuint VBO;
 	int countOfData;
@@ -69,6 +71,10 @@ public:
 			for (int j = 0; j < 9; j++) {
 				vertex[i][j] = 0.0f;
 			}
+		}
+		for (int i = 0; i < 3; i++) {
+			midPoint[i] = 0.0f;
+			size[i] = 0.0f;
 		}
 		VAO = 0;
 		VBO = 0;
@@ -254,10 +260,17 @@ public:
 		InitBuffer();
 	}
 	void MakeCube() {
+		float tempsize = 0.3f;
+		midPoint[0] = 0.0f;
+		midPoint[1] = 0.0f;
+		midPoint[2] = 0.0f;
+		size[0] = tempsize;
+		size[1] = tempsize;
+		size[2] = tempsize;
+
 		int front = 0;
 		int back = 4;
 		Shape = 2;
-		float tempsize = 0.3f;
 		countOfData = 36;
 		rotate_val_x = 0.0f;
 		rotate_val_y = 0.0f;
@@ -350,6 +363,13 @@ public:
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
+		midPoint[0] = midx;
+		midPoint[1] = midy;
+		midPoint[2] = midz;
+		size[0] = sizex;
+		size[1] = sizey;
+		size[2] = sizez;
+
 		int front = 0;
 		int back = 4;
 		Shape = 2;
@@ -437,6 +457,13 @@ public:
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR, float colorG, float colorB) {
+		midPoint[0] = midx;
+		midPoint[1] = midy;
+		midPoint[2] = midz;
+		size[0] = sizex;
+		size[1] = sizey;
+		size[2] = sizez;
+
 		int front = 0;
 		int back = 4;
 		Shape = 2;
@@ -528,6 +555,13 @@ public:
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR[6], float colorG[6], float colorB[6]) {
+		midPoint[0] = midx;
+		midPoint[1] = midy;
+		midPoint[2] = midz;
+		size[0] = sizex;
+		size[1] = sizey;
+		size[2] = sizez;
+
 		int front = 0;
 		int back = 4;
 		Shape = 2;
@@ -616,6 +650,13 @@ public:
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, int type) {
+		midPoint[0] = midx;
+		midPoint[1] = midy;
+		midPoint[2] = midz;
+		size[0] = sizex;
+		size[1] = sizey;
+		size[2] = sizez;
+
 		int front = 0;
 		int back = 4;
 		Shape = 2;
@@ -712,8 +753,15 @@ public:
 		InitBuffer();
 	}
 	void MakePyramid() {
-		Shape = 3;
 		float tempsize = 0.3f;
+		midPoint[0] = 0.0f;
+		midPoint[1] = 0.0f;
+		midPoint[2] = 0.0f;
+		size[0] = tempsize;
+		size[1] = tempsize;
+		size[2] = tempsize;
+
+		Shape = 3;
 		countOfData = 18;
 		rotate_val_x = 0.0f;
 		rotate_val_y = 0.0f;
@@ -777,6 +825,13 @@ public:
 		InitBuffer();
 	}
 	void MakePyramid(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
+		midPoint[0] = midx;
+		midPoint[1] = midy;
+		midPoint[2] = midz;
+		size[0] = sizex;
+		size[1] = sizey;
+		size[2] = sizez;
+
 		Shape = 3;
 		countOfData = 18;
 		rotate_val_x = 0.0f;
@@ -1176,9 +1231,32 @@ public:
 		TR = TR;
 	}
 
+	bool CrashCheck(Figure* b) {
+		float a_min[3];
+		float a_max[3];
+		float b_min[3];
+		float b_max[3];
+		float* btempMid = b->GetMidPos();
+		float* bSize = b->GetSize();
+		glm::vec4 bMid = b->GetTransformMat() * glm::vec4(btempMid[0], btempMid[1], btempMid[2], 1.0f);
+
+		for (int i = 0; i < 3; i++) {
+			a_min[i] = midPoint[i] - size[i];
+			a_max[i] = midPoint[i] + size[i];
+			b_min[i] = bMid[i] - bSize[i];
+			b_max[i] = bMid[i] + bSize[i];
+			if (a_min[i] > b_max[i] || a_max[i] < b_min[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	glm::mat4 GetTransformMat() {
 		return TR;
 	}
+	float* GetMidPos() { return midPoint; }
+	float* GetSize() { return size; }
 
 	GLuint InitBuffer()
 	{
@@ -1530,6 +1608,21 @@ public:
 			}
 		}
 		blockRot = glm::mat4(1.0f);
+	}
+
+	bool CrashCheck(Figure* b) {
+		for (int i = 0; i < blockCount[z]; i++) {
+			for (int j = 0; j < blockCount[y]; j++) {
+				for (int k = 0; k < blockCount[x]; k++) {
+					if (mazeWall[i][j][k]) {
+						if (blocks[i][j][k].CrashCheck(b)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	~Block() {
@@ -2078,6 +2171,20 @@ public:
 		}
 		cubeRot = glm::mat4(1.0f);
 	}
+
+	bool CrashCheck(Figure* b) {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					if (cube_blocks[i][j][k].CrashCheck(b)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	glm::mat4 get_cubeRot() {
 		return cubeRot;
 	}
