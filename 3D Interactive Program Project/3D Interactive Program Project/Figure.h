@@ -1251,6 +1251,27 @@ public:
 		}
 		return true;
 	}
+	bool CrashCheck(Figure* b, glm::mat4 mymat) {
+		float a_min[3];
+		float a_max[3];
+		float b_min[3];
+		float b_max[3];
+		float* btempMid = b->GetMidPos();
+		float* bSize = b->GetSize();
+		glm::vec4 bMid = b->GetTransformMat() * glm::vec4(btempMid[0], btempMid[1], btempMid[2], 1.0f);
+		glm::vec4 aMid = mymat * glm::vec4(midPoint[0], midPoint[1], midPoint[2], 1.0f);
+
+		for (int i = 0; i < 3; i++) {
+			a_min[i] = aMid[i] - size[i];
+			a_max[i] = aMid[i] + size[i];
+			b_min[i] = bMid[i] - bSize[i];
+			b_max[i] = bMid[i] + bSize[i];
+			if (a_min[i] > b_max[i] || a_max[i] < b_min[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	glm::mat4 GetTransformMat() {
 		return TR;
@@ -1615,7 +1636,7 @@ public:
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
 					if (mazeWall[i][j][k]) {
-						if (blocks[i][j][k].CrashCheck(b)) {
+						if (blocks[i][j][k].CrashCheck(b, blockRot)) {
 							return true;
 						}
 					}
