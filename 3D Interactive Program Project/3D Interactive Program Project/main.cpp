@@ -16,6 +16,7 @@ GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Keyboard_up(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 GLvoid Motion(int x, int y);
+GLvoid MouseWheel(int button, int dir, int x, int y);
 GLvoid Special(int key, int x, int y);
 GLvoid Special_up(int key, int x, int y);
 GLvoid Timer(int value);
@@ -30,6 +31,8 @@ glm::vec3 cameraPos; //--- 카메라 현재 위치
 glm::vec3 cameraDirection; //--- 카메라 현재 바라보는 방향
 glm::vec3 cameraUp; //--- 카메라 위쪽 방향
 glm::mat4 cameraRot; // 카메라 회전 행렬
+glm::mat4 cameraTrans; // 카메라 이동 행렬
+//glm::mat4 cameraTrans_2; // 카메라 이동 행렬
 
 glm::vec4 lightPos; // 빛의 위치
 glm::mat4 lightT; // 빛의 이동행렬
@@ -54,9 +57,11 @@ bool suffle_Flag; // 큐브 섞기 flag
 
 bool is_left_butten_up;
 bool is_right_butten_up;
+bool is_middle_butten_up;
 int mouse_x;
 int mouse_y;
 float max_rotation_magnification; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
+float max_translate_distance; // 화면 끝에서 끝으로 갈 때 움직이는 카메라의 거리
 
 void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 {
@@ -90,6 +95,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cameraDirection = cameraStartDir; //--- 카메라 바라보는 방향
 	cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); //--- 카메라 위쪽 방향
 	cameraRot = glm::mat4(1.0f);
+	cameraTrans = glm::mat4(1.0f);
 
 	lightT = glm::mat4(1.0f);
 	lightR = glm::mat4(1.0f);
@@ -108,9 +114,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	is_left_butten_up = true;
 	is_right_butten_up = true;
+	is_middle_butten_up = true;
 	mouse_x = 0;	// 상관없음
 	mouse_y = 0;	// 상관없음
 	max_rotation_magnification = 180.0f; // 화면 끝에서 끝으로 갈 때 돌아가는 각의 크기
+	max_translate_distance = 10.f;
 
 	glutTimerFunc(10, Timer, 1);
 
@@ -121,6 +129,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	glutSpecialFunc(Special); // 특수 키 입력 콜백함수 지정
 	glutSpecialUpFunc(Special_up); // 특수 키 입력 콜백함수 지정
 	glutMouseFunc(Mouse); // 마우스 입력 콜백함수 지정
+	glutMouseWheelFunc(MouseWheel); // 마우스 입력 콜백함수 지정
 	glutMotionFunc(Motion);
 	glutMainLoop(); // 이벤트 처리 시작
 }
@@ -150,7 +159,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projMat = glm::mat4(1.0f);
-	view =glm::lookAt(cameraPos, cameraDirection, cameraUp) * cameraRot;
+	view =glm::lookAt(cameraPos, cameraDirection, cameraUp) * cameraTrans * cameraRot;
 
 	projMat = glm::perspective((GLfloat)glm::radians(45.0f), (float)WIN_WIDTH / (float)WIN_HIGHT, 0.1f, 50.0f);
 	projMat = glm::translate(projMat, glm::vec3(0.0, 0.0, -5.0));
@@ -258,8 +267,20 @@ GLvoid Mouse(int button, int state, int x, int y)
 			is_right_butten_up = true;
 		}
 	}
+	if (button == GLUT_MIDDLE_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			is_middle_butten_up = false;
+			mouse_x = x;
+			mouse_y = y;
+		}
+		else if (state == GLUT_UP)
+		{
+			is_middle_butten_up = true;
+		}
+	}
 }
-
 
 GLvoid Motion(int x, int y)
 {
@@ -286,9 +307,9 @@ GLvoid Motion(int x, int y)
 		// 세로 회전
 
 		// 회전축 지정
-		//if (x < WIN_WIDTH / 3)			axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
-		/*else if (x < WIN_WIDTH / 3 * 2) */axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
-		//else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+		if (x < WIN_WIDTH / 3)			axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+		else if (x < WIN_WIDTH / 3 * 2) axis_vec4 = glm::vec4(cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
+		else							axis_vec4 = glm::vec4(-cameraStartPos[2], 0.0, -cameraStartPos[0], sqrt(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)));
 
 		// 카메라와 객체의 회전 상태를 적용하기위해 각자의 회전행렬을 곱한다.
 		axis_vec4 = axis_vec4 * cameraRot;
@@ -320,12 +341,55 @@ GLvoid Motion(int x, int y)
 		if (!is_right_butten_up)
 			test2.Rotate_Cube(axis_vec3, x_angle);
 
-		mouse_x = x;
-		mouse_y = y;
 		//glm::vec4 test3 = test2.get_gravityMat();
 		//std::cout << test3.x << ' ';
 		//std::cout << test3.y << ' ';
 		//std::cout << test3.z << '\n';
+	}
+	else if (!is_middle_butten_up)
+	{
+		int mod = glutGetModifiers();
+		float x_point = 0;
+		float y_point = 0;
+		float size_of_cameraStartPos = sqrt(pow(cameraStartPos.x, 2) + pow(cameraStartPos.y, 2) + pow(cameraStartPos.z, 2));
+		if (mod == GLUT_ACTIVE_CTRL)
+		{
+			x_point = (float)(x - mouse_x) / WIN_WIDTH * (max_translate_distance / 10);
+			y_point = (float)(y - mouse_y) / WIN_HIGHT * (max_translate_distance / 10);
+		}
+		else
+		{
+			x_point = (float)(x - mouse_x) / WIN_WIDTH * max_translate_distance;
+			y_point = (float)(y - mouse_y) / WIN_HIGHT * max_translate_distance;
+		}
+		cameraTrans = glm::translate(cameraTrans, glm::vec3(cameraStartPos.z * x_point, -cameraStartPos.y * y_point, -cameraStartPos.x * x_point) / size_of_cameraStartPos);
+
+	}
+	mouse_x = x;
+	mouse_y = y;
+}
+
+GLvoid MouseWheel(int button, int dir, int x, int y)
+{
+	int mod = glutGetModifiers();
+	float size_of_cameraStartPos;
+	if (mod == GLUT_ACTIVE_CTRL)
+	{
+		size_of_cameraStartPos = sqrt(pow(cameraStartPos.x, 2) + pow(cameraStartPos.y, 2) + pow(cameraStartPos.z, 2)) * 10;
+	}
+	else
+	{
+		size_of_cameraStartPos = sqrt(pow(cameraStartPos.x, 2) + pow(cameraStartPos.y, 2) + pow(cameraStartPos.z, 2));
+	}
+	if (dir > 0)
+	{
+		//printf("Zoom Out\n");
+		cameraTrans = glm::translate(cameraTrans, glm::vec3(-cameraStartPos.x, -cameraStartPos.y, -cameraStartPos.z) / size_of_cameraStartPos);
+	}
+	else
+	{
+		//printf("Zoom In\n");
+		cameraTrans = glm::translate(cameraTrans, glm::vec3(cameraStartPos.x, cameraStartPos.y, cameraStartPos.z) / size_of_cameraStartPos);
 	}
 }
 
