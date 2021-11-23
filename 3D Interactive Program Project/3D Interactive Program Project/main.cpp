@@ -218,12 +218,18 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	}
 	if (startFlag) { // 시작 후에만 입력 받을 수 있는 키 모음
 		switch (key) {
-		case 'q': case 'Q': if (cube_rotate_flag) { t = 2; cube_rotate_flag = !cube_rotate_flag; } break;
-		case 'a': case 'A': if (cube_rotate_flag) { t = 1; cube_rotate_flag = !cube_rotate_flag; } break;
-		case 'w': case 'W': if (cube_rotate_flag) { t = 4; cube_rotate_flag = !cube_rotate_flag; } break;
-		case 's': case 'S': if (cube_rotate_flag) { t = 3; cube_rotate_flag = !cube_rotate_flag; } break;
-		case 'e': case 'E': if (cube_rotate_flag) { t = 6; cube_rotate_flag = !cube_rotate_flag; } break;
-		case 'd': case 'D': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'q': if (cube_rotate_flag) { t = 2; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'Q': if (cube_rotate_flag) { t = 2; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
+		case 'a': if (cube_rotate_flag) { t = 1; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'A': if (cube_rotate_flag) { t = 1; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
+		case 'w': if (cube_rotate_flag) { t = 4; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'W': if (cube_rotate_flag) { t = 4; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
+		case 's': if (cube_rotate_flag) { t = 3; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'S': if (cube_rotate_flag) { t = 3; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
+		case 'e': if (cube_rotate_flag) { t = 6; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'E': if (cube_rotate_flag) { t = 6; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
+		case 'd': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
+		case 'D': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
 		case 'r': case 'R': if (cube_rotate_flag) { if (cubeRotVal >= 0.0f) { cubeRotVal = -1.0f; } else { cubeRotVal = 1.0f; } } break;
 		case 'c': case 'C': t = 7; break;
 		case 'v': case 'V': t = -1; break;
