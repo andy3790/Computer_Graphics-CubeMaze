@@ -16,4 +16,4 @@ void print_maze();
 void print_maze_wilson();
 void init_maze();
 void init_maze_wilson();
-void make_maze_wilson();
+bool make_maze_wilson();

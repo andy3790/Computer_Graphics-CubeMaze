@@ -195,12 +195,12 @@ void init_maze_wilson()
 }
 
 
-void make_maze_wilson()
+bool make_maze_wilson()
 {
 	if (maze_wilson == NULL || maze == NULL)
 	{
 		std::cout << "미로의 크기가 정해지지 않았다. G를 눌러서 JOY를 표하시오" << std::endl;
-		return;
+		return false;;
 	}
 
 	init_maze();
@@ -411,4 +411,5 @@ void make_maze_wilson()
 		}
 	}
 	// 비확정칸이 없으면 끝
+	return true;
 }

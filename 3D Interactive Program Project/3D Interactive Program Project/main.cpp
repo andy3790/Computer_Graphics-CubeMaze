@@ -52,8 +52,12 @@ extern bool*** maze;
 extern int maze_size;
 int t; // 큐브 면 선택 변수
 int drawType; // 큐브 길 출력 or 벽 출력
+int cubeColorType; // 큐브 생성 색 타입
 bool cube_rotate_flag; // 큐브 면 회전용 flag
 bool suffle_Flag; // 큐브 섞기 flag
+bool printType; // 선출력 / 면출력
+bool startFlag; // 시작 플래그
+float cubeRotVal; // 큐브 회전 각도
 
 bool is_left_butten_up;
 bool is_right_butten_up;
@@ -109,8 +113,12 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	t = -1;
 	drawType = 0;
+	cubeColorType = 7;
 	cube_rotate_flag = true;
 	suffle_Flag = false;
+	printType = true;
+	startFlag = false;
+	cubeRotVal = 1.0f;
 
 	is_left_butten_up = true;
 	is_right_butten_up = true;
@@ -164,9 +172,10 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 	projMat = glm::perspective((GLfloat)glm::radians(45.0f), (float)WIN_WIDTH / (float)WIN_HIGHT, 0.1f, 50.0f);
 	projMat = glm::translate(projMat, glm::vec3(0.0, 0.0, -5.0));
 
+	if (printType) { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
+	else { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 		glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, glm::value_ptr(projMat));
 
@@ -193,22 +202,33 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 }
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
-	switch (key) {
-	case '1':case '2':case '3':case '4':case '5':case '6': if (cube_rotate_flag) { t = key - '0'; cube_rotate_flag = !cube_rotate_flag; } break;
-	case 'c': case 'C': t = 7; break;
-	case 'v': case 'V': t = -1; break;
-	case '`': suffle_Flag = true; break;
+	switch (key) { // 언제든 입력 받을 수 있는 키 모음
+	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cubeColorType = key - '0'; break;
 
 	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'y': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
 	case 'Y': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
-	case 'i': case 'I': glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); break;
-	case 'o': case 'O': glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break;
+	case 'i': case 'I': printType = true; break;
+	case 'o': case 'O': printType = false; break;
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
-	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_CUBE_SIDE_DEFAULT); glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); break; // 미로 크기 재설정
-	case 'm': case 'M': make_maze_wilson(); print_maze(); test2.InputMaze(maze); break; // 미로 재생성
-	case 'q': case 'Q': glutDestroyWindow(window1); break; // 프로그램 종료
+	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cubeColorType); printType = false; startFlag = true; break; // 미로 크기 재설정
+	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); test2.InputMaze(maze); } break; // 미로 재생성
+	case 27: exit(0); break; // ESC 프로그램 종료
+	}
+	if (startFlag) { // 시작 후에만 입력 받을 수 있는 키 모음
+		switch (key) {
+		case 'q': case 'Q': if (cube_rotate_flag) { t = 2; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'a': case 'A': if (cube_rotate_flag) { t = 1; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'w': case 'W': if (cube_rotate_flag) { t = 4; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 's': case 'S': if (cube_rotate_flag) { t = 3; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'e': case 'E': if (cube_rotate_flag) { t = 6; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'd': case 'D': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; } break;
+		case 'r': case 'R': if (cube_rotate_flag) { if (cubeRotVal >= 0.0f) { cubeRotVal = -1.0f; } else { cubeRotVal = 1.0f; } } break;
+		case 'c': case 'C': t = 7; break;
+		case 'v': case 'V': t = -1; break;
+		case '`': suffle_Flag = true; break;
+		}
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
 }
@@ -229,7 +249,6 @@ GLvoid Special(int key, int x, int y)
 	case GLUT_KEY_F2: SetObject(7); break;
 	case GLUT_KEY_F3: SetObject(13); break;
 	case GLUT_KEY_F4: SetObject(19); break;
-
 	}
 }
 GLvoid Special_up(int key, int x, int y)
@@ -420,13 +439,14 @@ GLvoid Timer(int value)
 	else if (t == -1) {
 	}
 	else {
-		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, 1.0f)) {
+		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, cubeRotVal)) {
 			t = -1;
 		}
 	}
 
 	if (suffle_Flag) {
 		suffle_Flag = Shuffle_Cube(&test2, 3);
+		cube_rotate_flag = !suffle_Flag;
 	}
 
 	glm::vec4 gravity = test2.get_gravityMat();
@@ -442,10 +462,11 @@ GLvoid Timer(int value)
 
 void SetObject(int size) {
 	get_size_of_maze(size); 
-	test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_FIGURE_GRAY);
+	test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cubeColorType);
 	character.Reset();
 	character.MakeCube(0.0, 0.0, 0.0, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 3.0 / maze_size / 2);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
+	printType = false;
 	make_maze_wilson(); 
 	test2.InputMaze(maze);
+	startFlag = true;
 }
