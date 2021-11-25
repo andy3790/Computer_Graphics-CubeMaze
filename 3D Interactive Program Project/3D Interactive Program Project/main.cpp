@@ -187,7 +187,7 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(lightR * lightT * glm::scale(glm::mat4(1.0f), glm::vec3(0.2, 0.2, 0.2))));
 		//flashlight.Draw();
 
-		test2.Draw_Use_CubeMat(transformLocation, drawType);
+		test2.Draw_Use_CubeMat(transformLocation, drawType, 10);
 
 		if (startFlag) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -219,7 +219,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 27: 
 		if (startFlag) { // 초기화면으로
 			test2.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
-			printType = true; startFlag = false;
+			printType = true; startFlag = false; suffle_Flag = false;
 		}
 		else { exit(0); }
 		break;

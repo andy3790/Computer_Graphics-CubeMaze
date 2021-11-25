@@ -1318,6 +1318,7 @@ private:
 	const int y = 1;
 	const int z = 2;
 	int figureType;
+	int draw_count;
 	glm::mat4 blockRot;
 public:
 	Block() {
@@ -1330,6 +1331,7 @@ public:
 		blockSize[y] = 0.0;
 		blockSize[z] = 0.0;
 		figureType = -1;
+		draw_count = 0;
 		blockRot = glm::mat4(1.0f);
 	}
 	GLvoid MakeBlock() {
@@ -1562,6 +1564,37 @@ public:
 			}
 		}
 	}
+	bool Draw(unsigned int transformLocation, glm::mat4 afterMat, int printType, int val) {
+		if (draw_count < blockCount[z] * blockCount[y] * blockCount[x]) {
+			int tx, ty, tz;
+			if (printType == CUBE_PRINT_ROAD) {
+				for (int i = 0; i < draw_count; i++) {
+					tx = i % blockCount[x];
+					ty = i / blockCount[y] % blockCount[x];
+					tz = i / blockCount[z] / blockCount[y] % blockCount[x];
+					if (!mazeWall[tz][ty][tx]) {
+						blocks[tz][ty][tx].Draw(transformLocation, afterMat * blockRot);
+					}
+				}
+			}
+			else if (printType == CUBE_PRINT_WALL) {
+				for (int i = 0; i < draw_count; i++) {
+					tx = i % blockCount[x];
+					ty = i / blockCount[y] % blockCount[x];
+					tz = i / blockCount[z] / blockCount[y] % blockCount[x];
+					if (mazeWall[tz][ty][tx]) {
+						blocks[tz][ty][tx].Draw(transformLocation, afterMat * blockRot);
+					}
+				}
+			}
+			draw_count += val;
+			if (draw_count >= blockCount[z] * blockCount[y] * blockCount[x]) { return true; }
+		}
+		else {
+			Draw(transformLocation, afterMat, printType);
+		}
+		return false;
+	}
 
 	void InputMaze(bool*** maze, int startX, int startY, int startZ) {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1619,6 +1652,8 @@ public:
 		blockCount[y] = 0;
 		blockCount[z] = 0;
 		figureType = -1;
+		draw_count = 0;
+		blockRot = glm::mat4(1.0f);
 	}
 	void Reset() {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1629,6 +1664,8 @@ public:
 			}
 		}
 		blockRot = glm::mat4(1.0f);
+		figureType = -1;
+		draw_count = 0;
 	}
 
 	bool CrashCheck(Figure* b) {
@@ -1671,6 +1708,8 @@ private:
 	const int x = 0;
 	const int y = 1;
 	const int z = 2;
+	int draw_count;
+	float nowRotDegree;
 	glm::mat4 cubeRot;
 	Figure gravity;
 public:
@@ -1689,6 +1728,8 @@ public:
 		blockSize[x] = 0.0;
 		blockSize[y] = 0.0;
 		blockSize[z] = 0.0;
+		draw_count = 0;
+		nowRotDegree = 0.0;
 		cubeRot = glm::mat4(1.0f);
 	}
 	GLvoid MakeCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz) {
@@ -1934,7 +1975,6 @@ public:
 		}
 	}
 	bool Rotate_Specific_Side_Check_Rot(int sel, int line, float degree) {
-		static float nowRotDegree = 0.0f;
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
 		bool reVal = false;
 		nowRotDegree += degree;
@@ -2086,6 +2126,24 @@ public:
 		}
 		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
 	}
+	GLvoid Draw_Use_CubeMat(unsigned int transformLocation, int printType, int val) {
+		if (draw_count <= cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z]) {
+			int tx;
+			int ty;
+			int tz;
+			bool flag = false;
+			for (int i = 0; i <= draw_count; i++) {
+				tx = i % cube_blockCount[x];
+				tz = i / cube_blockCount[z] % cube_blockCount[x];
+				ty = i / cube_blockCount[z] / cube_blockCount[y] % cube_blockCount[x];
+				if (cube_blocks[tz][ty][tx].Draw(transformLocation, cubeRot, printType, val)) { flag = true; }
+			}
+			if (flag) { draw_count++; }
+		}
+		else {
+			Draw_Use_CubeMat(transformLocation, printType);
+		}
+	}
 	GLvoid DrawGravityVec(unsigned int transformLocation) {
 		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
 	}
@@ -2181,6 +2239,9 @@ public:
 		cube_blockCount[x] = 0;
 		cube_blockCount[y] = 0;
 		cube_blockCount[z] = 0;
+		cubeRot = glm::mat4(1.0f);
+		nowRotDegree = 0.0f;
+		draw_count = 0;
 	}
 	void Reset() {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
@@ -2191,6 +2252,8 @@ public:
 			}
 		}
 		cubeRot = glm::mat4(1.0f);
+		nowRotDegree = 0.0f;
+		draw_count = 0;
 	}
 
 	bool CrashCheck(Figure* b) {
