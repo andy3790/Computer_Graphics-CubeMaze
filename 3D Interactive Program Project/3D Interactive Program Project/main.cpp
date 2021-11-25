@@ -189,9 +189,11 @@ GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 		test2.Draw_Use_CubeMat(transformLocation, drawType);
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(test2.get_cubeRot() * character.GetTransformMat()));
-		character.Draw();
+		if (startFlag) {
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glUniformMatrix4fv(transformLocation, 1, GL_FALSE, glm::value_ptr(test2.get_cubeRot() * character.GetTransformMat()));
+			character.Draw();
+		}
 	}
 
 	glutSwapBuffers(); // 화면에 출력하기
@@ -214,7 +216,13 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'p': case 'P': drawType = (drawType + 1) % 2; break;
 	case 'g': case 'G': get_size_of_maze(30, 1); test2.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cubeColorType); printType = false; startFlag = true; break; // 미로 크기 재설정
 	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); test2.InputMaze(maze); } break; // 미로 재생성
-	case 27: exit(0); break; // ESC 프로그램 종료
+	case 27: 
+		if (startFlag) { // 초기화면으로
+			test2.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
+			printType = true; startFlag = false;
+		}
+		else { exit(0); }
+		break;
 	}
 	if (startFlag) { // 시작 후에만 입력 받을 수 있는 키 모음
 		switch (key) {
@@ -230,7 +238,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		case 'E': if (cube_rotate_flag) { t = 6; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
 		case 'd': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = +1.0f; } break;
 		case 'D': if (cube_rotate_flag) { t = 5; cube_rotate_flag = !cube_rotate_flag; cubeRotVal = -1.0f; } break;
-		case 'r': case 'R': if (cube_rotate_flag) { if (cubeRotVal >= 0.0f) { cubeRotVal = -1.0f; } else { cubeRotVal = 1.0f; } } break;
 		case 'c': case 'C': t = 7; break;
 		case 'v': case 'V': t = -1; break;
 		case '`': suffle_Flag = true; break;
