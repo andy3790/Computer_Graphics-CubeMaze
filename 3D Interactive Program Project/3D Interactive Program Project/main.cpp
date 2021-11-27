@@ -48,6 +48,8 @@ Figure flashlight; // 빛 오브젝트 출력
 Cube test2; // 메인오브젝트
 Figure character;
 
+LinkedList test;
+
 extern bool*** maze;
 extern int maze_size;
 int t; // 큐브 면 선택 변수
@@ -205,7 +207,8 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) { // 언제든 입력 받을 수 있는 키 모음
-	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cubeColorType = key - '0'; break;
+	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cubeColorType = key - '0'; test.push(key - '0'); break;
+	case 32: std::cout << test.pop() << '\n'; break;
 
 	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
