@@ -30,6 +30,94 @@ extern std::random_device rd;
 extern std::default_random_engine dre;
 extern std::uniform_real_distribution<float> F_urd;
 
+class Data {
+private:
+public:
+	Data() {
+		sel = 0;
+		line = 0;
+		degree = 0;
+	}
+	Data(int s, int l, int d) {
+		sel = s;
+		line = l;
+		degree = d;
+	}
+	int sel; // x,y,z
+	int line;
+	int degree; // -1,1
+};
+
+class MyNode {
+private:
+	Data* data;
+	MyNode* next;
+	MyNode* prev;
+public:
+	MyNode() {
+		data = NULL;
+		next = NULL;
+		prev = NULL;
+	}
+	void SetData(Data* d) { data = d; }
+	void SetNext(MyNode* n) { next = n; }
+	void SetPrev(MyNode* p) { prev = p; }
+	Data* GetData() { return data; }
+	MyNode* GetNext() { return next; }
+	MyNode* GetPrev() { return prev; }
+
+	~MyNode() {
+	}
+};
+
+class CubeQueue { // 회전 전용 큐
+private:
+	MyNode* node;
+
+public:
+	CubeQueue() {
+		node = NULL;
+	}
+
+	void push(Data* NewData) {
+		MyNode* NewNode = new MyNode;
+		NewNode->SetData(NewData);
+		if (node == NULL) {
+			node = NewNode;
+			NewNode->SetNext(NULL);
+			NewNode->SetPrev(NULL);
+		}
+		else {
+			Data* temp = node->GetData();
+			if (temp->sel == NewData->sel && temp->line == NewData->line && (temp->degree * -1) == NewData->degree) { // 두 회전이 서로 역방향이다
+				// 서로 상쇄되니 넣지 말고 현재 데이터를 빼자
+				delete pop();
+				delete NewData;
+				delete NewNode;
+			}
+			else {
+				NewNode->SetNext(NULL);
+				NewNode->SetPrev(node);
+				node->SetNext(NewNode);
+				node = NewNode;
+			}
+		}
+	}
+	Data* pop() {
+		if (node != NULL) {
+			MyNode* temp = node;
+			node = node->GetPrev();
+			if (node != NULL) { node->SetNext(NULL); }
+			Data* temp2 = temp->GetData();
+			delete temp;
+			return temp2;
+		}
+		else {
+			return NULL;
+		}
+	}
+};
+
 class Figure {
 private:
 	GLfloat point[8][6];
@@ -1712,6 +1800,7 @@ private:
 	float nowRotDegree;
 	glm::mat4 cubeRot;
 	Figure gravity;
+	CubeQueue rotReverseDirQueue;
 public:
 	Cube() {
 		cube_blocks = NULL;
@@ -1989,6 +2078,8 @@ public:
 				Arr_Rotate(sel, line, 1);
 			}
 			nowRotDegree = 0.0f;
+			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, line, -1)); } // 회전 정보 저장
+			else { rotReverseDirQueue.push(new Data(sel, line, 1)); }
 			reVal = true;
 		}
 		if (sel == 0) { // z
@@ -2096,6 +2187,64 @@ public:
 				cube_block_pos[line][j][i] = temp;
 			}
 		}
+	}
+
+	bool AutoSolveCube() {
+		static bool rotFlag = true;
+		static int select;
+		static int line;
+		static float rotdegree;
+
+		if (rotFlag) {
+			Data* tdata = rotReverseDirQueue.pop();
+			if (tdata == NULL) { return false; }
+			select = tdata->sel;
+			line = tdata->line;
+			rotdegree = (float)tdata->degree * 10.0f;
+		}
+		rotFlag = SolveRotFuck(select, line, rotdegree);
+
+		return true;
+	}
+	bool SolveRotFuck(int sel, int line, float degree) {
+		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
+		bool reVal = false;
+		nowRotDegree += degree;
+		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
+			int* temp;
+			if (nowRotDegree >= 90.0f) {
+				degree += 90.0f - nowRotDegree;
+				Arr_Rotate(sel, line, 0);
+			}
+			else {
+				degree += nowRotDegree + 90.0f;
+				Arr_Rotate(sel, line, 1);
+			}
+			nowRotDegree = 0.0f;
+			reVal = true;
+		}
+		if (sel == 0) { // z
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) { // y
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 2) { // x
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+				}
+			}
+		}
+		return reVal;
 	}
 
 	GLvoid Draw(unsigned int transformLocation) {

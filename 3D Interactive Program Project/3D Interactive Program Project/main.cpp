@@ -48,8 +48,6 @@ Figure flashlight; // 빛 오브젝트 출력
 Cube test2; // 메인오브젝트
 Figure character;
 
-LinkedList test;
-
 extern bool*** maze;
 extern int maze_size;
 int t; // 큐브 면 선택 변수
@@ -59,6 +57,7 @@ bool cube_rotate_flag; // 큐브 면 회전용 flag
 bool suffle_Flag; // 큐브 섞기 flag
 bool printType; // 선출력 / 면출력
 bool startFlag; // 시작 플래그
+bool autoCubeSolveFlag; // 큐브 자동 풀기 플래그
 float cubeRotVal; // 큐브 회전 각도
 
 bool is_left_butten_up;
@@ -120,6 +119,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	suffle_Flag = false;
 	printType = true;
 	startFlag = false;
+	autoCubeSolveFlag = false;
 	cubeRotVal = 1.0f;
 
 	is_left_butten_up = true;
@@ -207,8 +207,7 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) { // 언제든 입력 받을 수 있는 키 모음
-	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cubeColorType = key - '0'; test.push(key - '0'); break;
-	case 32: std::cout << test.pop() << '\n'; break;
+	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cubeColorType = key - '0'; break;
 
 	case 'x': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': cameraRot = glm::rotate(cameraRot, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
@@ -265,6 +264,7 @@ GLvoid Special(int key, int x, int y)
 	case GLUT_KEY_F2: SetObject(7); break;
 	case GLUT_KEY_F3: SetObject(13); break;
 	case GLUT_KEY_F4: SetObject(19); break;
+	case GLUT_KEY_F5: autoCubeSolveFlag = true; break;
 	}
 }
 GLvoid Special_up(int key, int x, int y)
@@ -455,7 +455,7 @@ GLvoid Timer(int value)
 	else if (t == -1) {
 	}
 	else {
-		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, cubeRotVal)) {
+		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, cubeRotVal * 5.0f)) {
 			t = -1;
 		}
 	}
@@ -463,6 +463,9 @@ GLvoid Timer(int value)
 	if (suffle_Flag) {
 		suffle_Flag = Shuffle_Cube(&test2, 3);
 		cube_rotate_flag = !suffle_Flag;
+	}
+	else if (autoCubeSolveFlag) {
+		autoCubeSolveFlag = test2.AutoSolveCube();
 	}
 
 	glm::vec4 gravity = test2.get_gravityMat();
