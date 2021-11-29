@@ -2309,6 +2309,7 @@ public:
 
 	void SettingCube(int count_x, int count_y, int count_z, int bCountx, int bCounty, int bCountz, float midx, float midy, float midz, float size_x, float size_y, float size_z) {
 		if (cube_blockCount[x] != 0 || cube_blockCount[y] != 0 || cube_blockCount[z] != 0) { ClearBlocks(); }
+		while (true) { Data* temp = rotReverseDirQueue.pop(); if (temp == NULL) break; delete temp; }
 		cube_blockCount[x] = count_x;
 		cube_blockCount[y] = count_y;
 		cube_blockCount[z] = count_z;
