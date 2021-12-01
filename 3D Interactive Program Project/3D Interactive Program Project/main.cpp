@@ -457,13 +457,9 @@ GLvoid Timer(int value)
 	else {
 		// 카메라 회전행렬과 큐브 회전행렬의 역행렬을 곱한 값
 		glm::vec4 rlwns_vec = glm::vec4(1.0, 0.0, 0.0, 1.0f);
-		glm::mat4 rlwns_mat = glm::mat4(1.0f);
-		glm::vec4 normal_vec[6];
-
-		rlwns_mat = rlwns_mat * cameraRot * test2.get_cubeRot();
-
-
-		rlwns_vec = rlwns_mat * rlwns_vec;
+		glm::vec4* normal_vec = test2.get_plainNormal();
+		for (int i = 0; i < 6; i++)
+			std::cout << normal_vec[i].x << ' ' << normal_vec[i].y << ' ' << normal_vec[i].z << std::endl;
 
 		//float tmp_x = rlwns_vec.x * rlwns_vec.x;
 		//float tmp_y = rlwns_vec.y * rlwns_vec.y;
@@ -497,24 +493,32 @@ GLvoid Timer(int value)
 		// 앞	뒤	상	하	오	왼
 		// 카메라를 향하는 벡터, 카메라의 업벡터, 둘을 외적한 벡터, 반대방향
 		// 가장 가까운 벡터는 내적해서 구한 코사인값이 가장 큰 벡터. 이때 두 벡터의 크기가 1이므로 내적값 = 코사인값이다.
-
+		cameraPos;
 		switch (t)
 		{
-		case 2: rlwns_vec = { 0.0, 0.0, 1.0, 1.0 }; break;
-		case 1: rlwns_vec = { 0.0, 0.0, -1.0, 1.0 }; break;
-		case 4: rlwns_vec = { 0.0, 1.0, 0.0, 1.0 }; break;
-		case 3: rlwns_vec = { 0.0, -1.0, 0.0, 1.0 }; break;
-		case 6: rlwns_vec = { 1.0, 0.0, 0.0, 1.0 }; break;
-		case 5: rlwns_vec = { -1.0, 0.0, 0.0, 1.0 }; break;
+		case 1: rlwns_vec = glm::vec4(0.0, 0.0, 1.0, 1.0); break;
+		case 2: rlwns_vec = glm::vec4(0.0, 0.0, -1.0, 1.0); break;
+		case 3: rlwns_vec = glm::vec4(0.0, 1.0, 0.0, 1.0); break;
+		case 4: rlwns_vec = glm::vec4(0.0, -1.0, 0.0, 1.0); break;
+		case 5: rlwns_vec = glm::vec4(1.0, 0.0, 0.0, 1.0); break;
+		case 6: rlwns_vec = glm::vec4(-1.0, 0.0, 0.0, 1.0); break;
 		}
-
-
+		float asdf = -1;
+		float tmp;
+		int adr;
 		for (int i = 0; i < 6; i++)
 		{
-			
+			tmp = dot(cameraRot * normal_vec[i], rlwns_vec);
+			std::cout << tmp << std::endl;
+			if (tmp > asdf)
+			{
+				asdf = tmp;
+				adr = i + 1;
+			}
 		}
 
-		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((t - 1) / 2, (t - 1) % 2 + (t - 1) % 2, cubeRotVal * 5.0f)) {	t = -1;	}
+		if (cube_rotate_flag = test2.Rotate_Specific_Side_Check_Rot((adr - 1) / 2, (adr - 1) % 2 + (adr - 1) % 2, cubeRotVal * 5.0f)) {	t = -1;	}
+		delete[] normal_vec;
 	}
 
 	if (suffle_Flag) {
@@ -524,13 +528,6 @@ GLvoid Timer(int value)
 	else if (autoCubeSolveFlag) {
 		autoCubeSolveFlag = test2.AutoSolveCube();
 	}
-
-	glm::vec4 gravity = test2.get_gravityMat();
-	character.Translate(gravity.x / 100.0, gravity.y / 100.0, gravity.z / 100.0);
-	if (test2.CrashCheck(&character)) {
-		character.Translate(-gravity.x / 100.0, -gravity.y / 100.0, -gravity.z / 100.0);
-	}
-
 
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);

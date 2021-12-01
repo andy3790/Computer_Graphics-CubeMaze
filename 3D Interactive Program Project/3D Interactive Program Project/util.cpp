@@ -59,3 +59,11 @@ bool Shuffle_Cube(Cube* cube, int cubeSize) {
 
 	return true;
 }
+
+float dot(glm::vec3 v_1, glm::vec3 v_2) {
+	return v_1.x * v_2.x + v_1.y * v_2.y + v_1.z * v_2.z;
+}
+
+float dot(glm::vec4 v_1, glm::vec4 v_2) {
+	return v_1.x * v_2.x + v_1.y * v_2.y + v_1.z * v_2.z;
+}

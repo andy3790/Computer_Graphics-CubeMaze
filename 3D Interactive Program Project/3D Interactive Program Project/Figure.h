@@ -2426,7 +2426,7 @@ public:
 		return glm::transpose(cubeRot) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 	}
 	glm::vec4* get_plainNormal() {
-		glm::vec4 tnormal[6];
+		glm::vec4* tnormal = new glm::vec4[6];
 		tnormal[0] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 		tnormal[1] = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 		tnormal[2] = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
