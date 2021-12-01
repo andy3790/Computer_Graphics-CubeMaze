@@ -2425,6 +2425,19 @@ public:
 	glm::vec4 get_gravityMat() {
 		return glm::transpose(cubeRot) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 	}
+	glm::vec4* get_plainNormal() {
+		glm::vec4 tnormal[6];
+		tnormal[0] = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+		tnormal[1] = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
+		tnormal[2] = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		tnormal[3] = glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
+		tnormal[4] = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		tnormal[5] = glm::vec4(-1.0f, 0.0f, 0.0f, 1.0f);
+		for (int i = 0; i < 6; i++) {
+			tnormal[i] = cubeRot * tnormal[i];
+		}
+		return tnormal;
+	}
 
 	~Cube() {
 		ClearBlocks();
