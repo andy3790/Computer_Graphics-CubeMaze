@@ -318,8 +318,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 GLvoid Motion(int x, int y)
 {
 	
-	//if (t == -1 && !is_left_butten_up || !is_right_butten_up)
-	if (Cube_mainObject.Rotate_Specific_Side_Check_Rot(0.0, 0.0, 0.0) && !is_leftButten_up || !is_right_butten_up)
+	if (cube_sideSelecter_i == -1 && (!is_leftButten_up || !is_right_butten_up))
+	//if (Cube_mainObject.Rotate_Specific_Side_Check_Rot(0.0, 0.0, 0.0) && (!is_leftButten_up || !is_right_butten_up))
 	{
 		// 마우스 조작으로 인해 회전해야할 각
 		int modifier_i = glutGetModifiers();
@@ -436,6 +436,7 @@ GLvoid Timer(int value)
 		}
 	}
 	else if (cube_sideSelecter_i == -1) {
+
 	}
 	else {
 		// 카메라 회전행렬과 큐브 회전행렬의 역행렬을 곱한 값
