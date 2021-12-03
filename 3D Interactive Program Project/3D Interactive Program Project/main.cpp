@@ -458,6 +458,15 @@ GLvoid Timer(int value)
 		case 5: use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0); break;
 		case 6: use_compare_v4 = glm::vec4(-camera_startPos_v3.z, 0.0, camera_startPos_v3.x, 1.0); break;
 		}
+		//switch (cube_sideSelecter_i)
+		//{
+		//case 1: use_compare_v4 = glm::vec4(0.0, 0.0, 1.0, 1.0); break;
+		//case 2: use_compare_v4 = glm::vec4(0.0, 0.0, -1.0, 1.0); break;
+		//case 3: use_compare_v4 = glm::vec4(0.0, 1.0, 0.0, 1.0); break;
+		//case 4: use_compare_v4 = glm::vec4(0.0, -1.0, 0.0, 1.0); break;
+		//case 5: use_compare_v4 = glm::vec4(1.0, 0.0, 0.0, 1.0); break;
+		//case 6: use_compare_v4 = glm::vec4(-1.0, 0.0, 0.0, 1.0); break;
+		//}
 
 		float max_dotVal_f = -1;
 		float tmp_dotVal_f;
