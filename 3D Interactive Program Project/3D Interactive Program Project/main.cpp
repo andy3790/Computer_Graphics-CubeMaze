@@ -461,15 +461,24 @@ GLvoid Timer(int value)
 		for (int i = 0; i < 6; i++)
 		{
 			tmp_dotVal_f = dot(camera_rot_m4 * cube_normal_v4[i], use_compare_v4);
-			std::cout << tmp_dotVal_f << std::endl;
-			if (tmp_dotVal_f > max_dotVal_f)
+			//std::cout << i << ' : ' << tmp_dotVal_f << std::endl;
+			if (tmp_dotVal_f >= max_dotVal_f)
 			{
 				max_dotVal_f = tmp_dotVal_f;
 				selected_side_i = i + 1;
 			}
 		}
+		std::cout << std::endl;
 
-		if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, cube_rotVal_f * 5.0f)) { cube_sideSelecter_i = -1; }
+		if (dot(use_compare_v4, camera_rot_m4 * Cube_mainObject.get_cubeRot() * glm::vec4(camera_pos_v3, 1.0f)) > 0)
+		{
+			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, -cube_rotVal_f * 5.0f)) { cube_sideSelecter_i = -1; }
+		}
+		else
+		{
+			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, cube_rotVal_f * 5.0f)) { cube_sideSelecter_i = -1; }
+		}
+
 		delete[] cube_normal_v4;
 	}
 
