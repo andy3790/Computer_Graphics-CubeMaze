@@ -254,7 +254,7 @@ bool make_maze_wilson()
 
 	init_maze();
 	init_maze_wilson();
-	int root_count = 0;
+	int route_count = 0;
 
 	int decide_count = 0; // 확정 카운트
 
@@ -405,33 +405,33 @@ bool make_maze_wilson()
 			if (maze_wilson[new_z][new_y][new_x] == 0)
 				break;
 			// 현재 위치에서 향할 방향의 벽을 부신다.
-			maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 1] = root_count++;
+			maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 
 			switch (maze_wilson[new_z][new_y][new_x])
 			{
 			case 4:
 				maze[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = root_count++;
+				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = route_count++;
 				break;
 			case 8:
 				maze[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = root_count++;
+				maze_route[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = route_count++;
 				break;
 			case 6:
 				maze[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = root_count++;
+				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = route_count++;
 				break;
 			case 2:
 				maze[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = root_count++;
+				maze_route[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = route_count++;
 				break;
 			case 9:
 				maze[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = root_count++;
+				maze_route[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 				break;
 			case 3:
 				maze[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = false;
-				maze_route[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = root_count++;
+				maze_route[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 				break;
 			}
 			//print_maze();
@@ -468,6 +468,6 @@ bool make_maze_wilson()
 		}
 	}
 	// 비확정칸이 없으면 끝
-	std::cout << "root_count : " << root_count << std::endl;
+	std::cout << "root_count : " << route_count << std::endl;
 	return true;
 }
