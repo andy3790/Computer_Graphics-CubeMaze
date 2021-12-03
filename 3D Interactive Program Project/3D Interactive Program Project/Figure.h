@@ -2067,7 +2067,7 @@ public:
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
 		bool reVal = false;
 		nowRotDegree += degree;
-		if (nowRotDegree == 0.0f) { reVal = true; }
+		if ((int)nowRotDegree == 0) { reVal = true; }
 		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
 			int* temp;
 			if (nowRotDegree >= 90.0f) {
