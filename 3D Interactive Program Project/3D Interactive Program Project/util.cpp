@@ -36,13 +36,13 @@ bool Shuffle_Cube(Cube* cube, int cubeSize) {
 	static int suffleCount = uid(dre) % 10 + 25;
 	static bool rotFlag = true;
 	static int select = uid(dre) % 3;
-	static int line = uid(dre) % cubeSize;
+	static int Figure_axis = uid(dre) % cubeSize;
 	static float rotdegree = 5.0f;
 
-	rotFlag = cube->Rotate_Specific_Side_Check_Rot(select, line, rotdegree);
+	rotFlag = cube->Rotate_Specific_Side_Check_Rot(select, Figure_axis, rotdegree);
 	if (rotFlag) {
 		select = uid(dre) % 3;
-		line = uid(dre) % cubeSize;
+		Figure_axis = uid(dre) % cubeSize;
 		suffleCount -= 1;
 		if (uid(dre) % 2 == 0) {
 			rotdegree = 5.0f;

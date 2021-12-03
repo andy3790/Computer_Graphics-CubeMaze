@@ -35,16 +35,16 @@ private:
 public:
 	Data() {
 		sel = 0;
-		line = 0;
+		Figure_axis = 0;
 		degree = 0;
 	}
 	Data(int s, int l, int d) {
 		sel = s;
-		line = l;
+		Figure_axis = l;
 		degree = d;
 	}
 	int sel; // x,y,z
-	int line;
+	int Figure_axis;
 	int degree; // -1,1
 };
 
@@ -89,7 +89,7 @@ public:
 		}
 		else {
 			Data* temp = node->GetData();
-			if (temp->sel == NewData->sel && temp->line == NewData->line && (temp->degree * -1) == NewData->degree) { // 두 회전이 서로 역방향이다
+			if (temp->sel == NewData->sel && temp->Figure_axis == NewData->Figure_axis && (temp->degree * -1) == NewData->degree) { // 두 회전이 서로 역방향이다
 				// 서로 상쇄되니 넣지 말고 현재 데이터를 빼자
 				delete pop();
 				delete NewData;
@@ -986,7 +986,7 @@ public:
 
 	glm::vec3 calNormal(int sv, int sel, int vcount)
 	{
-		float v1[3], v2[3], t[3];
+		float v1[3], v2[3], cube_sideSelecter_i[3];
 		static const int x = 0;
 		static const int y = 1;
 		static const int z = 2;
@@ -999,67 +999,67 @@ public:
 		v2[y] = vertex[sv + 1 + vcount * sel][y] - vertex[sv + 2 + vcount * sel][y];
 		v2[z] = vertex[sv + 1 + vcount * sel][z] - vertex[sv + 2 + vcount * sel][z];
 
-		t[x] = v1[y] * v2[z] - v1[z] * v2[y];
-		t[y] = v1[z] * v2[x] - v1[x] * v2[z];
-		t[z] = v1[x] * v2[y] - v1[y] * v2[x];
+		cube_sideSelecter_i[x] = v1[y] * v2[z] - v1[z] * v2[y];
+		cube_sideSelecter_i[y] = v1[z] * v2[x] - v1[x] * v2[z];
+		cube_sideSelecter_i[z] = v1[x] * v2[y] - v1[y] * v2[x];
 
-		float tlen = (float)sqrt(t[x] * t[x] + t[y] * t[y] + t[z] * t[z]);
+		float tlen = (float)sqrt(cube_sideSelecter_i[x] * cube_sideSelecter_i[x] + cube_sideSelecter_i[y] * cube_sideSelecter_i[y] + cube_sideSelecter_i[z] * cube_sideSelecter_i[z]);
 
-		return glm::vec3(t[x] / tlen, t[y] / tlen, t[z] / tlen);
+		return glm::vec3(cube_sideSelecter_i[x] / tlen, cube_sideSelecter_i[y] / tlen, cube_sideSelecter_i[z] / tlen);
 	}
 	void InitCubeNormal() {
-		glm::vec3 t[6];
+		glm::vec3 cube_sideSelecter_i[6];
 		for (int i = 0; i < 6; i++) {
-			t[i] = calNormal(0, i, 6);
+			cube_sideSelecter_i[i] = calNormal(0, i, 6);
 		}
 
 		for (int i = 0; i < 6; i++) {	// 노멀 저장
 			for (int j = 0; j < 3; j++) {
 				//앞면
-				vertex[i + 6 * 0][j + 6] = t[0][j];
+				vertex[i + 6 * 0][j + 6] = cube_sideSelecter_i[0][j];
 				//뒷면
-				vertex[i + 6 * 1][j + 6] = t[1][j];
+				vertex[i + 6 * 1][j + 6] = cube_sideSelecter_i[1][j];
 				//오른쪽 면
-				vertex[i + 6 * 2][j + 6] = t[2][j];
+				vertex[i + 6 * 2][j + 6] = cube_sideSelecter_i[2][j];
 				//왼쪽 면
-				vertex[i + 6 * 3][j + 6] = t[3][j];
+				vertex[i + 6 * 3][j + 6] = cube_sideSelecter_i[3][j];
 				//위쪽 면
-				vertex[i + 6 * 4][j + 6] = t[4][j];
+				vertex[i + 6 * 4][j + 6] = cube_sideSelecter_i[4][j];
 				//아래쪽 면
-				vertex[i + 6 * 5][j + 6] = t[5][j];
+				vertex[i + 6 * 5][j + 6] = cube_sideSelecter_i[5][j];
 			}
 		}
 	}
 	void InitPyramidNormal() {
-		glm::vec3 t[5];
+		glm::vec3 cube_sideSelecter_i[5];
 		for (int i = 0; i < 5; i++) {
-			t[i] = calNormal(0, i + 1, 3);
+			cube_sideSelecter_i[i] = calNormal(0, i + 1, 3);
 		}
 
 		for (int i = 0; i < 3; i++) {
 			//밑면
-			vertex[0 + 3 * 0][6 + i] = t[0][i];
-			vertex[1 + 3 * 0][6 + i] = t[0][i];
-			vertex[2 + 3 * 0][6 + i] = t[0][i];
-			vertex[0 + 3 * 1][6 + i] = t[0][i];
-			vertex[1 + 3 * 1][6 + i] = t[0][i];
-			vertex[2 + 3 * 1][6 + i] = t[0][i];
+			vertex[0 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[1 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[2 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[0 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[1 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[2 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
 			//앞면
-			vertex[0 + 3 * 2][6 + i] = t[1][i];
-			vertex[1 + 3 * 2][6 + i] = t[1][i];
-			vertex[2 + 3 * 2][6 + i] = t[1][i];
+			vertex[0 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
+			vertex[1 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
+			vertex[2 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
 			//뒷면
-			vertex[0 + 3 * 3][6 + i] = t[2][i];
-			vertex[1 + 3 * 3][6 + i] = t[2][i];
-			vertex[2 + 3 * 3][6 + i] = t[2][i];
+			vertex[0 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
+			vertex[1 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
+			vertex[2 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
 			//왼쪽 면
-			vertex[0 + 3 * 4][6 + i] = t[3][i];
-			vertex[1 + 3 * 4][6 + i] = t[3][i];
-			vertex[2 + 3 * 4][6 + i] = t[3][i];
+			vertex[0 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
+			vertex[1 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
+			vertex[2 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
 			//오른쪽 면
-			vertex[0 + 3 * 5][6 + i] = t[4][i];
-			vertex[1 + 3 * 5][6 + i] = t[4][i];
-			vertex[2 + 3 * 5][6 + i] = t[4][i];
+			vertex[0 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
+			vertex[1 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
+			vertex[2 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
 		}
 	}
 
@@ -2040,30 +2040,30 @@ public:
 			}
 		}
 	}
-	void Rotate_Specific_Side(int sel, int line, float degree) {
+	void Rotate_Specific_Side(int sel, int Figure_axis, float degree) {
 		if(sel == 0){ // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[line][i][j].Rotate_Block('z', degree);
+					cube_blocks[Figure_axis][i][j].Rotate_Block('z', degree);
 				}
 			}
 		}
 		else if (sel == 1) { // y
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[i][line][j].Rotate_Block('y', degree);
+					cube_blocks[i][Figure_axis][j].Rotate_Block('y', degree);
 				}
 			}
 		}
 		else if (sel == 2) { // x
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
-					cube_blocks[i][j][line].Rotate_Block('x', degree);
+					cube_blocks[i][j][Figure_axis].Rotate_Block('x', degree);
 				}
 			}
 		}
 	}
-	bool Rotate_Specific_Side_Check_Rot(int sel, int line, float degree) {
+	bool Rotate_Specific_Side_Check_Rot(int sel, int Figure_axis, float degree) {
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
 		bool reVal = false;
 		nowRotDegree += degree;
@@ -2072,120 +2072,120 @@ public:
 			int* temp;
 			if (nowRotDegree >= 90.0f) {
 				degree += 90.0f - nowRotDegree;
-				Arr_Rotate(sel, line, 0);
+				Arr_Rotate(sel, Figure_axis, 0);
 			}
 			else {
 				degree += nowRotDegree + 90.0f;
-				Arr_Rotate(sel, line, 1);
+				Arr_Rotate(sel, Figure_axis, 1);
 			}
 			nowRotDegree = 0.0f;
-			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, line, -1)); } // 회전 정보 저장
-			else { rotReverseDirQueue.push(new Data(sel, line, 1)); }
+			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, Figure_axis, -1)); } // 회전 정보 저장
+			else { rotReverseDirQueue.push(new Data(sel, Figure_axis, 1)); }
 			reVal = true;
 		}
 		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+					cube_blocks[cube_block_pos[Figure_axis][i][j][z]][cube_block_pos[Figure_axis][i][j][y]][cube_block_pos[Figure_axis][i][j][x]].Rotate_Block('z', degree);
 				}
 			}
 		}
 		else if (sel == 1) { // y
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+					cube_blocks[cube_block_pos[i][Figure_axis][j][z]][cube_block_pos[i][Figure_axis][j][y]][cube_block_pos[i][Figure_axis][j][x]].Rotate_Block('y', degree);
 				}
 			}
 		}
 		else if (sel == 2) { // x
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
-					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+					cube_blocks[cube_block_pos[i][j][Figure_axis][z]][cube_block_pos[i][j][Figure_axis][y]][cube_block_pos[i][j][Figure_axis][x]].Rotate_Block('x', degree);
 				}
 			}
 		}
 		return reVal;
 	}
 
-	void Arr_Rotate(int sel, int line, int rotateDir) {
+	void Arr_Rotate(int sel, int Figure_axis, int rotateDir) {
 		if (rotateDir == 0) {
 			if (sel == 0) { // z
-				Arr_Rotate_Z(line);
+				Arr_Rotate_Z(Figure_axis);
 			}
 			else if (sel == 1) { // y
 				for (int i = 0; i < 3; i++) {
-					Arr_Rotate_Y_Reverse(line);
+					Arr_Rotate_Y_Reverse(Figure_axis);
 				}
 			}
 			else if (sel == 2) { // x
-				Arr_Rotate_X(line);
+				Arr_Rotate_X(Figure_axis);
 			}
 		}
 		else {
 			if (sel == 0) { // z
 				for (int i = 0; i < 3; i++) {
-					Arr_Rotate_Z(line);
+					Arr_Rotate_Z(Figure_axis);
 				}
 			}
 			else if (sel == 1) { // y
-				Arr_Rotate_Y_Reverse(line);
+				Arr_Rotate_Y_Reverse(Figure_axis);
 
 			}
 			else if (sel == 2) { // x
 				for (int i = 0; i < 3; i++) {
-					Arr_Rotate_X(line);
+					Arr_Rotate_X(Figure_axis);
 				}
 			}
 		}
 	}
-	void Arr_Rotate_X(int line) {
+	void Arr_Rotate_X(int Figure_axis) {
 		int* temp;
 		for (int i = 0; i < cube_blockCount[z] / 2; i++) {
 			for (int j = 0; j < cube_blockCount[y]; j++) {
-				temp = cube_block_pos[i][j][line];
-				cube_block_pos[i][j][line] = cube_block_pos[cube_blockCount[z] - i - 1][j][line];
-				cube_block_pos[cube_blockCount[z] - i - 1][j][line] = temp;
+				temp = cube_block_pos[i][j][Figure_axis];
+				cube_block_pos[i][j][Figure_axis] = cube_block_pos[cube_blockCount[z] - i - 1][j][Figure_axis];
+				cube_block_pos[cube_blockCount[z] - i - 1][j][Figure_axis] = temp;
 			}
 		}
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = i; j < cube_blockCount[y]; j++) {
-				temp = cube_block_pos[i][j][line];
-				cube_block_pos[i][j][line] = cube_block_pos[j][i][line];
-				cube_block_pos[j][i][line] = temp;
+				temp = cube_block_pos[i][j][Figure_axis];
+				cube_block_pos[i][j][Figure_axis] = cube_block_pos[j][i][Figure_axis];
+				cube_block_pos[j][i][Figure_axis] = temp;
 			}
 		}
 	}
-	void Arr_Rotate_Y_Reverse(int line) {
+	void Arr_Rotate_Y_Reverse(int Figure_axis) {
 		int* temp;
 		for (int i = 0; i < cube_blockCount[z] / 2; i++) {
 			for (int j = 0; j < cube_blockCount[x]; j++) {
-				temp = cube_block_pos[i][line][j];
-				cube_block_pos[i][line][j] = cube_block_pos[cube_blockCount[z] - i - 1][line][j];
-				cube_block_pos[cube_blockCount[z] - i - 1][line][j] = temp;
+				temp = cube_block_pos[i][Figure_axis][j];
+				cube_block_pos[i][Figure_axis][j] = cube_block_pos[cube_blockCount[z] - i - 1][Figure_axis][j];
+				cube_block_pos[cube_blockCount[z] - i - 1][Figure_axis][j] = temp;
 			}
 		}
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = i; j < cube_blockCount[x]; j++) {
-				temp = cube_block_pos[i][line][j];
-				cube_block_pos[i][line][j] = cube_block_pos[j][line][i];
-				cube_block_pos[j][line][i] = temp;
+				temp = cube_block_pos[i][Figure_axis][j];
+				cube_block_pos[i][Figure_axis][j] = cube_block_pos[j][Figure_axis][i];
+				cube_block_pos[j][Figure_axis][i] = temp;
 			}
 		}
 	}
-	void Arr_Rotate_Z(int line) {
+	void Arr_Rotate_Z(int Figure_axis) {
 		int* temp;
 		for (int i = 0; i < cube_blockCount[y] / 2; i++) {
 			for (int j = 0; j < cube_blockCount[x]; j++) {
-				temp = cube_block_pos[line][i][j];
-				cube_block_pos[line][i][j] = cube_block_pos[line][cube_blockCount[y] - i - 1][j];
-				cube_block_pos[line][cube_blockCount[y] - i - 1][j] = temp;
+				temp = cube_block_pos[Figure_axis][i][j];
+				cube_block_pos[Figure_axis][i][j] = cube_block_pos[Figure_axis][cube_blockCount[y] - i - 1][j];
+				cube_block_pos[Figure_axis][cube_blockCount[y] - i - 1][j] = temp;
 			}
 		}
 		for (int i = 0; i < cube_blockCount[y]; i++) {
 			for (int j = i; j < cube_blockCount[x]; j++) {
-				temp = cube_block_pos[line][i][j];
-				cube_block_pos[line][i][j] = cube_block_pos[line][j][i];
-				cube_block_pos[line][j][i] = temp;
+				temp = cube_block_pos[Figure_axis][i][j];
+				cube_block_pos[Figure_axis][i][j] = cube_block_pos[Figure_axis][j][i];
+				cube_block_pos[Figure_axis][j][i] = temp;
 			}
 		}
 	}
@@ -2193,21 +2193,21 @@ public:
 	bool AutoSolveCube() {
 		static bool rotFlag = true;
 		static int select;
-		static int line;
+		static int Figure_axis;
 		static float rotdegree;
 
 		if (rotFlag) {
 			Data* tdata = rotReverseDirQueue.pop();
 			if (tdata == NULL) { return false; }
 			select = tdata->sel;
-			line = tdata->line;
+			Figure_axis = tdata->Figure_axis;
 			rotdegree = (float)tdata->degree * 10.0f;
 		}
-		rotFlag = SolveRotFuck(select, line, rotdegree);
+		rotFlag = SolveRotFuck(select, Figure_axis, rotdegree);
 
 		return true;
 	}
-	bool SolveRotFuck(int sel, int line, float degree) {
+	bool SolveRotFuck(int sel, int Figure_axis, float degree) {
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
 		bool reVal = false;
 		nowRotDegree += degree;
@@ -2215,11 +2215,11 @@ public:
 			int* temp;
 			if (nowRotDegree >= 90.0f) {
 				degree += 90.0f - nowRotDegree;
-				Arr_Rotate(sel, line, 0);
+				Arr_Rotate(sel, Figure_axis, 0);
 			}
 			else {
 				degree += nowRotDegree + 90.0f;
-				Arr_Rotate(sel, line, 1);
+				Arr_Rotate(sel, Figure_axis, 1);
 			}
 			nowRotDegree = 0.0f;
 			reVal = true;
@@ -2227,21 +2227,21 @@ public:
 		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+					cube_blocks[cube_block_pos[Figure_axis][i][j][z]][cube_block_pos[Figure_axis][i][j][y]][cube_block_pos[Figure_axis][i][j][x]].Rotate_Block('z', degree);
 				}
 			}
 		}
 		else if (sel == 1) { // y
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
-					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+					cube_blocks[cube_block_pos[i][Figure_axis][j][z]][cube_block_pos[i][Figure_axis][j][y]][cube_block_pos[i][Figure_axis][j][x]].Rotate_Block('y', degree);
 				}
 			}
 		}
 		else if (sel == 2) { // x
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
-					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+					cube_blocks[cube_block_pos[i][j][Figure_axis][z]][cube_block_pos[i][j][Figure_axis][y]][cube_block_pos[i][j][Figure_axis][x]].Rotate_Block('x', degree);
 				}
 			}
 		}
