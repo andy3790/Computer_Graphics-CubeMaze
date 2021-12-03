@@ -3,7 +3,7 @@
 
 int maze_size;
 bool*** maze;
-int*** maze_route;
+int*** maze_route_i;
 int*** maze_wilson;
 
 void get_size_of_maze(int max_size, int min_size)
@@ -20,16 +20,16 @@ void get_size_of_maze(int max_size, int min_size)
 		delete[] maze;
 		maze = NULL;
 	}
-	if (maze_route != NULL)
+	if (maze_route_i != NULL)
 	{
 		for (int z = 0; z < maze_size; z++)
 		{
 			for (int y = 0; y < maze_size; y++)
-				delete[] maze_route[z][y];
-			delete[] maze_route[z];
+				delete[] maze_route_i[z][y];
+			delete[] maze_route_i[z];
 		}
-		delete[] maze_route;
-		maze_route = NULL;
+		delete[] maze_route_i;
+		maze_route_i = NULL;
 	}
 	if (maze_wilson != NULL)
 	{
@@ -79,14 +79,14 @@ void get_size_of_maze(int max_size, int min_size)
 				maze[z][y] = new bool[maze_size];
 		}
 	}
-	if (maze_route == NULL)
+	if (maze_route_i == NULL)
 	{
-		maze_route = new int** [maze_size];
+		maze_route_i = new int** [maze_size];
 		for (int z = 0; z < maze_size; z++)
 		{
-			maze_route[z] = new int* [maze_size];
+			maze_route_i[z] = new int* [maze_size];
 			for (int y = 0; y < maze_size; y++)
-				maze_route[z][y] = new int[maze_size];
+				maze_route_i[z][y] = new int[maze_size];
 		}
 	}
 }
@@ -104,16 +104,16 @@ void get_size_of_maze(int mazeSize)
 		delete[] maze;
 		maze = NULL;
 	}
-	if (maze_route != NULL)
+	if (maze_route_i != NULL)
 	{
 		for (int z = 0; z < maze_size; z++)
 		{
 			for (int y = 0; y < maze_size; y++)
-				delete[] maze_route[z][y];
-			delete[] maze_route[z];
+				delete[] maze_route_i[z][y];
+			delete[] maze_route_i[z];
 		}
-		delete[] maze_route;
-		maze_route = NULL;
+		delete[] maze_route_i;
+		maze_route_i = NULL;
 	}
 	if (maze_wilson != NULL)
 	{
@@ -142,14 +142,14 @@ void get_size_of_maze(int mazeSize)
 
 	maze_size = maze_size * 2 + 1;
 
-	if (maze_route == NULL)
+	if (maze_route_i == NULL)
 	{
-		maze_route = new int** [maze_size];
+		maze_route_i = new int** [maze_size];
 		for (int z = 0; z < maze_size; z++)
 		{
-			maze_route[z] = new int* [maze_size];
+			maze_route_i[z] = new int* [maze_size];
 			for (int y = 0; y < maze_size; y++)
-				maze_route[z][y] = new int[maze_size];
+				maze_route_i[z][y] = new int[maze_size];
 		}
 	}
 
@@ -180,10 +180,10 @@ void print_maze()
 				//	std::cout << "  ";
 				//else
 				//	std::cout << "ㅁ";
-				if(maze_route[z][y][x] == -1)
+				if(maze_route_i[z][y][x] == -1)
 					std::cout << "    ";
 				else
-					printf("%4d", maze_route[z][y][x]);
+					printf("%4d", maze_route_i[z][y][x]);
 			}
 			std::cout << std::endl;
 		}
@@ -221,7 +221,7 @@ void init_maze()
 					maze[z][y][x] = true;
 				else
 					maze[z][y][x] = false;
-				maze_route[z][y][x] = -1;
+				maze_route_i[z][y][x] = -1;
 			}
 		}
 	}
@@ -405,33 +405,33 @@ bool make_maze_wilson()
 			if (maze_wilson[new_z][new_y][new_x] == 0)
 				break;
 			// 현재 위치에서 향할 방향의 벽을 부신다.
-			maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
+			maze_route_i[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 
 			switch (maze_wilson[new_z][new_y][new_x])
 			{
 			case 4:
 				maze[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = route_count++;
+				maze_route_i[new_z * 2 + 1][new_y * 2 + 1][new_x * 2] = route_count++;
 				break;
 			case 8:
 				maze[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = route_count++;
+				maze_route_i[new_z * 2 + 1][new_y * 2][new_x * 2 + 1] = route_count++;
 				break;
 			case 6:
 				maze[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = route_count++;
+				maze_route_i[new_z * 2 + 1][new_y * 2 + 1][new_x * 2 + 2] = route_count++;
 				break;
 			case 2:
 				maze[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = route_count++;
+				maze_route_i[new_z * 2 + 1][new_y * 2 + 2][new_x * 2 + 1] = route_count++;
 				break;
 			case 9:
 				maze[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = false;
-				maze_route[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
+				maze_route_i[new_z * 2 + 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 				break;
 			case 3:
 				maze[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = false;
-				maze_route[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
+				maze_route_i[new_z * 2][new_y * 2 + 1][new_x * 2 + 1] = route_count++;
 				break;
 			}
 			//print_maze();
