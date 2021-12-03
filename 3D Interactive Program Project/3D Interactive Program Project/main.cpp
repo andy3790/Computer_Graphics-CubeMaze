@@ -473,12 +473,21 @@ GLvoid Timer(int value)
 		delete[] cube_normal_v4;
 	}
 
+
 	if (is_cube_suffle) {
-		is_cube_suffle = Shuffle_Cube(&Cube_mainObject, 3);
+		float cube_suffle_degree_f;
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { cube_suffle_degree_f = 90.0f; }
+		else { cube_suffle_degree_f = 5.0f; }
+
+		is_cube_suffle = Shuffle_Cube(&Cube_mainObject, 3, cube_suffle_degree_f);
 		is_cube_canRotate = !is_cube_suffle;
 	}
 	else if (is_cube_autoSolve) {
-		is_cube_autoSolve = Cube_mainObject.AutoSolveCube();
+		float cube_solve_degree_f;
+		if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { cube_solve_degree_f = 90.0f; }
+		else { cube_solve_degree_f = 10.0f; }
+
+		is_cube_autoSolve = Cube_mainObject.AutoSolveCube(cube_solve_degree_f);
 	}
 
 	glutPostRedisplay();
