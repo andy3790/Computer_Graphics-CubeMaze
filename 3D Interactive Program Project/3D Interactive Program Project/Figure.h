@@ -2190,7 +2190,7 @@ public:
 		}
 	}
 
-	bool AutoSolveCube() {
+	bool AutoSolveCube(float degree) {
 		static bool rotFlag = true;
 		static int select;
 		static int Figure_axis;
@@ -2201,7 +2201,7 @@ public:
 			if (tdata == NULL) { return false; }
 			select = tdata->sel;
 			Figure_axis = tdata->Figure_axis;
-			rotdegree = (float)tdata->degree * 10.0f;
+			rotdegree = (float)tdata->degree * degree;
 		}
 		rotFlag = SolveRotFuck(select, Figure_axis, rotdegree);
 

@@ -28,7 +28,7 @@ bool CrashCheck_AABB(float a_midx, float a_midy, float a_midz, float a_sizex, fl
 	return true;
 }
 
-bool Shuffle_Cube(Cube* cube, int cubeSize) {
+bool Shuffle_Cube(Cube* cube, int cubeSize, float degree) {
 	static std::random_device rd;
 	static std::default_random_engine dre(rd());
 	static std::uniform_int_distribution<> uid;
@@ -37,7 +37,7 @@ bool Shuffle_Cube(Cube* cube, int cubeSize) {
 	static bool rotFlag = true;
 	static int select = uid(dre) % 3;
 	static int Figure_axis = uid(dre) % cubeSize;
-	static float rotdegree = 5.0f;
+	static float rotdegree = degree;
 
 	rotFlag = cube->Rotate_Specific_Side_Check_Rot(select, Figure_axis, rotdegree);
 	if (rotFlag) {
@@ -45,10 +45,10 @@ bool Shuffle_Cube(Cube* cube, int cubeSize) {
 		Figure_axis = uid(dre) % cubeSize;
 		suffleCount -= 1;
 		if (uid(dre) % 2 == 0) {
-			rotdegree = 5.0f;
+			rotdegree = degree;
 		}
 		else {
-			rotdegree = -5.0f;
+			rotdegree = -degree;
 		}
 	}
 
