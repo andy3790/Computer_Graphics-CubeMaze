@@ -461,48 +461,23 @@ GLvoid Timer(int value)
 		for (int i = 0; i < 6; i++)
 			std::cout << normal_vec[i].x << ' ' << normal_vec[i].y << ' ' << normal_vec[i].z << std::endl;
 
-		//float tmp_x = rlwns_vec.x * rlwns_vec.x;
-		//float tmp_y = rlwns_vec.y * rlwns_vec.y;
-		//float tmp_z = rlwns_vec.z * rlwns_vec.z;
-		//float biggest_value = tmp_x;
-		//if (biggest_value < tmp_y) { biggest_value = tmp_y; };
-		//if (biggest_value < tmp_z) { biggest_value = tmp_z; };
-		//
-		//if (biggest_value == tmp_x){
-		//	if (rlwns_vec.x > 0)
-		//		;//x, +
-		//	else
-		//		;//x, -
-		//}
-		//else if (biggest_value == tmp_y) {
-		//	if (rlwns_vec.y > 0)
-		//		;//y, +
-		//	else
-		//		;//y, -
-		//}
-		//else if (biggest_value == tmp_z) {
-		//	if (rlwns_vec.z > 0)
-		//		;//z, +
-		//	else
-		//		;//z, -
-		//}
-		//
-		//// rlwns_vec의 절대값이 가장 큰 축을 구하고 그 값이 양이냐 음이냐에 따라서 조건을 나눈다. 
-
-		// 2	1	4	3	6	5
-		// 앞	뒤	상	하	오	왼
-		// 카메라를 향하는 벡터, 카메라의 업벡터, 둘을 외적한 벡터, 반대방향
-		// 가장 가까운 벡터는 내적해서 구한 코사인값이 가장 큰 벡터. 이때 두 벡터의 크기가 1이므로 내적값 = 코사인값이다.
-		cameraPos;
+		// 걍 6개 나눠서 부여
 		switch (t)
 		{
-		case 1: rlwns_vec = glm::vec4(0.0, 0.0, 1.0, 1.0); break;
-		case 2: rlwns_vec = glm::vec4(0.0, 0.0, -1.0, 1.0); break;
-		case 3: rlwns_vec = glm::vec4(0.0, 1.0, 0.0, 1.0); break;
-		case 4: rlwns_vec = glm::vec4(0.0, -1.0, 0.0, 1.0); break;
-		case 5: rlwns_vec = glm::vec4(1.0, 0.0, 0.0, 1.0); break;
-		case 6: rlwns_vec = glm::vec4(-1.0, 0.0, 0.0, 1.0); break;
+		case 1: rlwns_vec = glm::vec4(cameraStartPos.x, cameraStartPos.y, cameraStartPos.z, 1.0); break;
+		case 2: rlwns_vec = glm::vec4(-cameraStartPos.x, -cameraStartPos.y, -cameraStartPos.z, 1.0); break;
+		case 3: rlwns_vec = glm::vec4(-cameraStartPos.x, (pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)) / cameraStartPos[1], -cameraStartPos.z, 1.0); break;
+		case 4: rlwns_vec = glm::vec4(cameraStartPos.x, -(pow(cameraStartPos[0], 2) + pow(cameraStartPos[2], 2)) / cameraStartPos[1], cameraStartPos.z, 1.0); break;
+		case 5: rlwns_vec = glm::vec4(cameraStartPos.z, 0.0, -cameraStartPos.x, 1.0); break;
+		case 6: rlwns_vec = glm::vec4(-cameraStartPos.z, 0.0, cameraStartPos.x, 1.0); break;
 		}
+		// z 축을 제외한 요소만큼 회전시킨다. 어떻게?
+		// mat4 준비
+		//glm::mat4 tmp_mat = glm::mat4(1.0f);
+
+		//tmp_mat = glm::translate(tmp_mat, glm::vec3(cameraStartPos.x / cameraStartPos.z, cameraStartPos.y / cameraStartPos.z, 0.0));
+		//rlwns_vec = tmp_mat * rlwns_vec;
+
 		float asdf = -1;
 		float tmp;
 		int adr;
