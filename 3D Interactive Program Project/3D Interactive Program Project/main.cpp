@@ -6,19 +6,28 @@
 #define WIN_WIDTH 800	// 윈도우 가로 크기
 #define WIN_HIGHT 800	// 윈도우 세로 크기
 
+// 상위객체_자신객체명_기능_자료형
+// 변수 - _로 구분	전부 소문자
+// 함수 대소문자로 구분
+// i = int
+// f = float
+// is_ = bool
+// v() = vec()
+// m() = mat()
+
 std::random_device rd;
 std::default_random_engine dre(rd());
 std::uniform_real_distribution<float> F_urd(0.1, 1.0);	// Figure class를 위한 랜덤 생성자
 
-GLvoid drawScene(GLvoid);
+GLvoid DrawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid Keyboard_up(unsigned char key, int x, int y);
+GLvoid KeyboardUp(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 GLvoid Motion(int x, int y);
 GLvoid MouseWheel(int button, int dir, int x, int y);
 GLvoid Special(int key, int x, int y);
-GLvoid Special_up(int key, int x, int y);
+GLvoid SpecialUp(int key, int x, int y);
 GLvoid Timer(int value);
 
 GLuint s_program;
@@ -132,19 +141,19 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	glutTimerFunc(10, Timer, 1);
 
-	glutDisplayFunc(drawScene); // 출력 콜백함수의 지정
+	glutDisplayFunc(DrawScene); // 출력 콜백함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 콜백함수 지정
 	glutKeyboardFunc(Keyboard); // 키보드 입력 콜백함수 지정
-	glutKeyboardUpFunc(Keyboard_up); // 키보드 입력 콜백함수 지정
+	glutKeyboardUpFunc(KeyboardUp); // 키보드 입력 콜백함수 지정
 	glutSpecialFunc(Special); // 특수 키 입력 콜백함수 지정
-	glutSpecialUpFunc(Special_up); // 특수 키 입력 콜백함수 지정
+	glutSpecialUpFunc(SpecialUp); // 특수 키 입력 콜백함수 지정
 	glutMouseFunc(Mouse); // 마우스 입력 콜백함수 지정
 	glutMouseWheelFunc(MouseWheel); // 마우스 입력 콜백함수 지정
 	glutMotionFunc(Motion);
 	glutMainLoop(); // 이벤트 처리 시작
 }
 
-GLvoid drawScene() //--- 콜백 함수: 그리기 콜백 함수
+GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 {
 	//--- 변경된 배경색 설정
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 바탕색을 변경
@@ -247,7 +256,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
 }
-GLvoid Keyboard_up(unsigned char key, int x, int y)
+GLvoid KeyboardUp(unsigned char key, int x, int y)
 {
 	switch (key) {
 
@@ -267,7 +276,7 @@ GLvoid Special(int key, int x, int y)
 	case GLUT_KEY_F5: autoCubeSolveFlag = true; break;
 	}
 }
-GLvoid Special_up(int key, int x, int y)
+GLvoid SpecialUp(int key, int x, int y)
 {
 	switch (key) {
 
