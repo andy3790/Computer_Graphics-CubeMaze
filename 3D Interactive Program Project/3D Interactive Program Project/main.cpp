@@ -73,6 +73,7 @@ bool is_cube_suffle; // 큐브 섞기 flag
 bool is_print_line; // 선출력 / 면출력
 bool is_cube_exist; // 시작 플래그
 bool is_cube_autoSolve; // 큐브 자동 풀기 플래그
+bool is_cube_undoRot; // 큐브 언두 플래그
 float cube_rotVal_f; // 큐브 회전 각도
 
 bool is_leftButten_up;
@@ -127,10 +128,11 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cube_drawType_i = 0;
 	cube_colorType_i = 7;
 	is_cube_canRotate = true;
-	is_cube_suffle = false;
+	is_cube_suffle = CUBE_SEQUENCE_END;
 	is_print_line = true;
 	is_cube_exist = false;
-	is_cube_autoSolve = false;
+	is_cube_autoSolve = CUBE_SEQUENCE_END;
+	is_cube_undoRot = CUBE_SEQUENCE_END;
 	cube_rotVal_f = 1.0f;
 
 	is_leftButten_up = true;
@@ -220,6 +222,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'p': case 'P': cube_drawType_i = (cube_drawType_i + 1) % 2; break;
 	case 'g': case 'G': get_size_of_maze(30, 1); Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i); is_print_line = false; is_cube_exist = true; break; // 미로 크기 재설정
 	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); Cube_mainObject.InputMaze(maze); } break; // 미로 재생성
+	case VK_BACK: is_cube_undoRot = CUBE_SEQUENCE_ING; break;
 	case 27: 
 		if (is_cube_exist) { // 초기화면으로
 			Cube_mainObject.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
@@ -244,7 +247,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		case 'D': if (is_cube_canRotate) { cube_sideSelecter_i = 5; is_cube_canRotate = !is_cube_canRotate; cube_rotVal_f = -1.0f; } break;
 		case 'c': case 'C': cube_sideSelecter_i = 7; break;
 		case 'v': case 'V': cube_sideSelecter_i = -1; break;
-		case '`': is_cube_suffle = true; break;
+		case '`': is_cube_suffle = CUBE_SEQUENCE_ING; break;
 		}
 	}
 	glutPostRedisplay(); //--- 배경색이 바뀔때마다 출력 콜백함수를 호출하여 화면을 refresh 한다
@@ -262,7 +265,7 @@ GLvoid Special(int key, int x, int y)
 	case GLUT_KEY_F2: SetObject(7); break;
 	case GLUT_KEY_F3: SetObject(13); break;
 	case GLUT_KEY_F4: SetObject(19); break;
-	case GLUT_KEY_F5: is_cube_autoSolve = true; break;
+	case GLUT_KEY_F5: is_cube_autoSolve = CUBE_SEQUENCE_ING; break;
 	}
 }
 GLvoid SpecialUp(int key, int x, int y)
@@ -469,22 +472,22 @@ GLvoid Timer(int value)
 				selected_side_i = i + 1;
 			}
 		}
-		std::cout << std::endl;
+		//std::cout << std::endl;
 
 		if (dot(use_compare_v4, camera_rot_m4 * Cube_mainObject.get_cubeRot() * glm::vec4(camera_pos_v3, 1.0f)) > 0)
 		{
-			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, -cube_rotVal_f * 5.0f)) { cube_sideSelecter_i = -1; }
+			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, -cube_rotVal_f * 5.0f) == CUBE_SEQUENCE_END) { cube_sideSelecter_i = -1; }
 		}
 		else
 		{
-			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, cube_rotVal_f * 5.0f)) { cube_sideSelecter_i = -1; }
+			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, cube_rotVal_f * 5.0f) == CUBE_SEQUENCE_END) { cube_sideSelecter_i = -1; }
 		}
 
 		delete[] cube_normal_v4;
 	}
 
 
-	if (is_cube_suffle) {
+	if (is_cube_suffle == CUBE_SEQUENCE_ING) {
 		float cube_suffle_degree_f;
 		if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { cube_suffle_degree_f = 90.0f; }
 		else { cube_suffle_degree_f = 5.0f; }
@@ -492,12 +495,19 @@ GLvoid Timer(int value)
 		is_cube_suffle = Shuffle_Cube(&Cube_mainObject, 3, cube_suffle_degree_f);
 		is_cube_canRotate = !is_cube_suffle;
 	}
-	else if (is_cube_autoSolve) {
+	else if (is_cube_autoSolve == CUBE_SEQUENCE_ING) {
 		float cube_solve_degree_f;
 		if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { cube_solve_degree_f = 90.0f; }
 		else { cube_solve_degree_f = 10.0f; }
 
 		is_cube_autoSolve = Cube_mainObject.AutoSolveCube(cube_solve_degree_f);
+	}
+	else if (is_cube_undoRot == CUBE_SEQUENCE_ING) {
+		//float cube_undo_degree_f;
+		//if (GetAsyncKeyState(VK_CONTROL) & 0x8000) { cube_undo_degree_f = 90.0f; }
+		//else { cube_undo_degree_f = 10.0f; }
+
+		is_cube_undoRot = Cube_mainObject.Undo_Rotate_Specific_Side(10.0f);
 	}
 
 	glutPostRedisplay();

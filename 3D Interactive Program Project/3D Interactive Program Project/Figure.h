@@ -26,6 +26,10 @@
 #define CUBE_PRINT_WALL 0
 #define CUBE_PRINT_ROAD 1
 
+// Rotate Return Val
+#define CUBE_SEQUENCE_END false
+#define CUBE_SEQUENCE_ING true
+
 extern std::random_device rd;
 extern std::default_random_engine dre;
 extern std::uniform_real_distribution<float> F_urd;
@@ -2065,9 +2069,9 @@ public:
 	}
 	bool Rotate_Specific_Side_Check_Rot(int sel, int line, float degree) {
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
-		bool reVal = false;
+		bool reVal = CUBE_SEQUENCE_ING;
 		nowRotDegree += degree;
-		if ((int)nowRotDegree == 0) { reVal = true; }
+		if ((int)nowRotDegree == 0) { reVal = CUBE_SEQUENCE_END; }
 		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
 			int* temp;
 			if (nowRotDegree >= 90.0f) {
@@ -2081,7 +2085,7 @@ public:
 			nowRotDegree = 0.0f;
 			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, line, -1)); } // 회전 정보 저장
 			else { rotReverseDirQueue.push(new Data(sel, line, 1)); }
-			reVal = true;
+			reVal = CUBE_SEQUENCE_END;
 		}
 		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
@@ -2190,26 +2194,43 @@ public:
 		}
 	}
 
-	bool AutoSolveCube(float degree) {
-		static bool rotFlag = true;
+	bool Undo_Rotate_Specific_Side(float degree) {
+		static bool rotFlag = CUBE_SEQUENCE_END;
 		static int select;
 		static int line;
 		static float rotdegree;
 
-		if (rotFlag) {
+		if (rotFlag == CUBE_SEQUENCE_END) {
 			Data* tdata = rotReverseDirQueue.pop();
-			if (tdata == NULL) { return false; }
+			if (tdata == NULL) { return CUBE_SEQUENCE_END; }
 			select = tdata->sel;
 			line = tdata->line;
 			rotdegree = (float)tdata->degree * degree;
 		}
 		rotFlag = SolveRotFuck(select, line, rotdegree);
 
-		return true;
+		return rotFlag;
+	}
+	bool AutoSolveCube(float degree) {
+		static bool rotFlag = CUBE_SEQUENCE_END;
+		static int select;
+		static int line;
+		static float rotdegree;
+
+		if (rotFlag == CUBE_SEQUENCE_END) {
+			Data* tdata = rotReverseDirQueue.pop();
+			if (tdata == NULL) { return CUBE_SEQUENCE_END; }
+			select = tdata->sel;
+			line = tdata->line;
+			rotdegree = (float)tdata->degree * degree;
+		}
+		rotFlag = SolveRotFuck(select, line, rotdegree);
+
+		return CUBE_SEQUENCE_ING;
 	}
 	bool SolveRotFuck(int sel, int line, float degree) {
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
-		bool reVal = false;
+		bool reVal = CUBE_SEQUENCE_ING;
 		nowRotDegree += degree;
 		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
 			int* temp;
@@ -2222,7 +2243,7 @@ public:
 				Arr_Rotate(sel, line, 1);
 			}
 			nowRotDegree = 0.0f;
-			reVal = true;
+			reVal = CUBE_SEQUENCE_END;
 		}
 		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {

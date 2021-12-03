@@ -34,13 +34,13 @@ bool Shuffle_Cube(Cube* cube, int cubeSize, float degree) {
 	static std::uniform_int_distribution<> uid;
 
 	static int suffleCount = uid(dre) % 10 + 25;
-	static bool rotFlag = true;
+	static bool rotFlag = CUBE_SEQUENCE_END;
 	static int select = uid(dre) % 3;
 	static int Figure_axis = uid(dre) % cubeSize;
 	static float rotdegree = degree;
 
 	rotFlag = cube->Rotate_Specific_Side_Check_Rot(select, Figure_axis, rotdegree);
-	if (rotFlag) {
+	if (rotFlag == CUBE_SEQUENCE_END) {
 		select = uid(dre) % 3;
 		Figure_axis = uid(dre) % cubeSize;
 		suffleCount -= 1;
@@ -54,10 +54,10 @@ bool Shuffle_Cube(Cube* cube, int cubeSize, float degree) {
 
 	if (suffleCount <= 0) {
 		suffleCount = uid(dre) % 10 + 25;
-		return false;
+		return CUBE_SEQUENCE_END;
 	}
 
-	return true;
+	return CUBE_SEQUENCE_ING;
 }
 
 float dot(glm::vec3 v_1, glm::vec3 v_2) {
