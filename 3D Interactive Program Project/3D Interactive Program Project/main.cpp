@@ -319,7 +319,9 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 GLvoid Motion(int x, int y)
 {
-	if (!is_left_butten_up || !is_right_butten_up)
+	
+	//if (t == -1 && !is_left_butten_up || !is_right_butten_up)
+	if (test2.Rotate_Specific_Side_Check_Rot(0.0, 0.0, 0.0) && !is_left_butten_up || !is_right_butten_up)
 	{
 		// 마우스 조작으로 인해 회전해야할 각
 		int mod = glutGetModifiers();
