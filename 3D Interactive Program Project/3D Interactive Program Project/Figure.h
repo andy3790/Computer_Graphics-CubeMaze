@@ -1995,7 +1995,7 @@ public:
 						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
 							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
 							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
-							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], 
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z],
 							(-size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx + size_x) / (size_x * 2.0f),
 							(-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy + size_y) / (size_y * 2.0f),
 							(-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz + size_z) / (size_z * 2.0f));
@@ -2136,7 +2136,7 @@ public:
 		}
 	}
 	void Rotate_Specific_Side(int sel, int line, float degree) {
-		if(sel == 0){ // z
+		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
 					cube_blocks[line][i][j].Rotate_Block('z', degree);
@@ -2515,9 +2515,9 @@ public:
 		blockCount[y] = bCounty;
 		blockCount[z] = bCountz;
 
-		cube_blocks = new Block**[cube_blockCount[z]];
+		cube_blocks = new Block * *[cube_blockCount[z]];
 		for (int i = 0; i < cube_blockCount[z]; i++) {
-			cube_blocks[i] = new Block*[cube_blockCount[y]];
+			cube_blocks[i] = new Block * [cube_blockCount[y]];
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				cube_blocks[i][j] = new Block[cube_blockCount[x]];
 			}
@@ -2615,6 +2615,23 @@ public:
 			}
 		}
 		return false;
+	}
+
+	bool CheckCubeBlocksLocation() {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					if (
+						cube_block_pos[i][j][k][x] != k ||
+						cube_block_pos[i][j][k][y] != j ||
+						cube_block_pos[i][j][k][z] != i
+						) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	glm::mat4 get_cubeRot() {

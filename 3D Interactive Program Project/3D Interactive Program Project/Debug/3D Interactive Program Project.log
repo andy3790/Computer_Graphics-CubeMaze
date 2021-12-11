@@ -1,19 +1,19 @@
 ﻿  main.cpp
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2167,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2327,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2212,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2372,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(33,54): warning C4305: '인수': 'double'에서 '_Ty'(으)로 잘립니다.
           with
           [
               _Ty=float
           ]
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(88,1): warning C4326: 'main'의 반환 형식이 'int'이어야 하는데 'void'입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(263,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(279,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(371,21): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(390,35): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(411,34): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(533,124): warning C4305: '인수': 'double'에서 'float'(으)로 잘립니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(535,98): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(535,77): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(535,56): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(265,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(281,2): warning C4060: switch문에 'case' 또는 'default' 레이블이 없습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(373,21): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(392,35): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(413,34): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(537,98): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(537,77): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(537,56): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   3D Interactive Program Project.vcxproj -> C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\Debug\3D Interactive Program Project.exe
