@@ -19,6 +19,7 @@
 #define CUBE_COLOR_BLOCK_RAND 4
 #define CUBE_COLOR_BLOCK_SMOOTH 5
 #define CUBE_COLOR_CUBE_SIDE_DEFAULT 7
+#define CUBE_COLOR_FIGURE_GRAY_SMOOTH 8
 
 #define CUBE_COLORTYPE_BLOCK 4
 
@@ -29,6 +30,10 @@
 // Rotate Return Val
 #define CUBE_SEQUENCE_END false
 #define CUBE_SEQUENCE_ING true
+
+// Cube Print Animation Type List
+#define CUBE_ANIMATION_DEFALUT 1
+#define CUBE_ANIMATION_MAZE 2
 
 extern std::random_device rd;
 extern std::default_random_engine dre;
@@ -1403,7 +1408,7 @@ class Block {
 private:
 	Figure*** blocks;
 	Figure myFigure;
-	bool*** mazeWall;
+	int*** mazeWall;
 	int blockCount[3];
 	float blockSize[3];
 	const int x = 0;
@@ -1492,7 +1497,7 @@ public:
 		SettingBlocks(count_x, count_y, count_z, midx, midy, midz, size_x, size_y, size_z);
 		figureType = type;
 
-		if (type == 0) { // 정점별 랜덤 색
+		if (type == CUBE_COLOR_POINT_RAND) { // 정점별 랜덤 색
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
 					for (int k = 0; k < blockCount[x]; k++) {
@@ -1504,7 +1509,7 @@ public:
 				}
 			}
 		}
-		else if (type == 1) { // 면별 랜덤 색
+		else if (type == CUBE_COLOR_FIGURE_SIDE_RAND) { // 면별 랜덤 색
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
 					for (int k = 0; k < blockCount[x]; k++) {
@@ -1516,7 +1521,7 @@ public:
 				}
 			}
 		}
-		else if (type == 2) { // 도형별 랜덤 색
+		else if (type == CUBE_COLOR_FIGURE_RAND) { // 도형별 랜덤 색
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
 					for (int k = 0; k < blockCount[x]; k++) {
@@ -1528,7 +1533,7 @@ public:
 				}
 			}
 		}
-		else if (type == 3) { // 그래이 스케일
+		else if (type == CUBE_COLOR_FIGURE_GRAY) { // 그래이 스케일
 			float tempColor;
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
@@ -1542,7 +1547,7 @@ public:
 				}
 			}
 		}
-		else if (type == 6) { // 그라데이션
+		else if (type == CUBE_COLOR_FIGURE_SMOOTH) { // 그라데이션
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
 					for (int k = 0; k < blockCount[x]; k++) {
@@ -1553,6 +1558,22 @@ public:
 							(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx + size_x) / (size_x * 2.0f),
 							(-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy + size_y) / (size_y * 2.0f),
 							(-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz + size_z) / (size_z * 2.0f));
+					}
+				}
+			}
+		}
+		else if (type == CUBE_COLOR_FIGURE_GRAY_SMOOTH) { // 흑백 그라데이션
+			for (int i = 0; i < blockCount[z]; i++) {
+				for (int j = 0; j < blockCount[y]; j++) {
+					for (int k = 0; k < blockCount[x]; k++) {
+						float temp = ((-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx + size_x) + (-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy + size_y) + (-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz + size_z)) / ((size_x * 2.0f) + (size_y * 2.0f) + (size_z * 2.0f));
+						blocks[i][j][k].MakeCube(-size_x + blockSize[x] * (float)k * 2.0f + blockSize[x] + midx,
+							-size_y + blockSize[y] * (float)j * 2.0f + blockSize[y] + midy,
+							-size_z + blockSize[z] * (float)i * 2.0f + blockSize[z] + midz,
+							blockSize[x], blockSize[y], blockSize[z],
+							temp,
+							temp,
+							temp);
 					}
 				}
 			}
@@ -1620,7 +1641,7 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					if (!mazeWall[i][j][k]) {
+					if (mazeWall[i][j][k] != -1) {
 						blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
 					}
 				}
@@ -1632,7 +1653,7 @@ public:
 			for (int i = 0; i < blockCount[z]; i++) {
 				for (int j = 0; j < blockCount[y]; j++) {
 					for (int k = 0; k < blockCount[x]; k++) {
-						if (!mazeWall[i][j][k]) {
+						if (mazeWall[i][j][k] != -1) {
 							blocks[i][j][k].Draw(transformLocation, afterMat * blockRot);
 						}
 					}
@@ -1687,8 +1708,66 @@ public:
 		}
 		return false;
 	}
+	bool Draw(unsigned int transformLocation, glm::mat4 afterMat, int printType, int animationType, int val) {
+		if (animationType == CUBE_ANIMATION_DEFALUT) {
+			if (draw_count < blockCount[z] * blockCount[y] * blockCount[x]) {
+				int tx, ty, tz;
+				if (printType == CUBE_PRINT_ROAD) {
+					for (int i = 0; i < draw_count; i++) {
+						tx = i % blockCount[x];
+						ty = i / blockCount[y] % blockCount[x];
+						tz = i / blockCount[z] / blockCount[y] % blockCount[x];
+						if (!mazeWall[tz][ty][tx]) {
+							blocks[tz][ty][tx].Draw(transformLocation, afterMat * blockRot);
+						}
+					}
+				}
+				else if (printType == CUBE_PRINT_WALL) {
+					for (int i = 0; i < draw_count; i++) {
+						tx = i % blockCount[x];
+						ty = i / blockCount[y] % blockCount[x];
+						tz = i / blockCount[z] / blockCount[y] % blockCount[x];
+						if (mazeWall[tz][ty][tx]) {
+							blocks[tz][ty][tx].Draw(transformLocation, afterMat * blockRot);
+						}
+					}
+				}
+				draw_count += val;
+				if (draw_count >= blockCount[z] * blockCount[y] * blockCount[x]) { return true; }
+			}
+			else {
+				Draw(transformLocation, afterMat, printType);
+			}
+		}
+		else if (animationType == CUBE_ANIMATION_MAZE) {
+			if (printType == CUBE_PRINT_ROAD) {
+				for (int i = 0; i < blockCount[x]; i++) {
+					for (int j = 0; j < blockCount[y]; j++) {
+						for (int k = 0; k < blockCount[z]; k++) {
+							if (draw_count > mazeWall[k][j][i] && mazeWall[k][j][i] != -1) {
+								blocks[k][j][i].Draw(transformLocation, afterMat * blockRot);
+							}
+						}
+					}
+				}
+			}
+			else if (printType == CUBE_PRINT_WALL) {
+				for (int i = 0; i < blockCount[x]; i++) {
+					for (int j = 0; j < blockCount[y]; j++) {
+						for (int k = 0; k < blockCount[z]; k++) {
+							if (mazeWall[k][j][i] == -1) {
+								blocks[k][j][i].Draw(transformLocation, afterMat * blockRot);
+							}
+						}
+					}
+				}
+			}
+			draw_count += val;
+		}
+		return false;
+	}
 
-	void InputMaze(bool*** maze, int startX, int startY, int startZ) {
+	void InputMaze(int*** maze, int startX, int startY, int startZ) {
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
@@ -1705,13 +1784,13 @@ public:
 		blockCount[z] = count_z;
 
 		blocks = new Figure**[blockCount[z]];
-		mazeWall = new bool**[blockCount[z]];
+		mazeWall = new int**[blockCount[z]];
 		for (int i = 0; i < blockCount[z]; i++) {
 			blocks[i] = new Figure*[blockCount[y]];
-			mazeWall[i] = new bool*[blockCount[y]];
+			mazeWall[i] = new int*[blockCount[y]];
 			for (int j = 0; j < blockCount[y]; j++) {
 				blocks[i][j] = new Figure[blockCount[x]];
-				mazeWall[i][j] = new bool[blockCount[x]];
+				mazeWall[i][j] = new int[blockCount[x]];
 			}
 		}
 
@@ -1897,7 +1976,7 @@ public:
 				}
 			}
 		}
-		else if (type == 4) { // 블럭별 랜덤 색
+		else if (type == CUBE_COLOR_BLOCK_RAND) { // 블럭별 랜덤 색
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1909,7 +1988,7 @@ public:
 				}
 			}
 		}
-		else if (type == 5) { // 블럭 단위 그라데이션
+		else if (type == CUBE_COLOR_BLOCK_SMOOTH) { // 블럭 단위 그라데이션
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1924,7 +2003,7 @@ public:
 				}
 			}
 		}
-		else if (type == 6) { // Figure 단위 그라데이션
+		else if (type == CUBE_COLOR_FIGURE_SMOOTH) { // Figure 단위 그라데이션
 			for (int i = 0; i < cube_blockCount[z]; i++) {
 				for (int j = 0; j < cube_blockCount[y]; j++) {
 					for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -1936,7 +2015,7 @@ public:
 				}
 			}
 		}
-		else if (type == 7) { // 큐브 면 단위 같은 색
+		else if (type == CUBE_COLOR_CUBE_SIDE_DEFAULT) { // 큐브 면 단위 같은 색
 			float colorR[6] = { 0 };
 			float colorG[6] = { 0 };
 			float colorB[6] = { 0 };
@@ -1954,6 +2033,18 @@ public:
 							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
 							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
 							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], colorR, colorG, colorB);
+					}
+				}
+			}
+		}
+		else if (type == CUBE_COLOR_FIGURE_GRAY_SMOOTH) { // Figure 단위 흑백 그라데이션
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					for (int k = 0; k < cube_blockCount[x]; k++) {
+						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
+							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
+							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], type);
 					}
 				}
 			}
@@ -2315,11 +2406,51 @@ public:
 			Draw_Use_CubeMat(transformLocation, printType);
 		}
 	}
+	GLvoid Draw_Use_CubeMat(unsigned int transformLocation, int printType, int animationType, int val) {
+		if (animationType == CUBE_ANIMATION_DEFALUT) {
+			if (draw_count <= cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z]) {
+				int tx;
+				int ty;
+				int tz;
+				bool flag = false;
+				for (int i = 0; i <= draw_count; i++) {
+					tx = i % cube_blockCount[x];
+					tz = i / cube_blockCount[z] % cube_blockCount[x];
+					ty = i / cube_blockCount[z] / cube_blockCount[y] % cube_blockCount[x];
+					if (cube_blocks[tz][ty][tx].Draw(transformLocation, cubeRot, printType, val)) { flag = true; }
+				}
+				if (flag) { draw_count++; }
+			}
+			else {
+				Draw_Use_CubeMat(transformLocation, printType);
+			}
+		}
+		else if (animationType == CUBE_ANIMATION_MAZE) {
+			if (printType == CUBE_PRINT_ROAD) {
+				if (draw_count <= cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z] * blockCount[x] * blockCount[y] * blockCount[z]) {
+					for (int i = 0; i < cube_blockCount[x]; i++) {
+						for (int j = 0; j < cube_blockCount[y]; j++) {
+							for (int k = 0; k < cube_blockCount[z]; k++) {
+								cube_blocks[k][j][i].Draw(transformLocation, cubeRot, printType, animationType, val);
+							}
+						}
+					}
+					draw_count += val;
+				}
+				else {
+					Draw_Use_CubeMat(transformLocation, printType);
+				}
+			}
+			else if (printType == CUBE_PRINT_WALL) {
+				Draw_Use_CubeMat(transformLocation, printType);
+			}
+		}
+	}
 	GLvoid DrawGravityVec(unsigned int transformLocation) {
 		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
 	}
 
-	void InputMaze(bool*** maze) {
+	void InputMaze(int*** maze) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				for (int k = 0; k < cube_blockCount[x]; k++) {
@@ -2463,5 +2594,126 @@ public:
 
 	~Cube() {
 		ClearBlocks();
+	}
+};
+
+
+
+class Maze_BY_ANDY {
+	int*** MazeWall; // 미로 벽 활성화 (-1 벽 else 길)
+
+	int Count; // x,y,z 개수
+	const int x = 0, y = 1, z = 2;
+	std::uniform_int_distribution<> uid;
+
+public:
+	Maze_BY_ANDY() {
+		MazeWall = NULL;
+		Count = 0;
+	}
+	void MakeFild(int size) {
+
+		//MazeWall[0][0] = false;
+		//MazeWall[CountH - 1][CountW - 1] = false;
+	}
+
+	bool CheckRoad(int x, int y, int z) { // x,y,z 위치 상하좌우에 뚫려있는 위치가 1개일때 true
+		int tempCount = 0;
+		if (x - 1 > 0 && MazeWall[z][y][x - 1] != -1) { tempCount += 1; }
+		if (x + 1 < (Count - 1) && MazeWall[z][y][x + 1] != -1) { tempCount += 1; }
+		if (y - 1 > 0 && MazeWall[z][y - 1][x] != -1) { tempCount += 1; }
+		if (y + 1 < (Count - 1) && MazeWall[z][y + 1][x] != -1) { tempCount += 1; }
+		if (z - 1 > 0 && MazeWall[z - 1][y][x] != -1) { tempCount += 1; }
+		if (z + 1 < (Count - 1) && MazeWall[z + 1][y][x] != -1) { tempCount += 1; }
+
+		if (tempCount == 1) { return true; }
+		else { return false; }
+	}
+	int MakeRoad(int x, int y, int z, int counter) {
+		int RoadArr[6];
+		int RoadCount = 0;
+		for (int i = 0; i < Count / 3; i++) {
+			RoadCount = 0;
+			if (x - 1 > 0 && MazeWall[z][y][x - 1] == -1 && CheckRoad(x - 1, y, z)) { RoadArr[RoadCount++] = 1; } // 좌
+			if (x + 1 < (Count - 1) && MazeWall[z][y][x + 1] == -1 && CheckRoad(x + 1, y, z)) { RoadArr[RoadCount++] = 2; } // 우
+			if (y - 1 > 0 && MazeWall[z][y - 1][x] == -1 && CheckRoad(x, y - 1, z)) { RoadArr[RoadCount++] = 3; } // 하
+			if (y + 1 < (Count - 1) && MazeWall[z][y + 1][x] == -1 && CheckRoad(x, y + 1, z)) { RoadArr[RoadCount++] = 4; } // 상
+			if (z - 1 > 0 && MazeWall[z - 1][y][x] == -1 && CheckRoad(x, y, z - 1)) { RoadArr[RoadCount++] = 5; } // 전
+			if (z + 1 < (Count - 1) && MazeWall[z + 1][y][x] == -1 && CheckRoad(x, y, z + 1)) { RoadArr[RoadCount++] = 6; } // 후
+
+			if (RoadCount == 0) { return counter; }
+
+			int temp = RoadArr[(uid(dre) % RoadCount)];
+			if (temp == 1) { MazeWall[z][y][--x] = counter++; }
+			else if (temp == 2) { MazeWall[z][y][++x] = counter++; }
+			else if (temp == 3) { MazeWall[z][--y][x] = counter++; }
+			else if (temp == 4) { MazeWall[z][++y][x] = counter++; }
+			else if (temp == 5) { MazeWall[--z][y][x] = counter++; }
+			else if (temp == 6) { MazeWall[++z][y][x] = counter++; }
+		}
+		return counter;
+	}
+	int*** MakeMaze(int size) {
+		if (size == 0) { return NULL; }
+		ResetMaze(size);
+
+		MazeWall[1][1][1] = 0;
+
+		int orderCounter = 1;
+		orderCounter = MakeRoad(1, 1, 1, orderCounter);
+
+		for (int i = 0; i < Count * Count * Count; i++) {
+			int tempX, tempY, tempZ;
+			do {
+				tempX = uid(dre) % Count;
+				tempY = uid(dre) % Count;
+				tempZ = uid(dre) % Count;
+			} while (MazeWall[tempZ][tempY][tempX] == -1);
+			orderCounter = MakeRoad(tempX, tempY, tempZ, orderCounter);
+		}
+
+		//MazeWall[Count - 1][Count - 1] = false;
+
+		if (MazeWall[Count - 2][Count - 3][Count - 2] == -1 && MazeWall[Count - 2][Count - 2][Count - 3] == -1 && MazeWall[Count - 3][Count - 2][Count - 2] == -1) { MazeWall[Count - 2][Count - 3][Count - 2] = 0; }
+
+		return MazeWall;
+	}
+	void ResetMaze(int size) {
+		if (Count != 0) {
+			for (int i = 0; i < Count; i++) {
+				for (int j = 0; j < Count; j++) {
+					delete[] MazeWall[i][j];
+				}
+			}
+			delete[] MazeWall;
+		}
+
+		Count = size;
+
+		MazeWall = new int** [Count];
+		for (int i = 0; i < Count; i++) {
+			MazeWall[i] = new int* [Count];
+			for (int j = 0; j < Count; j++) {
+				MazeWall[i][j] = new int[Count];
+			}
+		}
+		for (int i = 0; i < Count; i++) {
+			for (int j = 0; j < Count; j++) {
+				for (int k = 0; k < Count; k++) {
+					MazeWall[i][j][k] = -1;
+				}
+			}
+		}
+	}
+
+	~Maze_BY_ANDY() {
+		if (Count != 0) {
+			for (int i = 0; i < Count; i++) {
+				for (int j = 0; j < Count; j++) {
+					delete[] MazeWall[i][j];
+				}
+			}
+			delete[] MazeWall;
+		}
 	}
 };

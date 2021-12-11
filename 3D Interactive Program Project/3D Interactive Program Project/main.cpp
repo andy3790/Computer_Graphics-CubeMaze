@@ -25,7 +25,7 @@
 // v() = vec()
 // m() = mat()
 
-extern bool*** maze;
+extern int*** maze_route_i;
 extern int maze_size;
 
 std::random_device rd;
@@ -64,10 +64,12 @@ void SetObject(int size);
 
 Cube Cube_mainObject; // 메인오브젝트
 Figure Figure_player;
+Maze_BY_ANDY Maze_BY_ANDY_maze;
 
 int cube_sideSelecter_i; // 큐브 면 선택 변수
 int cube_drawType_i; // 큐브 길 출력 or 벽 출력
 int cube_colorType_i; // 큐브 생성 색 타입
+int cube_mazeSelecter_i; // 큐브 미로 생성 알고리즘 선택 변수 0=윌슨 1=크루스컬
 bool is_cube_canRotate; // 큐브 면 회전용 flag
 bool is_cube_suffle; // 큐브 섞기 flag
 bool is_print_line; // 선출력 / 면출력
@@ -127,6 +129,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cube_sideSelecter_i = -1;
 	cube_drawType_i = 0;
 	cube_colorType_i = 7;
+	cube_mazeSelecter_i = 0;
 	is_cube_canRotate = true;
 	is_cube_suffle = CUBE_SEQUENCE_END;
 	is_print_line = true;
@@ -193,7 +196,7 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
 
-		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, 10);
+		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
 
 		if (is_cube_exist) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -211,8 +214,9 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) { // 언제든 입력 받을 수 있는 키 모음
-	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '0': cube_colorType_i = key - '0'; break;
+	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '8': case '0': cube_colorType_i = key - '0'; break;
 
+	case ']': cube_mazeSelecter_i = !cube_mazeSelecter_i; break;
 	case 'x': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'y': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
@@ -221,7 +225,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'o': case 'O': is_print_line = false; break;
 	case 'p': case 'P': cube_drawType_i = (cube_drawType_i + 1) % 2; break;
 	case 'g': case 'G': get_size_of_maze(30, 1); Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i); is_print_line = false; is_cube_exist = true; break; // 미로 크기 재설정
-	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); Cube_mainObject.InputMaze(maze); } break; // 미로 재생성
+	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); Cube_mainObject.InputMaze(maze_route_i); } break; // 미로 재생성
 	case VK_BACK: is_cube_undoRot = CUBE_SEQUENCE_ING; break;
 	case 27: 
 		if (is_cube_exist) { // 초기화면으로
@@ -525,11 +529,20 @@ GLvoid Timer(int value)
 
 void SetObject(int size) {
 	get_size_of_maze(size); 
-	Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i);
+	//Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i);
+	Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 0.7, 0.7, 0.7);
 	Figure_player.Reset();
 	Figure_player.MakeCube(0.0, 0.0, 0.0, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 3.0 / maze_size / 2);
 	is_print_line = false;
 	make_maze_wilson(); 
-	Cube_mainObject.InputMaze(maze);
+	if (cube_mazeSelecter_i == 0) {
+		Cube_mainObject.InputMaze(maze_route_i);
+	}
+	else if (cube_mazeSelecter_i == 1) {
+		Cube_mainObject.InputMaze(Maze_BY_ANDY_maze.MakeMaze(maze_size));
+	}
+	else {
+		Cube_mainObject.InputMaze(maze_route_i);
+	}
 	is_cube_exist = true;
 }
