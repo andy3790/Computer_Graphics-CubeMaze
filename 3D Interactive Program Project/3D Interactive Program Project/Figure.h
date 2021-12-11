@@ -1843,7 +1843,7 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					if (mazeWall[i][j][k]) {
+					if (mazeWall[i][j][k] == -1) {
 						if (blocks[i][j][k].CrashCheck(b, blockRot)) {
 							return true;
 						}
@@ -2545,6 +2545,9 @@ public:
 		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
 		cube_blockSize[y] = size_y / (float)cube_blockCount[y];
 		cube_blockSize[z] = size_z / (float)cube_blockCount[z];
+		blockSize[x] = cube_blockSize[x] / (float)blockCount[x];
+		blockSize[y] = cube_blockSize[y] / (float)blockCount[y];
+		blockSize[z] = cube_blockSize[z] / (float)blockCount[z];
 		gravity.MakeLine_N(0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
 	}
 
@@ -2615,6 +2618,19 @@ public:
 			}
 		}
 		return false;
+	}
+	bool CrashCheck(char type, Figure* b) {
+		float* temp = b->GetMidPos();
+		glm::vec4 mypos = b->GetTransformMat() * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
+		float figureSize = blockSize[x];
+		float cubeSize = cube_blockSize[x] * cube_blockCount[x];
+		mypos = glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * mypos;
+
+		int blockPos[3];
+		blockPos[x] = mypos.x / figureSize;
+		blockPos[y] = mypos.y / figureSize;
+		blockPos[z] = mypos.z / figureSize;
+
 	}
 
 	bool CheckCubeBlocksLocation() {
