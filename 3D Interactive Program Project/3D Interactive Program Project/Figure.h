@@ -2201,6 +2201,51 @@ public:
 		}
 		return reVal;
 	}
+	bool Rotate_Specific_Side_Check_Rot(int sel, int line, bool front, float degree) {
+		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
+		bool reVal = CUBE_SEQUENCE_ING;
+		if (line <= cube_blockCount[0] / 2 && front == false) { degree *= -1; }
+		else if (line > cube_blockCount[0] / 2 && front == true) { degree *= -1; }
+		nowRotDegree += degree;
+		if ((int)nowRotDegree == 0) { reVal = CUBE_SEQUENCE_END; }
+		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
+			int* temp;
+			if (nowRotDegree >= 90.0f) {
+				degree += 90.0f - nowRotDegree;
+				Arr_Rotate(sel, line, 0);
+			}
+			else {
+				degree += nowRotDegree + 90.0f;
+				Arr_Rotate(sel, line, 1);
+			}
+			nowRotDegree = 0.0f;
+			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, line, -1)); } // 회전 정보 저장
+			else { rotReverseDirQueue.push(new Data(sel, line, 1)); }
+			reVal = CUBE_SEQUENCE_END;
+		}
+		if (sel == 0) { // z
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) { // y
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 2) { // x
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+				}
+			}
+		}
+		return reVal;
+	}
 
 	void Arr_Rotate(int sel, int line, int rotateDir) {
 		if (rotateDir == 0) {
