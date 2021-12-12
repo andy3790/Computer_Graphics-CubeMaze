@@ -502,7 +502,7 @@ GLvoid Timer(int value)
 		{
 			tmp_dotVal_f = dot(camera_rot_m4 * cube_normal_v4[i], use_compare_v4);
 			//std::cout << i << ' : ' << tmp_dotVal_f << std::endl;
-			if (tmp_dotVal_f >= max_dotVal_f)
+			if (tmp_dotVal_f > max_dotVal_f)
 			{
 				max_dotVal_f = tmp_dotVal_f;
 				selected_side_i = i + 1;

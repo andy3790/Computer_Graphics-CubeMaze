@@ -468,6 +468,6 @@ bool make_maze_wilson()
 		}
 	}
 	// 비확정칸이 없으면 끝
-	std::cout << "root_count : " << route_count << std::endl;
+	//std::cout << "root_count : " << route_count << std::endl;
 	return true;
 }
