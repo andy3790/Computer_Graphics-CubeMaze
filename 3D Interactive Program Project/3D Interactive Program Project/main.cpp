@@ -76,6 +76,7 @@ bool is_print_line; // 선출력 / 면출력
 bool is_cube_exist; // 시작 플래그
 bool is_cube_autoSolve; // 큐브 자동 풀기 플래그
 bool is_cube_undoRot; // 큐브 언두 플래그
+bool is_cube_correctOrder; // 큐브가 옳은 모양인가
 float cube_rotVal_f; // 큐브 회전 각도
 
 bool is_leftButten_up;
@@ -136,6 +137,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	is_cube_exist = false;
 	is_cube_autoSolve = CUBE_SEQUENCE_END;
 	is_cube_undoRot = CUBE_SEQUENCE_END;
+	is_cube_correctOrder = true;
 	cube_rotVal_f = 1.0f;
 
 	is_leftButten_up = true;
@@ -198,7 +200,7 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
 
-		if (is_cube_exist) {
+		if (is_cube_exist && is_cube_correctOrder) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			glUniformMatrix4fv(transformLocation_ui, 1, GL_FALSE, glm::value_ptr(Cube_mainObject.get_cubeRot() * Figure_player.GetTransformMat()));
 			Figure_player.Draw();
@@ -542,6 +544,23 @@ GLvoid Timer(int value)
 		//else { cube_undo_degree_f = 10.0f; }
 
 		is_cube_undoRot = Cube_mainObject.Undo_Rotate_Specific_Side(10.0f);
+	}
+
+	is_cube_correctOrder = Cube_mainObject.CheckCubeBlocksLocation(); // 큐브 모양 체크
+
+	if (is_cube_exist) {
+		glm::vec4 temp = Cube_mainObject.get_gravityVec();
+		Figure_player.Translate(temp.x / 100, temp.y / 100, temp.z / 100);
+
+		if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
+			Figure_player.Translate(CUBE_X, -temp.x / 100);
+		}
+		if (Cube_mainObject.CrashCheck(CUBE_Y, &Figure_player)) {
+			Figure_player.Translate(CUBE_Y, -temp.y / 100);
+		}
+		if (Cube_mainObject.CrashCheck(CUBE_Z, &Figure_player)) {
+			Figure_player.Translate(CUBE_Z, -temp.z / 100);
+		}
 	}
 
 	glutPostRedisplay();

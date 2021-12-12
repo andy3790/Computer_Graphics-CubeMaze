@@ -1843,13 +1843,19 @@ public:
 		for (int i = 0; i < blockCount[z]; i++) {
 			for (int j = 0; j < blockCount[y]; j++) {
 				for (int k = 0; k < blockCount[x]; k++) {
-					if (mazeWall[i][j][k]) {
+					if (mazeWall[i][j][k] == -1) {
 						if (blocks[i][j][k].CrashCheck(b, blockRot)) {
 							return true;
 						}
 					}
 				}
 			}
+		}
+		return false;
+	}
+	bool CrashCheck(Figure* b, int posx, int posy, int posz) {
+		if (mazeWall[posz][posy][posx] == -1) {
+			if (blocks[posz][posy][posx].CrashCheck(b)) { return true; }
 		}
 		return false;
 	}
@@ -1995,7 +2001,7 @@ public:
 						cube_blocks[i][j][k].MakeBlock(bCountx, bCounty, bCountz, -size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx,
 							-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy,
 							-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz,
-							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z], 
+							cube_blockSize[x], cube_blockSize[y], cube_blockSize[z],
 							(-size_x + cube_blockSize[x] * (float)k * 2.0f + cube_blockSize[x] + midx + size_x) / (size_x * 2.0f),
 							(-size_y + cube_blockSize[y] * (float)j * 2.0f + cube_blockSize[y] + midy + size_y) / (size_y * 2.0f),
 							(-size_z + cube_blockSize[z] * (float)i * 2.0f + cube_blockSize[z] + midz + size_z) / (size_z * 2.0f));
@@ -2136,7 +2142,7 @@ public:
 		}
 	}
 	void Rotate_Specific_Side(int sel, int line, float degree) {
-		if(sel == 0){ // z
+		if (sel == 0) { // z
 			for (int i = 0; i < cube_blockCount[y]; i++) {
 				for (int j = 0; j < cube_blockCount[x]; j++) {
 					cube_blocks[line][i][j].Rotate_Block('z', degree);
@@ -2161,6 +2167,51 @@ public:
 	bool Rotate_Specific_Side_Check_Rot(int sel, int line, float degree) {
 		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
 		bool reVal = CUBE_SEQUENCE_ING;
+		nowRotDegree += degree;
+		if ((int)nowRotDegree == 0) { reVal = CUBE_SEQUENCE_END; }
+		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
+			int* temp;
+			if (nowRotDegree >= 90.0f) {
+				degree += 90.0f - nowRotDegree;
+				Arr_Rotate(sel, line, 0);
+			}
+			else {
+				degree += nowRotDegree + 90.0f;
+				Arr_Rotate(sel, line, 1);
+			}
+			nowRotDegree = 0.0f;
+			if (degree > 0) { rotReverseDirQueue.push(new Data(sel, line, -1)); } // 회전 정보 저장
+			else { rotReverseDirQueue.push(new Data(sel, line, 1)); }
+			reVal = CUBE_SEQUENCE_END;
+		}
+		if (sel == 0) { // z
+			for (int i = 0; i < cube_blockCount[y]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[line][i][j][z]][cube_block_pos[line][i][j][y]][cube_block_pos[line][i][j][x]].Rotate_Block('z', degree);
+				}
+			}
+		}
+		else if (sel == 1) { // y
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[x]; j++) {
+					cube_blocks[cube_block_pos[i][line][j][z]][cube_block_pos[i][line][j][y]][cube_block_pos[i][line][j][x]].Rotate_Block('y', degree);
+				}
+			}
+		}
+		else if (sel == 2) { // x
+			for (int i = 0; i < cube_blockCount[z]; i++) {
+				for (int j = 0; j < cube_blockCount[y]; j++) {
+					cube_blocks[cube_block_pos[i][j][line][z]][cube_block_pos[i][j][line][y]][cube_block_pos[i][j][line][x]].Rotate_Block('x', degree);
+				}
+			}
+		}
+		return reVal;
+	}
+	bool Rotate_Specific_Side_Check_Rot(int sel, int line, bool front, float degree) {
+		float tempSize = (float)(cube_blockCount[0] - 1) / 2.0f;
+		bool reVal = CUBE_SEQUENCE_ING;
+		if (line <= cube_blockCount[0] / 2 && front == false) { degree *= -1; }
+		else if (line > cube_blockCount[0] / 2 && front == true) { degree *= -1; }
 		nowRotDegree += degree;
 		if ((int)nowRotDegree == 0) { reVal = CUBE_SEQUENCE_END; }
 		if (nowRotDegree >= 90.0f || nowRotDegree <= -90.0f) {
@@ -2470,9 +2521,9 @@ public:
 		blockCount[y] = bCounty;
 		blockCount[z] = bCountz;
 
-		cube_blocks = new Block**[cube_blockCount[z]];
+		cube_blocks = new Block * *[cube_blockCount[z]];
 		for (int i = 0; i < cube_blockCount[z]; i++) {
-			cube_blocks[i] = new Block*[cube_blockCount[y]];
+			cube_blocks[i] = new Block * [cube_blockCount[y]];
 			for (int j = 0; j < cube_blockCount[y]; j++) {
 				cube_blocks[i][j] = new Block[cube_blockCount[x]];
 			}
@@ -2500,6 +2551,9 @@ public:
 		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
 		cube_blockSize[y] = size_y / (float)cube_blockCount[y];
 		cube_blockSize[z] = size_z / (float)cube_blockCount[z];
+		blockSize[x] = cube_blockSize[x] / (float)blockCount[x];
+		blockSize[y] = cube_blockSize[y] / (float)blockCount[y];
+		blockSize[z] = cube_blockSize[z] / (float)blockCount[z];
 		gravity.MakeLine_N(0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
 	}
 
@@ -2571,11 +2625,100 @@ public:
 		}
 		return false;
 	}
+	bool CrashCheck(char type, Figure* b) {
+		float* temp = b->GetMidPos();
+		glm::vec4 mypos = b->GetTransformMat() * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
+		float figureSize = blockSize[x];
+		float cubeSize = cube_blockSize[x] * cube_blockCount[x];
+		mypos = glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * mypos;
+
+		int blockPos[3];
+		blockPos[x] = mypos.x / figureSize;
+		blockPos[y] = mypos.y / figureSize;
+		blockPos[z] = mypos.z / figureSize;
+
+		//std::cout << mypos[x] << ' ' << mypos[y] << ' ' << mypos[z] << '\t';
+		//std::cout << blockPos[x] << ' ' << blockPos[y] << ' ' << blockPos[z] << '\n';
+
+		int maxCount = cube_blockCount[x] * blockCount[x];
+		int tpos[3];
+		tpos[x] = blockPos[x];
+		tpos[y] = blockPos[y];
+		tpos[z] = blockPos[z];
+		if(tpos[x] - 1 <= 0 || tpos[x] + 1 > maxCount ||
+			tpos[y] - 1 <= 0 || tpos[y] + 1 > maxCount || 
+			tpos[z] - 1 <= 0 || tpos[z] + 1 > maxCount) {
+			return true;
+		}
+		if (type == CUBE_X) {
+			if (blockPos[x] - 1 >= 0) {
+				tpos[x] = blockPos[x] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[x] + 1 < maxCount) {
+				tpos[x] = blockPos[x] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		else if (type == CUBE_Y) {
+			if (blockPos[y] - 1 >= 0) {
+				tpos[y] = blockPos[y] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[y] + 1 < maxCount) {
+				tpos[y] = blockPos[y] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		else if (type == CUBE_Z) {
+			if (blockPos[z] - 1 >= 0) {
+				tpos[z] = blockPos[z] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[z] + 1 < maxCount) {
+				tpos[z] = blockPos[z] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool CheckCubeBlocksLocation() {
+		for (int i = 0; i < cube_blockCount[z]; i++) {
+			for (int j = 0; j < cube_blockCount[y]; j++) {
+				for (int k = 0; k < cube_blockCount[x]; k++) {
+					if (
+						cube_block_pos[i][j][k][x] != k ||
+						cube_block_pos[i][j][k][y] != j ||
+						cube_block_pos[i][j][k][z] != i
+						) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	glm::mat4 get_cubeRot() {
 		return cubeRot;
 	}
-	glm::vec4 get_gravityMat() {
+	glm::vec4 get_gravityVec() {
 		return glm::transpose(cubeRot) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 	}
 	glm::vec4* get_plainNormal() {
