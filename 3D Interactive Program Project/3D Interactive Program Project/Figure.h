@@ -130,7 +130,7 @@ public:
 class Figure {
 private:
 	GLfloat point[8][6];
-	GLfloat vertex[36][9];
+	GLfloat vertex[36][12];
 	GLfloat midPoint[3];
 	GLfloat size[3];
 	GLuint VAO;
@@ -165,7 +165,7 @@ public:
 			}
 		}
 		for (int i = 0; i < 36; i++) {
-			for (int j = 0; j < 9; j++) {
+			for (int j = 0; j < 12; j++) {
 				vertex[i][j] = 0.0f;
 			}
 		}
@@ -230,6 +230,9 @@ public:
 				}
 			}
 		}
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
+		}
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -262,6 +265,9 @@ public:
 					vertex[j][i + 3] = 1.0f;
 				}
 			}
+		}
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
 		}
 		MakeTransformMat();
 		InitBuffer();
@@ -300,6 +306,9 @@ public:
 				}
 			}
 		}
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
+		}
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -324,7 +333,9 @@ public:
 				vertex[i][j + 3] = F_urd(dre);
 			}
 		}
-
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
+		}
 		MakeTransformMat();
 		InitBuffer();
 	}
@@ -352,105 +363,28 @@ public:
 				vertex[i][j + 6] = vertex[1][j] - vertex[0][j];
 			}
 		}
-
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
+		}
 		MakeTransformMat();
 		InitBuffer();
 	}
 	void MakeCube() {
 		float tempsize = 0.3f;
-		midPoint[0] = 0.0f;
-		midPoint[1] = 0.0f;
-		midPoint[2] = 0.0f;
-		size[0] = tempsize;
-		size[1] = tempsize;
-		size[2] = tempsize;
-
-		int front = 0;
-		int back = 4;
-		Shape = 2;
-		countOfData = 36;
-		rotate_val_x = 0.0f;
-		rotate_val_y = 0.0f;
-		T_val[0] = 0.0f;
-		T_val[1] = 0.0f;
-		T_val[2] = 0.0f;
-
-		point[0][0] = -tempsize;
-		point[0][1] = +tempsize;
-		point[0][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
-
-		point[1][0] = +tempsize;
-		point[1][1] = +tempsize;
-		point[1][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
-
-		point[2][0] = +tempsize;
-		point[2][1] = -tempsize;
-		point[2][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
-
-		point[3][0] = -tempsize;
-		point[3][1] = -tempsize;
-		point[3][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
-
-		for (int i = 0; i < 4; i++) {
-			point[i + 4][0] = point[i][0];
-			point[i + 4][1] = point[i][1];
-			point[i + 4][2] = point[i][2] * -1;
-			for (int j = 0; j < 3; j++) { point[i + 4][j + 3] = F_urd(dre); }
-		}
-
+		InitCubeData(0.0f, 0.0f, 0.0f, tempsize, tempsize, tempsize);
 
 		for (int i = 0; i < 6; i++) {
-			// 앞면
-			vertex[0 + 6 * 0][i] = point[0 + front][i];
-			vertex[1 + 6 * 0][i] = point[3 + front][i];
-			vertex[2 + 6 * 0][i] = point[2 + front][i];
-			vertex[3 + 6 * 0][i] = point[0 + front][i];
-			vertex[4 + 6 * 0][i] = point[2 + front][i];
-			vertex[5 + 6 * 0][i] = point[1 + front][i];
-			//뒷면
-			vertex[0 + 6 * 1][i] = point[1 + back][i];
-			vertex[1 + 6 * 1][i] = point[2 + back][i];
-			vertex[2 + 6 * 1][i] = point[3 + back][i];
-			vertex[3 + 6 * 1][i] = point[1 + back][i];
-			vertex[4 + 6 * 1][i] = point[3 + back][i];
-			vertex[5 + 6 * 1][i] = point[0 + back][i];
-			//오른쪽 면
-			vertex[0 + 6 * 2][i] = point[1 + front][i];
-			vertex[1 + 6 * 2][i] = point[2 + front][i];
-			vertex[2 + 6 * 2][i] = point[2 + back][i];
-			vertex[3 + 6 * 2][i] = point[1 + front][i];
-			vertex[4 + 6 * 2][i] = point[2 + back][i];
-			vertex[5 + 6 * 2][i] = point[1 + back][i];
-			//왼쪽 면
-			vertex[0 + 6 * 3][i] = point[0 + back][i];
-			vertex[1 + 6 * 3][i] = point[3 + back][i];
-			vertex[2 + 6 * 3][i] = point[3 + front][i];
-			vertex[3 + 6 * 3][i] = point[0 + back][i];
-			vertex[4 + 6 * 3][i] = point[3 + front][i];
-			vertex[5 + 6 * 3][i] = point[0 + front][i];
-			//위쪽 면
-			vertex[0 + 6 * 4][i] = point[0 + back][i];
-			vertex[1 + 6 * 4][i] = point[0 + front][i];
-			vertex[2 + 6 * 4][i] = point[1 + front][i];
-			vertex[3 + 6 * 4][i] = point[0 + back][i];
-			vertex[4 + 6 * 4][i] = point[1 + front][i];
-			vertex[5 + 6 * 4][i] = point[1 + back][i];
-			//아래쪽 면
-			vertex[0 + 6 * 5][i] = point[3 + front][i];
-			vertex[1 + 6 * 5][i] = point[3 + back][i];
-			vertex[2 + 6 * 5][i] = point[2 + back][i];
-			vertex[3 + 6 * 5][i] = point[3 + front][i];
-			vertex[4 + 6 * 5][i] = point[2 + back][i];
-			vertex[5 + 6 * 5][i] = point[2 + front][i];
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = F_urd(dre);
+				vertex[j + 6 * i][4] = F_urd(dre);
+				vertex[j + 6 * i][5] = F_urd(dre);
+			}
 		}
+
 		InitCubeNormal();
 		//for (int i = 0; i < 3; i++) {
 		//	for (int j = 0; j < 6; j++) {
-		//		float tempcolor = urd(dre);
+		//		float tempcolor = F_urd(dre);
 		//		for (int k = 0; k < 6; k++) {
 		//			vertex[k + 6 * j][i + 3] = tempcolor;
 		//		}
@@ -460,198 +394,360 @@ public:
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
-		midPoint[0] = midx;
-		midPoint[1] = midy;
-		midPoint[2] = midz;
-		size[0] = sizex;
-		size[1] = sizey;
-		size[2] = sizez;
-
-		int front = 0;
-		int back = 4;
-		Shape = 2;
-		countOfData = 36;
-		rotate_val_x = 0.0f;
-		rotate_val_y = 0.0f;
-		T_val[0] = 0.0f;
-		T_val[1] = 0.0f;
-		T_val[2] = 0.0f;
-
-		point[0][0] = midx - sizex;
-		point[0][1] = midy + sizey;
-		point[0][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
-
-		point[1][0] = midx + sizex;
-		point[1][1] = midy + sizey;
-		point[1][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
-
-		point[2][0] = midx + sizex;
-		point[2][1] = midy - sizey;
-		point[2][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
-
-		point[3][0] = midx - sizex;
-		point[3][1] = midy - sizey;
-		point[3][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
-
-		for (int i = 0; i < 4; i++) {
-			point[i + 4][0] = point[i][0];
-			point[i + 4][1] = point[i][1];
-			point[i + 4][2] = point[i][2] - (sizez * 2);
-			for (int j = 0; j < 3; j++) { point[i + 4][j + 3] = F_urd(dre); }
-		}
-
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
 
 		for (int i = 0; i < 6; i++) {
-			// 앞면
-			vertex[0 + 6 * 0][i] = point[0 + front][i];
-			vertex[1 + 6 * 0][i] = point[3 + front][i];
-			vertex[2 + 6 * 0][i] = point[2 + front][i];
-			vertex[3 + 6 * 0][i] = point[0 + front][i];
-			vertex[4 + 6 * 0][i] = point[2 + front][i];
-			vertex[5 + 6 * 0][i] = point[1 + front][i];
-			//뒷면
-			vertex[0 + 6 * 1][i] = point[1 + back][i];
-			vertex[1 + 6 * 1][i] = point[2 + back][i];
-			vertex[2 + 6 * 1][i] = point[3 + back][i];
-			vertex[3 + 6 * 1][i] = point[1 + back][i];
-			vertex[4 + 6 * 1][i] = point[3 + back][i];
-			vertex[5 + 6 * 1][i] = point[0 + back][i];
-			//오른쪽 면
-			vertex[0 + 6 * 2][i] = point[1 + front][i];
-			vertex[1 + 6 * 2][i] = point[2 + front][i];
-			vertex[2 + 6 * 2][i] = point[2 + back][i];
-			vertex[3 + 6 * 2][i] = point[1 + front][i];
-			vertex[4 + 6 * 2][i] = point[2 + back][i];
-			vertex[5 + 6 * 2][i] = point[1 + back][i];
-			//왼쪽 면
-			vertex[0 + 6 * 3][i] = point[0 + back][i];
-			vertex[1 + 6 * 3][i] = point[3 + back][i];
-			vertex[2 + 6 * 3][i] = point[3 + front][i];
-			vertex[3 + 6 * 3][i] = point[0 + back][i];
-			vertex[4 + 6 * 3][i] = point[3 + front][i];
-			vertex[5 + 6 * 3][i] = point[0 + front][i];
-			//위쪽 면
-			vertex[0 + 6 * 4][i] = point[0 + back][i];
-			vertex[1 + 6 * 4][i] = point[0 + front][i];
-			vertex[2 + 6 * 4][i] = point[1 + front][i];
-			vertex[3 + 6 * 4][i] = point[0 + back][i];
-			vertex[4 + 6 * 4][i] = point[1 + front][i];
-			vertex[5 + 6 * 4][i] = point[1 + back][i];
-			//아래쪽 면
-			vertex[0 + 6 * 5][i] = point[3 + front][i];
-			vertex[1 + 6 * 5][i] = point[3 + back][i];
-			vertex[2 + 6 * 5][i] = point[2 + back][i];
-			vertex[3 + 6 * 5][i] = point[3 + front][i];
-			vertex[4 + 6 * 5][i] = point[2 + back][i];
-			vertex[5 + 6 * 5][i] = point[2 + front][i];
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = F_urd(dre);
+				vertex[j + 6 * i][4] = F_urd(dre);
+				vertex[j + 6 * i][5] = F_urd(dre);
+			}
 		}
+
 		InitCubeNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR, float colorG, float colorB) {
-		midPoint[0] = midx;
-		midPoint[1] = midy;
-		midPoint[2] = midz;
-		size[0] = sizex;
-		size[1] = sizey;
-		size[2] = sizez;
-
-		int front = 0;
-		int back = 4;
-		Shape = 2;
-		countOfData = 36;
-		rotate_val_x = 0.0f;
-		rotate_val_y = 0.0f;
-		T_val[0] = 0.0f;
-		T_val[1] = 0.0f;
-		T_val[2] = 0.0f;
-
-		point[0][0] = midx - sizex;
-		point[0][1] = midy + sizey;
-		point[0][2] = midz + sizez;
-
-		point[1][0] = midx + sizex;
-		point[1][1] = midy + sizey;
-		point[1][2] = midz + sizez;
-
-		point[2][0] = midx + sizex;
-		point[2][1] = midy - sizey;
-		point[2][2] = midz + sizez;
-
-		point[3][0] = midx - sizex;
-		point[3][1] = midy - sizey;
-		point[3][2] = midz + sizez;
-
-		for (int i = 0; i < 4; i++) {
-			point[i + 4][0] = point[i][0];
-			point[i + 4][1] = point[i][1];
-			point[i + 4][2] = point[i][2] - (sizez * 2);
-		}
-
-		for (int i = 0; i < 8; i++) {
-			point[i][3] = colorR;
-			point[i][4] = colorG;
-			point[i][5] = colorB;
-		}
-
-		//std::cout << midx << ' ' << midy << ' ' << midz << ' ' << sizex << ' ' << sizey << ' ' << sizez << '\n';
-		//std::cout << point[2][0] << '\t' << point[3][0] << '\t' << point[6][0] << '\t' << point[7][0] << '\t' << '\t';
-		//std::cout << point[2][2] << '\t' << point[3][2] << '\t' << point[6][2] << '\t' << point[7][2] << '\n';
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
 
 		for (int i = 0; i < 6; i++) {
-			// 앞면
-			vertex[0 + 6 * 0][i] = point[0 + front][i];
-			vertex[1 + 6 * 0][i] = point[3 + front][i];
-			vertex[2 + 6 * 0][i] = point[2 + front][i];
-			vertex[3 + 6 * 0][i] = point[0 + front][i];
-			vertex[4 + 6 * 0][i] = point[2 + front][i];
-			vertex[5 + 6 * 0][i] = point[1 + front][i];
-			//뒷면
-			vertex[0 + 6 * 1][i] = point[1 + back][i];
-			vertex[1 + 6 * 1][i] = point[2 + back][i];
-			vertex[2 + 6 * 1][i] = point[3 + back][i];
-			vertex[3 + 6 * 1][i] = point[1 + back][i];
-			vertex[4 + 6 * 1][i] = point[3 + back][i];
-			vertex[5 + 6 * 1][i] = point[0 + back][i];
-			//오른쪽 면
-			vertex[0 + 6 * 2][i] = point[1 + front][i];
-			vertex[1 + 6 * 2][i] = point[2 + front][i];
-			vertex[2 + 6 * 2][i] = point[2 + back][i];
-			vertex[3 + 6 * 2][i] = point[1 + front][i];
-			vertex[4 + 6 * 2][i] = point[2 + back][i];
-			vertex[5 + 6 * 2][i] = point[1 + back][i];
-			//왼쪽 면
-			vertex[0 + 6 * 3][i] = point[0 + back][i];
-			vertex[1 + 6 * 3][i] = point[3 + back][i];
-			vertex[2 + 6 * 3][i] = point[3 + front][i];
-			vertex[3 + 6 * 3][i] = point[0 + back][i];
-			vertex[4 + 6 * 3][i] = point[3 + front][i];
-			vertex[5 + 6 * 3][i] = point[0 + front][i];
-			//위쪽 면
-			vertex[0 + 6 * 4][i] = point[0 + back][i];
-			vertex[1 + 6 * 4][i] = point[0 + front][i];
-			vertex[2 + 6 * 4][i] = point[1 + front][i];
-			vertex[3 + 6 * 4][i] = point[0 + back][i];
-			vertex[4 + 6 * 4][i] = point[1 + front][i];
-			vertex[5 + 6 * 4][i] = point[1 + back][i];
-			//아래쪽 면
-			vertex[0 + 6 * 5][i] = point[3 + front][i];
-			vertex[1 + 6 * 5][i] = point[3 + back][i];
-			vertex[2 + 6 * 5][i] = point[2 + back][i];
-			vertex[3 + 6 * 5][i] = point[3 + front][i];
-			vertex[4 + 6 * 5][i] = point[2 + back][i];
-			vertex[5 + 6 * 5][i] = point[2 + front][i];
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = colorR;
+				vertex[j + 6 * i][4] = colorG;
+				vertex[j + 6 * i][5] = colorB;
+			}
 		}
+
+		InitCubeNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR, float colorG, float colorB, float alpha) {
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
+		for (int i = 0; i < countOfData; i++) { // alpha
+			vertex[i][6] = alpha;
+		}
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = colorR;
+				vertex[j + 6 * i][4] = colorG;
+				vertex[j + 6 * i][5] = colorB;
+			}
+		}
+
 		InitCubeNormal();
 		MakeTransformMat();
 		InitBuffer();
 	}
 	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float colorR[6], float colorG[6], float colorB[6]) {
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
+
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				vertex[j + 6 * i][3] = colorR[i];
+				vertex[j + 6 * i][4] = colorG[i];
+				vertex[j + 6 * i][5] = colorB[i];
+			}
+		}
+		InitCubeNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, int type) {
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
+
+		if (type == 0) { // 정점별 같은 색
+			int front = 0;
+			int back = 4;
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 3; j++) {
+					point[i][j + 3] = F_urd(dre);
+				}
+			}
+
+			for (int i = 3; i < 6; i++) {
+				// 앞면
+				vertex[0 + 6 * 0][i] = point[0 + front][i];
+				vertex[1 + 6 * 0][i] = point[3 + front][i];
+				vertex[2 + 6 * 0][i] = point[2 + front][i];
+				vertex[3 + 6 * 0][i] = point[0 + front][i];
+				vertex[4 + 6 * 0][i] = point[2 + front][i];
+				vertex[5 + 6 * 0][i] = point[1 + front][i];
+				//뒷면
+				vertex[0 + 6 * 1][i] = point[1 + back][i];
+				vertex[1 + 6 * 1][i] = point[2 + back][i];
+				vertex[2 + 6 * 1][i] = point[3 + back][i];
+				vertex[3 + 6 * 1][i] = point[1 + back][i];
+				vertex[4 + 6 * 1][i] = point[3 + back][i];
+				vertex[5 + 6 * 1][i] = point[0 + back][i];
+				//오른쪽 면
+				vertex[0 + 6 * 2][i] = point[1 + front][i];
+				vertex[1 + 6 * 2][i] = point[2 + front][i];
+				vertex[2 + 6 * 2][i] = point[2 + back][i];
+				vertex[3 + 6 * 2][i] = point[1 + front][i];
+				vertex[4 + 6 * 2][i] = point[2 + back][i];
+				vertex[5 + 6 * 2][i] = point[1 + back][i];
+				//왼쪽 면
+				vertex[0 + 6 * 3][i] = point[0 + back][i];
+				vertex[1 + 6 * 3][i] = point[3 + back][i];
+				vertex[2 + 6 * 3][i] = point[3 + front][i];
+				vertex[3 + 6 * 3][i] = point[0 + back][i];
+				vertex[4 + 6 * 3][i] = point[3 + front][i];
+				vertex[5 + 6 * 3][i] = point[0 + front][i];
+				//위쪽 면
+				vertex[0 + 6 * 4][i] = point[0 + back][i];
+				vertex[1 + 6 * 4][i] = point[0 + front][i];
+				vertex[2 + 6 * 4][i] = point[1 + front][i];
+				vertex[3 + 6 * 4][i] = point[0 + back][i];
+				vertex[4 + 6 * 4][i] = point[1 + front][i];
+				vertex[5 + 6 * 4][i] = point[1 + back][i];
+				//아래쪽 면
+				vertex[0 + 6 * 5][i] = point[3 + front][i];
+				vertex[1 + 6 * 5][i] = point[3 + back][i];
+				vertex[2 + 6 * 5][i] = point[2 + back][i];
+				vertex[3 + 6 * 5][i] = point[3 + front][i];
+				vertex[4 + 6 * 5][i] = point[2 + back][i];
+				vertex[5 + 6 * 5][i] = point[2 + front][i];
+			}
+		}
+		else if (type == 1) { // 면 별 같은 색
+			float tempColor[3];
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					tempColor[k] = F_urd(dre);
+				}
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor[k];
+					}
+				}
+			}
+		}
+		else if (type == 2) { // 도형별 같은 색
+			float tempColor[3];
+			for (int k = 0; k < 3; k++) {
+				tempColor[k] = F_urd(dre);
+			}
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor[k];
+					}
+				}
+			}
+		}
+		else if (type == 3) { // 그레이 스케일
+			float tempColor;
+			tempColor = F_urd(dre);
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor;
+					}
+				}
+			}
+		}
+		else { // 잘못된 타입의 경우 vertex 별 랜덤색
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 6; j++) {
+					vertex[j + 6 * i][3] = F_urd(dre);
+					vertex[j + 6 * i][4] = F_urd(dre);
+					vertex[j + 6 * i][5] = F_urd(dre);
+				}
+			}
+		}
+		InitCubeNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, float alpha, int type) {
+		InitCubeData(midx, midy, midz, sizex, sizey, sizez);
+		for (int i = 0; i < countOfData; i++) { // alpha
+			vertex[i][6] = alpha;
+		}
+		if (type == 0) { // 정점별 같은 색
+			int front = 0;
+			int back = 4;
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 3; j++) {
+					point[i][j + 3] = F_urd(dre);
+				}
+			}
+
+			for (int i = 3; i < 6; i++) {
+				// 앞면
+				vertex[0 + 6 * 0][i] = point[0 + front][i];
+				vertex[1 + 6 * 0][i] = point[3 + front][i];
+				vertex[2 + 6 * 0][i] = point[2 + front][i];
+				vertex[3 + 6 * 0][i] = point[0 + front][i];
+				vertex[4 + 6 * 0][i] = point[2 + front][i];
+				vertex[5 + 6 * 0][i] = point[1 + front][i];
+				//뒷면
+				vertex[0 + 6 * 1][i] = point[1 + back][i];
+				vertex[1 + 6 * 1][i] = point[2 + back][i];
+				vertex[2 + 6 * 1][i] = point[3 + back][i];
+				vertex[3 + 6 * 1][i] = point[1 + back][i];
+				vertex[4 + 6 * 1][i] = point[3 + back][i];
+				vertex[5 + 6 * 1][i] = point[0 + back][i];
+				//오른쪽 면
+				vertex[0 + 6 * 2][i] = point[1 + front][i];
+				vertex[1 + 6 * 2][i] = point[2 + front][i];
+				vertex[2 + 6 * 2][i] = point[2 + back][i];
+				vertex[3 + 6 * 2][i] = point[1 + front][i];
+				vertex[4 + 6 * 2][i] = point[2 + back][i];
+				vertex[5 + 6 * 2][i] = point[1 + back][i];
+				//왼쪽 면
+				vertex[0 + 6 * 3][i] = point[0 + back][i];
+				vertex[1 + 6 * 3][i] = point[3 + back][i];
+				vertex[2 + 6 * 3][i] = point[3 + front][i];
+				vertex[3 + 6 * 3][i] = point[0 + back][i];
+				vertex[4 + 6 * 3][i] = point[3 + front][i];
+				vertex[5 + 6 * 3][i] = point[0 + front][i];
+				//위쪽 면
+				vertex[0 + 6 * 4][i] = point[0 + back][i];
+				vertex[1 + 6 * 4][i] = point[0 + front][i];
+				vertex[2 + 6 * 4][i] = point[1 + front][i];
+				vertex[3 + 6 * 4][i] = point[0 + back][i];
+				vertex[4 + 6 * 4][i] = point[1 + front][i];
+				vertex[5 + 6 * 4][i] = point[1 + back][i];
+				//아래쪽 면
+				vertex[0 + 6 * 5][i] = point[3 + front][i];
+				vertex[1 + 6 * 5][i] = point[3 + back][i];
+				vertex[2 + 6 * 5][i] = point[2 + back][i];
+				vertex[3 + 6 * 5][i] = point[3 + front][i];
+				vertex[4 + 6 * 5][i] = point[2 + back][i];
+				vertex[5 + 6 * 5][i] = point[2 + front][i];
+			}
+		}
+		else if (type == 1) { // 면 별 같은 색
+			float tempColor[3];
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					tempColor[k] = F_urd(dre);
+				}
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor[k];
+					}
+				}
+			}
+		}
+		else if (type == 2) { // 도형별 같은 색
+			float tempColor[3];
+			for (int k = 0; k < 3; k++) {
+				tempColor[k] = F_urd(dre);
+			}
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor[k];
+					}
+				}
+			}
+		}
+		else if (type == 3) { // 그레이 스케일
+			float tempColor;
+			tempColor = F_urd(dre);
+			for (int i = 0; i < 6; i++) {
+				for (int k = 0; k < 3; k++) {
+					for (int j = 0; j < 6; j++) {
+						vertex[j + 6 * i][k + 3] = tempColor;
+					}
+				}
+			}
+		}
+		else { // 잘못된 타입의 경우 vertex 별 랜덤색
+			for (int i = 0; i < 6; i++) {
+				for (int j = 0; j < 6; j++) {
+					vertex[j + 6 * i][3] = F_urd(dre);
+					vertex[j + 6 * i][4] = F_urd(dre);
+					vertex[j + 6 * i][5] = F_urd(dre);
+				}
+			}
+		}
+		InitCubeNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakePyramid() {
+		float tempsize = 0.3f;
+		InitPyramidData(0.0f, 0.0f, 0.0f, tempsize, tempsize, tempsize);
+
+		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[4][j + 3] = F_urd(dre); }
+
+		for (int i = 0; i < 3; i++) {
+			//밑면
+			vertex[0 + 3 * 0][i + 3] = point[1][i + 3];
+			vertex[1 + 3 * 0][i + 3] = point[2][i + 3];
+			vertex[2 + 3 * 0][i + 3] = point[3][i + 3];
+			vertex[0 + 3 * 1][i + 3] = point[1][i + 3];
+			vertex[1 + 3 * 1][i + 3] = point[3][i + 3];
+			vertex[2 + 3 * 1][i + 3] = point[0][i + 3];
+			//앞면
+			vertex[0 + 3 * 2][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 2][i + 3] = point[3][i + 3];
+			vertex[2 + 3 * 2][i + 3] = point[2][i + 3];
+			//뒷면
+			vertex[0 + 3 * 3][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 3][i + 3] = point[1][i + 3];
+			vertex[2 + 3 * 3][i + 3] = point[0][i + 3];
+			//왼쪽 면
+			vertex[0 + 3 * 4][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 4][i + 3] = point[0][i + 3];
+			vertex[2 + 3 * 4][i + 3] = point[3][i + 3];
+			//오른쪽 면
+			vertex[0 + 3 * 5][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 5][i + 3] = point[2][i + 3];
+			vertex[2 + 3 * 5][i + 3] = point[1][i + 3];
+		}
+		InitPyramidNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+	void MakePyramid(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
+		InitPyramidData(midx, midy, midz, sizex, sizey, sizez);
+		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
+		for (int j = 0; j < 3; j++) { point[4][j + 3] = F_urd(dre); }
+
+		for (int i = 0; i < 3; i++) {
+			//밑면
+			vertex[0 + 3 * 0][i + 3] = point[1][i + 3];
+			vertex[1 + 3 * 0][i + 3] = point[2][i + 3];
+			vertex[2 + 3 * 0][i + 3] = point[3][i + 3];
+			vertex[0 + 3 * 1][i + 3] = point[1][i + 3];
+			vertex[1 + 3 * 1][i + 3] = point[3][i + 3];
+			vertex[2 + 3 * 1][i + 3] = point[0][i + 3];
+			//앞면
+			vertex[0 + 3 * 2][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 2][i + 3] = point[3][i + 3];
+			vertex[2 + 3 * 2][i + 3] = point[2][i + 3];
+			//뒷면
+			vertex[0 + 3 * 3][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 3][i + 3] = point[1][i + 3];
+			vertex[2 + 3 * 3][i + 3] = point[0][i + 3];
+			//왼쪽 면
+			vertex[0 + 3 * 4][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 4][i + 3] = point[0][i + 3];
+			vertex[2 + 3 * 4][i + 3] = point[3][i + 3];
+			//오른쪽 면
+			vertex[0 + 3 * 5][i + 3] = point[4][i + 3];
+			vertex[1 + 3 * 5][i + 3] = point[2][i + 3];
+			vertex[2 + 3 * 5][i + 3] = point[1][i + 3];
+		}
+		InitPyramidNormal();
+		MakeTransformMat();
+		InitBuffer();
+	}
+
+	void InitCubeData(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
 		midPoint[0] = midx;
 		midPoint[1] = midy;
 		midPoint[2] = midz;
@@ -735,193 +831,12 @@ public:
 			vertex[4 + 6 * 5][i] = point[2 + back][i];
 			vertex[5 + 6 * 5][i] = point[2 + front][i];
 		}
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				vertex[j + 6 * i][3] = colorR[i];
-				vertex[j + 6 * i][4] = colorG[i];
-				vertex[j + 6 * i][5] = colorB[i];
-			}
+		for (int i = 0; i < countOfData; i++) { // alpha
+			vertex[i][6] = 1.0f;
 		}
-		InitCubeNormal();
-		MakeTransformMat();
-		InitBuffer();
+		InitCubeUVPos();
 	}
-	void MakeCube(float midx, float midy, float midz, float sizex, float sizey, float sizez, int type) {
-		midPoint[0] = midx;
-		midPoint[1] = midy;
-		midPoint[2] = midz;
-		size[0] = sizex;
-		size[1] = sizey;
-		size[2] = sizez;
-
-		int front = 0;
-		int back = 4;
-		Shape = 2;
-		countOfData = 36;
-		rotate_val_x = 0.0f;
-		rotate_val_y = 0.0f;
-		T_val[0] = 0.0f;
-		T_val[1] = 0.0f;
-		T_val[2] = 0.0f;
-
-		point[0][0] = midx - sizex;
-		point[0][1] = midy + sizey;
-		point[0][2] = midz + sizez;
-
-		point[1][0] = midx + sizex;
-		point[1][1] = midy + sizey;
-		point[1][2] = midz + sizez;
-
-		point[2][0] = midx + sizex;
-		point[2][1] = midy - sizey;
-		point[2][2] = midz + sizez;
-
-		point[3][0] = midx - sizex;
-		point[3][1] = midy - sizey;
-		point[3][2] = midz + sizez;
-
-		for (int i = 0; i < 4; i++) {
-			point[i + 4][0] = point[i][0];
-			point[i + 4][1] = point[i][1];
-			point[i + 4][2] = point[i][2] - (sizez * 2);
-			for (int j = 0; j < 3; j++) { point[i + 4][j + 3] = F_urd(dre); }
-		}
-
-		for (int i = 0; i < 6; i++) {
-			// 앞면
-			vertex[0 + 6 * 0][i] = point[0 + front][i];
-			vertex[1 + 6 * 0][i] = point[3 + front][i];
-			vertex[2 + 6 * 0][i] = point[2 + front][i];
-			vertex[3 + 6 * 0][i] = point[0 + front][i];
-			vertex[4 + 6 * 0][i] = point[2 + front][i];
-			vertex[5 + 6 * 0][i] = point[1 + front][i];
-			//뒷면
-			vertex[0 + 6 * 1][i] = point[1 + back][i];
-			vertex[1 + 6 * 1][i] = point[2 + back][i];
-			vertex[2 + 6 * 1][i] = point[3 + back][i];
-			vertex[3 + 6 * 1][i] = point[1 + back][i];
-			vertex[4 + 6 * 1][i] = point[3 + back][i];
-			vertex[5 + 6 * 1][i] = point[0 + back][i];
-			//오른쪽 면
-			vertex[0 + 6 * 2][i] = point[1 + front][i];
-			vertex[1 + 6 * 2][i] = point[2 + front][i];
-			vertex[2 + 6 * 2][i] = point[2 + back][i];
-			vertex[3 + 6 * 2][i] = point[1 + front][i];
-			vertex[4 + 6 * 2][i] = point[2 + back][i];
-			vertex[5 + 6 * 2][i] = point[1 + back][i];
-			//왼쪽 면
-			vertex[0 + 6 * 3][i] = point[0 + back][i];
-			vertex[1 + 6 * 3][i] = point[3 + back][i];
-			vertex[2 + 6 * 3][i] = point[3 + front][i];
-			vertex[3 + 6 * 3][i] = point[0 + back][i];
-			vertex[4 + 6 * 3][i] = point[3 + front][i];
-			vertex[5 + 6 * 3][i] = point[0 + front][i];
-			//위쪽 면
-			vertex[0 + 6 * 4][i] = point[0 + back][i];
-			vertex[1 + 6 * 4][i] = point[0 + front][i];
-			vertex[2 + 6 * 4][i] = point[1 + front][i];
-			vertex[3 + 6 * 4][i] = point[0 + back][i];
-			vertex[4 + 6 * 4][i] = point[1 + front][i];
-			vertex[5 + 6 * 4][i] = point[1 + back][i];
-			//아래쪽 면
-			vertex[0 + 6 * 5][i] = point[3 + front][i];
-			vertex[1 + 6 * 5][i] = point[3 + back][i];
-			vertex[2 + 6 * 5][i] = point[2 + back][i];
-			vertex[3 + 6 * 5][i] = point[3 + front][i];
-			vertex[4 + 6 * 5][i] = point[2 + back][i];
-			vertex[5 + 6 * 5][i] = point[2 + front][i];
-		}
-
-		if (type == 1) {
-			float tempColor[3];
-			for (int i = 0; i < 6; i++) {
-				for (int k = 0; k < 3; k++) {
-					tempColor[k] = F_urd(dre);
-				}
-				for (int k = 0; k < 3; k++) {
-					for (int j = 0; j < 6; j++) {
-						vertex[j + 6 * i][k + 3] = tempColor[k];
-					}
-				}
-			}
-		}
-		InitCubeNormal();
-		MakeTransformMat();
-		InitBuffer();
-	}
-	void MakePyramid() {
-		float tempsize = 0.3f;
-		midPoint[0] = 0.0f;
-		midPoint[1] = 0.0f;
-		midPoint[2] = 0.0f;
-		size[0] = tempsize;
-		size[1] = tempsize;
-		size[2] = tempsize;
-
-		Shape = 3;
-		countOfData = 18;
-		rotate_val_x = 0.0f;
-		rotate_val_y = 0.0f;
-		T_val[0] = 0.0f;
-		T_val[1] = 0.0f;
-		T_val[2] = 0.0f;
-
-		point[0][0] = -tempsize;
-		point[0][1] = -tempsize;
-		point[0][2] = -tempsize;
-		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
-
-		point[1][0] = +tempsize;
-		point[1][1] = -tempsize;
-		point[1][2] = -tempsize;
-		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
-
-		point[2][0] = +tempsize;
-		point[2][1] = -tempsize;
-		point[2][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
-
-		point[3][0] = -tempsize;
-		point[3][1] = -tempsize;
-		point[3][2] = +tempsize;
-		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
-
-		point[4][0] = 0;
-		point[4][1] = +tempsize;
-		point[4][2] = 0;
-		for (int j = 0; j < 3; j++) { point[4][j + 3] = F_urd(dre); }
-
-
-		for (int i = 0; i < 6; i++) {
-			//밑면
-			vertex[0 + 3 * 0][i] = point[1][i];
-			vertex[1 + 3 * 0][i] = point[2][i];
-			vertex[2 + 3 * 0][i] = point[3][i];
-			vertex[0 + 3 * 1][i] = point[1][i];
-			vertex[1 + 3 * 1][i] = point[3][i];
-			vertex[2 + 3 * 1][i] = point[0][i];
-			//앞면
-			vertex[0 + 3 * 2][i] = point[4][i];
-			vertex[1 + 3 * 2][i] = point[3][i];
-			vertex[2 + 3 * 2][i] = point[2][i];
-			//뒷면
-			vertex[0 + 3 * 3][i] = point[4][i];
-			vertex[1 + 3 * 3][i] = point[1][i];
-			vertex[2 + 3 * 3][i] = point[0][i];
-			//왼쪽 면
-			vertex[0 + 3 * 4][i] = point[4][i];
-			vertex[1 + 3 * 4][i] = point[0][i];
-			vertex[2 + 3 * 4][i] = point[3][i];
-			//오른쪽 면
-			vertex[0 + 3 * 5][i] = point[4][i];
-			vertex[1 + 3 * 5][i] = point[2][i];
-			vertex[2 + 3 * 5][i] = point[1][i];
-		}
-		InitPyramidNormal();
-		MakeTransformMat();
-		InitBuffer();
-	}
-	void MakePyramid(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
+	void InitPyramidData(float midx, float midy, float midz, float sizex, float sizey, float sizez) {
 		midPoint[0] = midx;
 		midPoint[1] = midy;
 		midPoint[2] = midz;
@@ -940,30 +855,25 @@ public:
 		point[0][0] = midx - sizex;
 		point[0][1] = midy - sizey;
 		point[0][2] = midz - sizez;
-		for (int j = 0; j < 3; j++) { point[0][j + 3] = F_urd(dre); }
 
 		point[1][0] = midx + sizex;
 		point[1][1] = midy - sizey;
 		point[1][2] = midz - sizez;
-		for (int j = 0; j < 3; j++) { point[1][j + 3] = F_urd(dre); }
 
 		point[2][0] = midx + sizex;
 		point[2][1] = midy - sizey;
 		point[2][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[2][j + 3] = F_urd(dre); }
 
 		point[3][0] = midx - sizex;
 		point[3][1] = midy - sizey;
 		point[3][2] = midz + sizez;
-		for (int j = 0; j < 3; j++) { point[3][j + 3] = F_urd(dre); }
 
 		point[4][0] = midx;
 		point[4][1] = midy + sizey;
 		point[4][2] = midz;
-		for (int j = 0; j < 3; j++) { point[4][j + 3] = F_urd(dre); }
 
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 3; i++) {
 			//밑면
 			vertex[0 + 3 * 0][i] = point[1][i];
 			vertex[1 + 3 * 0][i] = point[2][i];
@@ -988,9 +898,10 @@ public:
 			vertex[1 + 3 * 5][i] = point[2][i];
 			vertex[2 + 3 * 5][i] = point[1][i];
 		}
-		InitPyramidNormal();
-		MakeTransformMat();
-		InitBuffer();
+		for (int i = 0; i < countOfData; i++) {
+			vertex[i][6] = 1.0f;
+		}
+		InitPyramidUVPos();
 	}
 
 	glm::vec3 calNormal(int sv, int sel, int vcount)
@@ -1017,58 +928,125 @@ public:
 		return glm::vec3(cube_sideSelecter_i[x] / tlen, cube_sideSelecter_i[y] / tlen, cube_sideSelecter_i[z] / tlen);
 	}
 	void InitCubeNormal() {
-		glm::vec3 cube_sideSelecter_i[6];
+		glm::vec3 t[6];
 		for (int i = 0; i < 6; i++) {
-			cube_sideSelecter_i[i] = calNormal(0, i, 6);
+			t[i] = calNormal(0, i, 6);
 		}
 
 		for (int i = 0; i < 6; i++) {	// 노멀 저장
 			for (int j = 0; j < 3; j++) {
 				//앞면
-				vertex[i + 6 * 0][j + 6] = cube_sideSelecter_i[0][j];
+				vertex[i + 6 * 0][j + 7] = t[0][j];
 				//뒷면
-				vertex[i + 6 * 1][j + 6] = cube_sideSelecter_i[1][j];
+				vertex[i + 6 * 1][j + 7] = t[1][j];
 				//오른쪽 면
-				vertex[i + 6 * 2][j + 6] = cube_sideSelecter_i[2][j];
+				vertex[i + 6 * 2][j + 7] = t[2][j];
 				//왼쪽 면
-				vertex[i + 6 * 3][j + 6] = cube_sideSelecter_i[3][j];
+				vertex[i + 6 * 3][j + 7] = t[3][j];
 				//위쪽 면
-				vertex[i + 6 * 4][j + 6] = cube_sideSelecter_i[4][j];
+				vertex[i + 6 * 4][j + 7] = t[4][j];
 				//아래쪽 면
-				vertex[i + 6 * 5][j + 6] = cube_sideSelecter_i[5][j];
+				vertex[i + 6 * 5][j + 7] = t[5][j];
 			}
 		}
 	}
 	void InitPyramidNormal() {
-		glm::vec3 cube_sideSelecter_i[5];
+		glm::vec3 t[5];
 		for (int i = 0; i < 5; i++) {
-			cube_sideSelecter_i[i] = calNormal(0, i + 1, 3);
+			t[i] = calNormal(0, i + 1, 3);
 		}
 
 		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				//밑면
+				vertex[j + 3 * 0][7 + i] = t[0][i];
+				vertex[j + 3 * 1][7 + i] = t[0][i];
+				//앞면
+				vertex[j + 3 * 2][7 + i] = t[1][i];
+				//뒷면
+				vertex[j + 3 * 3][7 + i] = t[2][i];
+				//왼쪽 면
+				vertex[j + 3 * 4][7 + i] = t[3][i];
+				//오른쪽 면
+				vertex[j + 3 * 5][7 + i] = t[4][i];
+			}
+		}
+	}
+
+	void InitCubeUVPos() {
+		const int U = 10;
+		const int V = 11;
+		// 앞면
+		vertex[0 + 6 * 0][U] = 0.0f;			vertex[0 + 6 * 0][V] = 1.0f;
+		vertex[1 + 6 * 0][U] = 0.0f;			vertex[1 + 6 * 0][V] = 0.0f;
+		vertex[2 + 6 * 0][U] = 1.0f;			vertex[2 + 6 * 0][V] = 0.0f;
+		vertex[3 + 6 * 0][U] = 0.0f;			vertex[3 + 6 * 0][V] = 1.0f;
+		vertex[4 + 6 * 0][U] = 1.0f;			vertex[4 + 6 * 0][V] = 0.0f;
+		vertex[5 + 6 * 0][U] = 1.0f;			vertex[5 + 6 * 0][V] = 1.0f;
+		//뒷면
+		vertex[0 + 6 * 1][U] = 0.0f;			vertex[0 + 6 * 1][V] = 1.0f;
+		vertex[1 + 6 * 1][U] = 0.0f;			vertex[1 + 6 * 1][V] = 0.0f;
+		vertex[2 + 6 * 1][U] = 1.0f;			vertex[2 + 6 * 1][V] = 0.0f;
+		vertex[3 + 6 * 1][U] = 0.0f;			vertex[3 + 6 * 1][V] = 1.0f;
+		vertex[4 + 6 * 1][U] = 1.0f;			vertex[4 + 6 * 1][V] = 0.0f;
+		vertex[5 + 6 * 1][U] = 1.0f;			vertex[5 + 6 * 1][V] = 1.0f;
+		//오른쪽 면
+		vertex[0 + 6 * 2][U] = 0.0f;			vertex[0 + 6 * 2][V] = 1.0f;
+		vertex[1 + 6 * 2][U] = 0.0f;			vertex[1 + 6 * 2][V] = 0.0f;
+		vertex[2 + 6 * 2][U] = 1.0f;			vertex[2 + 6 * 2][V] = 0.0f;
+		vertex[3 + 6 * 2][U] = 0.0f;			vertex[3 + 6 * 2][V] = 1.0f;
+		vertex[4 + 6 * 2][U] = 1.0f;			vertex[4 + 6 * 2][V] = 0.0f;
+		vertex[5 + 6 * 2][U] = 1.0f;			vertex[5 + 6 * 2][V] = 1.0f;
+		//왼쪽 면
+		vertex[0 + 6 * 3][U] = 0.0f;			vertex[0 + 6 * 3][V] = 1.0f;
+		vertex[1 + 6 * 3][U] = 0.0f;			vertex[1 + 6 * 3][V] = 0.0f;
+		vertex[2 + 6 * 3][U] = 1.0f;			vertex[2 + 6 * 3][V] = 0.0f;
+		vertex[3 + 6 * 3][U] = 0.0f;			vertex[3 + 6 * 3][V] = 1.0f;
+		vertex[4 + 6 * 3][U] = 1.0f;			vertex[4 + 6 * 3][V] = 0.0f;
+		vertex[5 + 6 * 3][U] = 1.0f;			vertex[5 + 6 * 3][V] = 1.0f;
+		//위쪽 면
+		vertex[0 + 6 * 4][U] = 0.0f;			vertex[0 + 6 * 4][V] = 1.0f;
+		vertex[1 + 6 * 4][U] = 0.0f;			vertex[1 + 6 * 4][V] = 0.0f;
+		vertex[2 + 6 * 4][U] = 1.0f;			vertex[2 + 6 * 4][V] = 0.0f;
+		vertex[3 + 6 * 4][U] = 0.0f;			vertex[3 + 6 * 4][V] = 1.0f;
+		vertex[4 + 6 * 4][U] = 1.0f;			vertex[4 + 6 * 4][V] = 0.0f;
+		vertex[5 + 6 * 4][U] = 1.0f;			vertex[5 + 6 * 4][V] = 1.0f;
+		//아래쪽 면
+		vertex[0 + 6 * 5][U] = 0.0f;			vertex[0 + 6 * 5][V] = 1.0f;
+		vertex[1 + 6 * 5][U] = 0.0f;			vertex[1 + 6 * 5][V] = 0.0f;
+		vertex[2 + 6 * 5][U] = 1.0f;			vertex[2 + 6 * 5][V] = 0.0f;
+		vertex[3 + 6 * 5][U] = 0.0f;			vertex[3 + 6 * 5][V] = 1.0f;
+		vertex[4 + 6 * 5][U] = 1.0f;			vertex[4 + 6 * 5][V] = 0.0f;
+		vertex[5 + 6 * 5][U] = 1.0f;			vertex[5 + 6 * 5][V] = 1.0f;
+	}
+	void InitPyramidUVPos() {
+		const int U = 10;
+		const int V = 11;
+
+		for (int i = 0; i < 3; i++) {
 			//밑면
-			vertex[0 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
-			vertex[1 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
-			vertex[2 + 3 * 0][6 + i] = cube_sideSelecter_i[0][i];
-			vertex[0 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
-			vertex[1 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
-			vertex[2 + 3 * 1][6 + i] = cube_sideSelecter_i[0][i];
+			vertex[0 + 3 * 0][U] = 0.0f;			vertex[0 + 3 * 0][V] = 0.0f;
+			vertex[1 + 3 * 0][U] = 0.0f;			vertex[1 + 3 * 0][V] = 1.0f;
+			vertex[2 + 3 * 0][U] = 1.0f;			vertex[2 + 3 * 0][V] = 1.0f;
+			vertex[0 + 3 * 1][U] = 0.0f;			vertex[0 + 3 * 1][V] = 0.0f;
+			vertex[1 + 3 * 1][U] = 1.0f;			vertex[1 + 3 * 1][V] = 1.0f;
+			vertex[2 + 3 * 1][U] = 1.0f;			vertex[2 + 3 * 1][V] = 0.0f;
 			//앞면
-			vertex[0 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
-			vertex[1 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
-			vertex[2 + 3 * 2][6 + i] = cube_sideSelecter_i[1][i];
+			vertex[0 + 3 * 2][U] = 0.5f;			vertex[0 + 3 * 2][V] = 1.0f;
+			vertex[1 + 3 * 2][U] = 0.0f;			vertex[1 + 3 * 2][V] = 0.0f;
+			vertex[2 + 3 * 2][U] = 1.0f;			vertex[2 + 3 * 2][V] = 0.0f;
 			//뒷면
-			vertex[0 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
-			vertex[1 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
-			vertex[2 + 3 * 3][6 + i] = cube_sideSelecter_i[2][i];
+			vertex[0 + 3 * 3][U] = 0.5f;			vertex[0 + 3 * 3][V] = 1.0f;
+			vertex[1 + 3 * 3][U] = 0.0f;			vertex[1 + 3 * 3][V] = 0.0f;
+			vertex[2 + 3 * 3][U] = 1.0f;			vertex[2 + 3 * 3][V] = 0.0f;
 			//왼쪽 면
-			vertex[0 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
-			vertex[1 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
-			vertex[2 + 3 * 4][6 + i] = cube_sideSelecter_i[3][i];
+			vertex[0 + 3 * 4][U] = 0.5f;			vertex[0 + 3 * 4][V] = 1.0f;
+			vertex[1 + 3 * 4][U] = 0.0f;			vertex[1 + 3 * 4][V] = 0.0f;
+			vertex[2 + 3 * 4][U] = 1.0f;			vertex[2 + 3 * 4][V] = 0.0f;
 			//오른쪽 면
-			vertex[0 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
-			vertex[1 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
-			vertex[2 + 3 * 5][6 + i] = cube_sideSelecter_i[4][i];
+			vertex[0 + 3 * 5][U] = 0.5f;			vertex[0 + 3 * 5][V] = 1.0f;
+			vertex[1 + 3 * 5][U] = 0.0f;			vertex[1 + 3 * 5][V] = 0.0f;
+			vertex[2 + 3 * 5][U] = 1.0f;			vertex[2 + 3 * 5][V] = 0.0f;
 		}
 	}
 
@@ -1314,13 +1292,13 @@ public:
 
 	GLvoid ChangeTransformMat() {
 		if (Shape == 0) {
-			TR = So * Tz * Ry * Rx * Ty * Tx * SelfRxy * Sm;
+			TR = So * Ry * Rx * Tz * Ty * Tx * SelfRxy * Sm;
 		}
 		else if (Shape == 1) {
-			TR = Tz * Rx * Tx * Ry * Ty;
+			TR =  Ry * Rx * Tz * Tx * Ty;
 		}
 		else if (Shape == 2 || Shape == 3) {
-			TR = So * Tz * Ry * Rx * Ty * Tx * SelfRxy * Sm;
+			TR = So * Ry * Rx * Tz * Ty * Tx * SelfRxy * Sm;
 		}
 		else if (Shape == 4) {
 			TR = Tz * Rx * Tx * Ry * Ty;
@@ -1386,14 +1364,15 @@ public:
 
 		glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, (countOfData * 9) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), 0);
+		glBufferData(GL_ARRAY_BUFFER, (countOfData * 12) * sizeof(GLfloat), vertex, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), 0);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(7 * sizeof(GLfloat)));
 		glEnableVertexAttribArray(2);
-
+		glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 12 * sizeof(GLfloat), (void*)(10 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(3);
 		return VAO;
 	}
 

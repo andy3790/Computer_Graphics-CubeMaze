@@ -60,6 +60,8 @@ glm::mat4 light_trans_m4; // 빛의 이동행렬
 glm::mat4 light_rot_m4; // 빛의 회전행렬
 bool is_light_on; // 빛 활성화/비활성화
 
+bool is_texture_on; // 텍스쳐 활성화/비활성화
+
 void SetObject(int size);
 
 Cube Cube_mainObject; // 메인오브젝트
@@ -103,8 +105,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	else
 		std::cout << "GLEW Initialized\n";
 
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-	//glEnable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	InitShader();
 	glEnable(GL_CULL_FACE);
@@ -124,6 +126,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	light_trans_m4 = glm::translate(light_trans_m4, glm::vec3(0.0f, 5.0f, -10.0f));
 	light_pos_v4 = glm::vec4(0.0, 0.0, 0.0, 1.0);
 	is_light_on = true;
+
+	is_texture_on = false;
 
 	Cube_mainObject.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
 
@@ -177,11 +181,15 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 	unsigned int lightColorLocation_ui = glGetUniformLocation(s_program, "lightColor");
 	unsigned int lightOnLocation_ui = glGetUniformLocation(s_program, "lightOn");
 	unsigned int viewPosLocation_ui = glGetUniformLocation(s_program, "viewPos");
+
 	glm::vec4 current_light_pos_v4 = light_rot_m4 * light_trans_m4 * light_pos_v4;
 	glUniform3f(lightPosLocation_ui, current_light_pos_v4.x, current_light_pos_v4.y, current_light_pos_v4.z);
 	glUniform1i(lightOnLocation_ui, is_light_on);
 	glUniform3f(lightColorLocation_ui, 1.0, 1.0, 1.0);
 	glUniform3f(viewPosLocation_ui, camera_pos_v3.x, camera_pos_v3.y, camera_pos_v3.z);
+
+	unsigned int textureOnLocation = glGetUniformLocation(s_program, "textureOn");
+	glUniform1i(textureOnLocation, is_texture_on);
 
 	glm::mat4 viewMat_m4 = glm::mat4(1.0f);
 	glm::mat4 projMat_m4 = glm::mat4(1.0f);
@@ -198,8 +206,8 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
 
-		//Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
-		Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
+		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
+		//Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
 
 		if (is_cube_exist && is_cube_correctOrder) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
