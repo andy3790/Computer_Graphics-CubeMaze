@@ -481,9 +481,9 @@ GLvoid Timer(int value)
 		{
 		case 1: use_compare_v4 = glm::vec4(camera_startPos_v3.x, camera_startPos_v3.y, camera_startPos_v3.z, 1.0); break;
 		case 2: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, -camera_startPos_v3.y, -camera_startPos_v3.z, 1.0); break;
-		case 3: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], -camera_startPos_v3.z, 1.0); break;
+		case 3: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], -camera_startPos_v3.z, 1.0); break;// or 1,5 를 외적
 		case 4: use_compare_v4 = glm::vec4(camera_startPos_v3.x, -(pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], camera_startPos_v3.z, 1.0); break;
-		case 5: use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0); break;
+		case 5: use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0); break;// or x,-y,z 와 외적
 		case 6: use_compare_v4 = glm::vec4(-camera_startPos_v3.z, 0.0, camera_startPos_v3.x, 1.0); break;
 		}
 		//switch (cube_sideSelecter_i)
@@ -552,15 +552,18 @@ GLvoid Timer(int value)
 	if (is_cube_exist) {
 		glm::vec4 temp = Cube_mainObject.get_gravityVec();
 		Figure_player.Translate(temp.x / 100, temp.y / 100, temp.z / 100);
-
+		//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(temp.x / 100, temp.y / 100, temp.z / 100));
 		if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
 			Figure_player.Translate(CUBE_X, -temp.x / 100);
+			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(-temp.x / 100, 0.0, 0.0));
 		}
 		if (Cube_mainObject.CrashCheck(CUBE_Y, &Figure_player)) {
 			Figure_player.Translate(CUBE_Y, -temp.y / 100);
+			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, -temp.y / 100, 0.0));
 		}
 		if (Cube_mainObject.CrashCheck(CUBE_Z, &Figure_player)) {
 			Figure_player.Translate(CUBE_Z, -temp.z / 100);
+			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, 0.0, -temp.z / 100));
 		}
 	}
 
