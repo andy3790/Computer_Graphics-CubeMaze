@@ -213,19 +213,40 @@ GLvoid Reshape(int w, int h) //--- 콜백 함수: 다시 그리기 콜백 함수
 }
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
+	glm::vec3 axis_v3;
+	glm::vec4 axis_v4;
+	static float tmp_vec_x_f;
+	static float tmp_vec_y_f;
+	static float tmp_vec_z_f;
 	switch (key) { // 언제든 입력 받을 수 있는 키 모음
 	case '1':case '2':case '3':case '4':case '5':case '6': case '7': case '8': case '0': cube_colorType_i = key - '0'; break;
 
 	case ']': cube_mazeSelecter_i = !cube_mazeSelecter_i; break;
 	case 'x': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
 	case 'X': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(-1.0f), glm::vec3(1.0, 0.0, 0.0)); break;
-	case 'y': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
-	case 'Y': camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(-1.0f), glm::vec3(0.0, 1.0, 0.0)); break;
+	case 'y':
+		tmp_vec_x_f = -camera_startPos_v3[0];
+		tmp_vec_y_f = (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1];
+		tmp_vec_z_f = -camera_startPos_v3[2];
+		axis_v4 = glm::vec4(tmp_vec_x_f, tmp_vec_y_f, tmp_vec_z_f, sqrt(pow(tmp_vec_x_f, 2) + pow(tmp_vec_y_f, 2) + pow(tmp_vec_z_f, 2)));
+		axis_v4 = axis_v4 * camera_rot_m4;
+		axis_v3 = glm::vec3(axis_v4);
+		camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(1.0f), axis_v3);
+		break;
+	case 'Y':
+		tmp_vec_x_f = -camera_startPos_v3[0];
+		tmp_vec_y_f = (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1];
+		tmp_vec_z_f = -camera_startPos_v3[2];
+		axis_v4 = glm::vec4(tmp_vec_x_f, tmp_vec_y_f, tmp_vec_z_f, sqrt(pow(tmp_vec_x_f, 2) + pow(tmp_vec_y_f, 2) + pow(tmp_vec_z_f, 2)));
+		axis_v4 = axis_v4 * camera_rot_m4;
+		axis_v3 = glm::vec3(axis_v4);
+		camera_rot_m4 = glm::rotate(camera_rot_m4, (GLfloat)glm::radians(-1.0f), axis_v3);
+		break;
 	case 'i': case 'I': is_print_line = true; break;
 	case 'o': case 'O': is_print_line = false; break;
 	case 'p': case 'P': cube_drawType_i = (cube_drawType_i + 1) % 2; break;
 	case 'g': case 'G': get_size_of_maze(30, 1); Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i); is_print_line = false; is_cube_exist = true; break; // 미로 크기 재설정
-	case 'm': case 'M': if (make_maze_wilson()) { print_maze(); Cube_mainObject.InputMaze(maze_route_i); } break; // 미로 재생성
+	case 'm': case 'M': if (make_maze_wilson()) {/* print_maze();*/ Cube_mainObject.InputMaze(maze_route_i); } break; // 미로 재생성
 	case VK_BACK: is_cube_undoRot = CUBE_SEQUENCE_ING; break;
 	case 27: 
 		if (is_cube_exist) { // 초기화면으로
