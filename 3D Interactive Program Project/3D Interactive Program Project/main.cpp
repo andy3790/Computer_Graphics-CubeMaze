@@ -65,8 +65,10 @@ bool is_texture_on; // 텍스쳐 활성화/비활성화
 void SetObject(int size);
 
 Cube Cube_mainObject; // 메인오브젝트
-Figure Figure_player;
-Maze_BY_ANDY Maze_BY_ANDY_maze;
+Figure Figure_player; // 플레이어 오브젝트
+Maze_BY_ANDY Maze_BY_ANDY_maze; // 미로 오브젝트
+
+glm::vec4 player_accel_v4;
 
 int cube_sideSelecter_i; // 큐브 면 선택 변수
 int cube_drawType_i; // 큐브 길 출력 or 벽 출력
@@ -130,6 +132,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	is_texture_on = false;
 
 	Cube_mainObject.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
+	player_accel_v4 = glm::vec4(0.0f);
 
 	cube_sideSelecter_i = -1;
 	cube_drawType_i = 0;
@@ -558,20 +561,42 @@ GLvoid Timer(int value)
 	is_cube_correctOrder = Cube_mainObject.CheckCubeBlocksLocation(); // 큐브 모양 체크
 
 	if (is_cube_exist) {
-		glm::vec4 temp = Cube_mainObject.get_gravityVec();
-		Figure_player.Translate(temp.x / 100, temp.y / 100, temp.z / 100);
+		//glm::vec4 temp = Cube_mainObject.get_gravityVec();
+		//Figure_player.Translate(temp.x / 100, temp.y / 100, temp.z / 100);
+		////camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(temp.x / 100, temp.y / 100, temp.z / 100));
+		//if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
+		//	Figure_player.Translate(CUBE_X, -temp.x / 100);
+		//	//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(-temp.x / 100, 0.0, 0.0));
+		//}
+		//if (Cube_mainObject.CrashCheck(CUBE_Y, &Figure_player)) {
+		//	Figure_player.Translate(CUBE_Y, -temp.y / 100);
+		//	//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, -temp.y / 100, 0.0));
+		//}
+		//if (Cube_mainObject.CrashCheck(CUBE_Z, &Figure_player)) {
+		//	Figure_player.Translate(CUBE_Z, -temp.z / 100);
+		//	//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, 0.0, -temp.z / 100));
+		//}
+
+		player_accel_v4 += Cube_mainObject.get_gravityVec() * 9.8f / 10000.0f;
+		if (player_accel_v4.x > 0.5f) { player_accel_v4.x = 0.5f; }
+		if (player_accel_v4.y > 0.5f) { player_accel_v4.y = 0.5f; }
+		if (player_accel_v4.z > 0.5f) { player_accel_v4.z = 0.5f; }
+		Figure_player.Translate(player_accel_v4.x, player_accel_v4.y, player_accel_v4.z);
 		//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(temp.x / 100, temp.y / 100, temp.z / 100));
 		if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
-			Figure_player.Translate(CUBE_X, -temp.x / 100);
+			Figure_player.Translate(CUBE_X, -player_accel_v4.x);
 			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(-temp.x / 100, 0.0, 0.0));
+			player_accel_v4.x = 0.0f;
 		}
 		if (Cube_mainObject.CrashCheck(CUBE_Y, &Figure_player)) {
-			Figure_player.Translate(CUBE_Y, -temp.y / 100);
+			Figure_player.Translate(CUBE_Y, -player_accel_v4.y);
 			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, -temp.y / 100, 0.0));
+			player_accel_v4.y = 0.0f;
 		}
 		if (Cube_mainObject.CrashCheck(CUBE_Z, &Figure_player)) {
-			Figure_player.Translate(CUBE_Z, -temp.z / 100);
+			Figure_player.Translate(CUBE_Z, -player_accel_v4.z);
 			//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(0.0, 0.0, -temp.z / 100));
+			player_accel_v4.z = 0.0f;
 		}
 	}
 
