@@ -1766,6 +1766,11 @@ public:
 		}
 		return false;
 	}
+	GLvoid DrawTest(unsigned int transformLocation, glm::mat4 afterMat, int posx, int posy, int posz) {
+		if (mazeWall[posz][posy][posx] == -1) {
+			blocks[posz][posy][posx].Draw(transformLocation, afterMat);
+		}
+	}
 
 	void InputMaze(int*** maze, int startX, int startY, int startZ) {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -1855,7 +1860,7 @@ public:
 	}
 	bool CrashCheck(Figure* b, int posx, int posy, int posz) {
 		if (mazeWall[posz][posy][posx] == -1) {
-			if (blocks[posz][posy][posx].CrashCheck(b)) { return true; }
+			return blocks[posz][posy][posx].CrashCheck(b);
 		}
 		return false;
 	}
@@ -2500,6 +2505,86 @@ public:
 	GLvoid DrawGravityVec(unsigned int transformLocation) {
 		gravity.Draw(transformLocation, cubeRot * glm::transpose(cubeRot));
 	}
+	GLvoid DrawTest(unsigned int transformLocation, Figure* b) {
+		float* temp = b->GetMidPos();
+		float cubeSize = cube_blockSize[x] * cube_blockCount[x] * 2.0f;
+		float figureSize = blockSize[x] * 2.0f;
+		glm::vec4 mypos = b->GetTransformMat() * glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
+
+		int blockPos[3];
+		blockPos[x] = mypos.x / figureSize;
+		blockPos[y] = mypos.y / figureSize;
+		blockPos[z] = mypos.z / figureSize;
+
+		//std::cout << mypos[x] << ' ' << mypos[y] << ' ' << mypos[z] << '\t';
+		//std::cout << blockPos[x] << ' ' << blockPos[y] << ' ' << blockPos[z] << '\n';
+
+		int maxCount = cube_blockCount[x] * blockCount[x];
+		int tpos[3];
+		tpos[x] = blockPos[x];
+		tpos[y] = blockPos[y];
+		tpos[z] = blockPos[z];
+		if (tpos[x] < 0 || tpos[x] >= maxCount ||
+			tpos[y] < 0 || tpos[y] >= maxCount ||
+			tpos[z] < 0 || tpos[z] >= maxCount) {
+			return;
+		}
+
+		int printsize = 1;
+
+		for (int i = -printsize; i <= printsize; i++) {
+			for (int j = -printsize; j <= printsize; j++) {
+				for (int k = -printsize; k <= printsize; k++) {
+					tpos[x] = blockPos[x] + i;
+					tpos[y] = blockPos[y] + j;
+					tpos[z] = blockPos[z] + k;
+					if (tpos[x] < 0 || tpos[x] >= maxCount ||
+						tpos[y] < 0 || tpos[y] >= maxCount ||
+						tpos[z] < 0 || tpos[z] >= maxCount) {
+					}
+					else {
+						cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+							DrawTest(transformLocation, cubeRot, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+					}
+				}
+			}
+		}
+
+		//if (blockPos[x] - 1 >= 0) {
+		//	tpos[x] = blockPos[x] - 1;
+		//	cube_blocks[blockPos[z] / blockCount[z]][blockPos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, tpos[x] % blockCount[x], blockPos[y] % blockCount[y], blockPos[z] % blockCount[z]);
+		//}
+		//if (blockPos[x] + 1 < maxCount) {
+		//	tpos[x] = blockPos[x] + 1;
+		//	cube_blocks[blockPos[z] / blockCount[z]][blockPos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, tpos[x] % blockCount[x], blockPos[y] % blockCount[y], blockPos[z] % blockCount[z]);
+		//}
+
+		//if (blockPos[y] - 1 >= 0) {
+		//	tpos[y] = blockPos[y] - 1;
+		//	cube_blocks[blockPos[z] / blockCount[z]][tpos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, blockPos[x] % blockCount[x], tpos[y] % blockCount[y], blockPos[z] % blockCount[z]);
+		//}
+		//if (blockPos[y] + 1 < maxCount) {
+		//	tpos[y] = blockPos[y] + 1;
+		//	cube_blocks[blockPos[z] / blockCount[z]][tpos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, blockPos[x] % blockCount[x], tpos[y] % blockCount[y], blockPos[z] % blockCount[z]);
+		//}
+
+		//if (blockPos[z] - 1 >= 0) {
+		//	tpos[z] = blockPos[z] - 1;
+		//	cube_blocks[tpos[z] / blockCount[z]][blockPos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, blockPos[x] % blockCount[x], blockPos[y] % blockCount[y], tpos[z] % blockCount[z]);
+		//}
+		//if (blockPos[z] + 1 < maxCount) {
+		//	tpos[z] = blockPos[z] + 1;
+		//	cube_blocks[tpos[z] / blockCount[z]][blockPos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+		//		DrawTest(transformLocation, cubeRot, blockPos[x] % blockCount[x], blockPos[y] % blockCount[y], tpos[z] % blockCount[z]);
+		//}
+
+
+	}
 
 	void InputMaze(int*** maze) {
 		for (int i = 0; i < cube_blockCount[z]; i++) {
@@ -2627,10 +2712,9 @@ public:
 	}
 	bool CrashCheck(char type, Figure* b) {
 		float* temp = b->GetMidPos();
-		glm::vec4 mypos = b->GetTransformMat() * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
-		float figureSize = blockSize[x];
-		float cubeSize = cube_blockSize[x] * cube_blockCount[x];
-		mypos = glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * mypos;
+		float cubeSize = cube_blockSize[x] * cube_blockCount[x] * 2.0f;
+		float figureSize = blockSize[x] * 2.0f;
+		glm::vec4 mypos = b->GetTransformMat() * glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
 
 		int blockPos[3];
 		blockPos[x] = mypos.x / figureSize;
@@ -2645,57 +2729,52 @@ public:
 		tpos[x] = blockPos[x];
 		tpos[y] = blockPos[y];
 		tpos[z] = blockPos[z];
-		if(tpos[x] - 1 <= 0 || tpos[x] + 1 > maxCount ||
-			tpos[y] - 1 <= 0 || tpos[y] + 1 > maxCount || 
-			tpos[z] - 1 <= 0 || tpos[z] + 1 > maxCount) {
+		if (tpos[x] < 0 || tpos[x] >= maxCount ||
+			tpos[y] < 0 || tpos[y] >= maxCount ||
+			tpos[z] < 0 || tpos[z] >= maxCount) {
 			return true;
 		}
+
+		bool checkVal = false;
+
 		if (type == CUBE_X) {
-			if (blockPos[x] - 1 >= 0) {
+			if (blockPos[x] - 1 >= 0 && !checkVal) {
 				tpos[x] = blockPos[x] - 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+				checkVal = cube_blocks[blockPos[z] / blockCount[z]][blockPos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], blockPos[y] % blockCount[y], blockPos[z] % blockCount[z]);
 			}
-			else if (blockPos[x] + 1 < maxCount) {
+			if (blockPos[x] + 1 < maxCount && !checkVal) {
 				tpos[x] = blockPos[x] + 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
-			}
-			else {
-				return true;
+				checkVal = cube_blocks[blockPos[z] / blockCount[z]][blockPos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], blockPos[y] % blockCount[y], blockPos[z] % blockCount[z]);
 			}
 		}
 		else if (type == CUBE_Y) {
-			if (blockPos[y] - 1 >= 0) {
+			if (blockPos[y] - 1 >= 0 && !checkVal) {
 				tpos[y] = blockPos[y] - 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+				checkVal = cube_blocks[blockPos[z] / blockCount[z]][tpos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+					CrashCheck(b, blockPos[x] % blockCount[x], tpos[y] % blockCount[y], blockPos[z] % blockCount[z]);
 			}
-			else if (blockPos[y] + 1 < maxCount) {
+			if (blockPos[y] + 1 < maxCount && !checkVal) {
 				tpos[y] = blockPos[y] + 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
-			}
-			else {
-				return true;
+				checkVal = cube_blocks[blockPos[z] / blockCount[z]][tpos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+					CrashCheck(b, blockPos[x] % blockCount[x], tpos[y] % blockCount[y], blockPos[z] % blockCount[z]);
 			}
 		}
 		else if (type == CUBE_Z) {
-			if (blockPos[z] - 1 >= 0) {
+			if (blockPos[z] - 1 >= 0 && !checkVal) {
 				tpos[z] = blockPos[z] - 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+				checkVal = cube_blocks[tpos[z] / blockCount[z]][blockPos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+					CrashCheck(b, blockPos[x] % blockCount[x], blockPos[y] % blockCount[y], tpos[z] % blockCount[z]);
 			}
-			else if (blockPos[z] + 1 < maxCount) {
+			if (blockPos[z] + 1 < maxCount && !checkVal) {
 				tpos[z] = blockPos[z] + 1;
-				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+				checkVal = cube_blocks[tpos[z] / blockCount[z]][blockPos[y] / blockCount[y]][blockPos[x] / blockCount[x]].
+					CrashCheck(b, blockPos[x] % blockCount[x], blockPos[y] % blockCount[y], tpos[z] % blockCount[z]);
 			}
-			else {
-				return true;
-			}
+
 		}
-		return false;
+		return checkVal;
 	}
 
 	bool CheckCubeBlocksLocation() {
