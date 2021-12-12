@@ -1853,6 +1853,12 @@ public:
 		}
 		return false;
 	}
+	bool CrashCheck(Figure* b, int posx, int posy, int posz) {
+		if (mazeWall[posz][posy][posx] == -1) {
+			if (blocks[posz][posy][posx].CrashCheck(b)) { return true; }
+		}
+		return false;
+	}
 
 	~Block() {
 		for (int i = 0; i < blockCount[z]; i++) {
@@ -2631,6 +2637,65 @@ public:
 		blockPos[y] = mypos.y / figureSize;
 		blockPos[z] = mypos.z / figureSize;
 
+		//std::cout << mypos[x] << ' ' << mypos[y] << ' ' << mypos[z] << '\t';
+		//std::cout << blockPos[x] << ' ' << blockPos[y] << ' ' << blockPos[z] << '\n';
+
+		int maxCount = cube_blockCount[x] * blockCount[x];
+		int tpos[3];
+		tpos[x] = blockPos[x];
+		tpos[y] = blockPos[y];
+		tpos[z] = blockPos[z];
+		if(tpos[x] - 1 <= 0 || tpos[x] + 1 > maxCount ||
+			tpos[y] - 1 <= 0 || tpos[y] + 1 > maxCount || 
+			tpos[z] - 1 <= 0 || tpos[z] + 1 > maxCount) {
+			return true;
+		}
+		if (type == CUBE_X) {
+			if (blockPos[x] - 1 >= 0) {
+				tpos[x] = blockPos[x] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[x] + 1 < maxCount) {
+				tpos[x] = blockPos[x] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		else if (type == CUBE_Y) {
+			if (blockPos[y] - 1 >= 0) {
+				tpos[y] = blockPos[y] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[y] + 1 < maxCount) {
+				tpos[y] = blockPos[y] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		else if (type == CUBE_Z) {
+			if (blockPos[z] - 1 >= 0) {
+				tpos[z] = blockPos[z] - 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else if (blockPos[z] + 1 < maxCount) {
+				tpos[z] = blockPos[z] + 1;
+				return cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+					CrashCheck(b, tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+			}
+			else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool CheckCubeBlocksLocation() {
@@ -2653,7 +2718,7 @@ public:
 	glm::mat4 get_cubeRot() {
 		return cubeRot;
 	}
-	glm::vec4 get_gravityMat() {
+	glm::vec4 get_gravityVec() {
 		return glm::transpose(cubeRot) * glm::vec4(0.0f, -1.0f, 0.0f, 1.0f);
 	}
 	glm::vec4* get_plainNormal() {

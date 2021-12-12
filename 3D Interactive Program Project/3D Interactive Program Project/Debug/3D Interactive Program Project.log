@@ -1,18 +1,18 @@
 ﻿  main.cpp
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2167,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2212,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2372,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2630,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2173,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2218,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2378,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2636,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2631,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2637,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2632,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2638,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
@@ -28,24 +28,24 @@ C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Inte
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(373,21): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(392,35): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(413,34): warning C4244: '초기화 중': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(539,98): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(539,77): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(539,56): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(554,98): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(554,77): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\main.cpp(554,56): warning C4244: '인수': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   util.cpp
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2167,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2212,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2372,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2630,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2173,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2218,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2378,9): warning C4101: 'temp' :참조되지 않은 지역 변수입니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2636,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2631,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2637,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float
           ]
-C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2632,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Git_Project\Computer_Graphics-CubeMaze\3D Interactive Program Project\3D Interactive Program Project\Figure.h(2638,25): warning C4244: '=': 'T'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
           with
           [
               T=float

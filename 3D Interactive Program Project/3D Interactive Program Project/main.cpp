@@ -527,6 +527,21 @@ GLvoid Timer(int value)
 
 	is_cube_correctOrder = Cube_mainObject.CheckCubeBlocksLocation(); // 큐브 모양 체크
 
+	if (is_cube_exist) {
+		glm::vec4 temp = Cube_mainObject.get_gravityVec();
+		Figure_player.Translate(temp.x / 100, temp.y / 100, temp.z / 100);
+
+		if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
+			Figure_player.Translate(CUBE_X, -temp.x / 100);
+		}
+		if (Cube_mainObject.CrashCheck(CUBE_Y, &Figure_player)) {
+			Figure_player.Translate(CUBE_Y, -temp.y / 100);
+		}
+		if (Cube_mainObject.CrashCheck(CUBE_Z, &Figure_player)) {
+			Figure_player.Translate(CUBE_Z, -temp.z / 100);
+		}
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
