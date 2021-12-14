@@ -2624,22 +2624,23 @@ public:
 						tpos[z] < 0 || tpos[z] >= maxCount) {
 					}
 					else {
-						 Figure* t = cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-											GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z], printType);
-						 if (t != NULL) {
-							 float dis = glm::length(cameraPosition - glm::vec3(cubeRot * glm::vec4(t->GetNowMidPosVec(), 1.0f)));
-							 sorted[dis] = t;
-							 int tmp[3];
-							 int val = 0;
-							 tmp[0] = i;
-							 tmp[1] = j;
-							 tmp[2] = k;
-							 for (int s = 0; s < 3; s++) {
-								 if (tmp[s] < 0) { tmp[s] *= -1; }
-								 if (tmp[s] > val) { val = tmp[s]; }
-							 }
-							 sot2[dis] = val;
-						 }
+						Figure* t = NULL;
+						t = cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+							GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z], printType);
+						if (t != NULL) {
+							float dis = glm::length(cameraPosition - glm::vec3(cubeRot * glm::vec4(t->GetNowMidPosVec(), 1.0f)));
+							sorted[dis] = t;
+							int tmp[3];
+							int val = 0;
+							tmp[0] = i;
+							tmp[1] = j;
+							tmp[2] = k;
+							for (int s = 0; s < 3; s++) {
+								if (tmp[s] < 0) { tmp[s] *= -1; }
+								if (tmp[s] > val) { val = tmp[s]; }
+							}
+							sot2[dis] = val;
+						}
 					}
 				}
 			}
