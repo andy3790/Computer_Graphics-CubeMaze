@@ -155,7 +155,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 
 	mciSendString(L"open bgm.mp3 type mpegvideo alias mp3", NULL, 0, NULL);
 	mciSendString(L"play bgm.mp3 repeat", NULL, 0, NULL);
-	mciSendString(L"setaudio bgm.mp3 volume to 200", NULL, 0, NULL);
+	mciSendString(L"setaudio bgm.mp3 volume to 100", NULL, 0, NULL);
 
 	glutTimerFunc(10, Timer, 1);
 
