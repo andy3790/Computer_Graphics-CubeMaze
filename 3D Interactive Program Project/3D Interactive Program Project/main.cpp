@@ -215,15 +215,19 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(viewLocation_ui, 1, GL_FALSE, &viewMat_m4[0][0]);
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
+		glDisable(GL_CULL_FACE);
 
-		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
+		//Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
 		//Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
-		//Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 1, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
+		Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 2, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
 
 		if (is_cube_exist && is_cube_correctOrder) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glUniformMatrix4fv(transformLocation_ui, 1, GL_FALSE, glm::value_ptr(Cube_mainObject.get_cubeRot() * Figure_player.GetTransformMat()));
-			Figure_player.Draw();
+			glEnable(GL_CULL_FACE);
+
+			//glUniform1f(alphaValueLocation_ui, 1.0f);
+			//glUniformMatrix4fv(transformLocation_ui, 1, GL_FALSE, glm::value_ptr(Cube_mainObject.get_cubeRot() * Figure_player.GetTransformMat()));
+			//Figure_player.Draw();
 		}
 	}
 
@@ -674,7 +678,7 @@ void SetObject(int size) {
 	Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, cube_colorType_i);
 	//Cube_mainObject.MakeCube(3, 3, 3, maze_size / 3, maze_size / 3, maze_size / 3, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, 0.7, 0.7, 0.7);
 	Figure_player.Reset();
-	Figure_player.MakeCube(0.0, 0.0, 0.0, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 3.0 / maze_size / 2);
+	Figure_player.MakeCube(0.0, 0.0, 0.0, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 3.0 / maze_size / 2, 128.0, 0.0, 128.0);
 	is_print_line = false;
 	make_maze_wilson(); 
 	if (cube_mazeSelecter_i == 0) {

@@ -2597,7 +2597,9 @@ public:
 		}
 
 		//Figure** figurelist = new Figure * [(range * 2 + 1) * 3];
+
 		std::map<float, Figure*> sorted;
+		std::map<float, int> sot2;
 
 		int counter = 0;
 		for (int i = -range; i <= range; i++) {
@@ -2614,15 +2616,31 @@ public:
 						 Figure* t = cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
 											GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
 						 if (t != NULL) {
-							 float dis = glm::length(cameraPosition - t->GetNowMidPosVec());
+							 float dis = glm::length(cameraPosition - glm::vec3(cubeRot * glm::vec4(t->GetNowMidPosVec(), 1.0f)));
 							 sorted[dis] = t;
+							 int tmp[3];
+							 int val = 0;
+							 tmp[0] = i;
+							 tmp[1] = j;
+							 tmp[2] = k;
+							 for (int s = 0; s < 3; s++) {
+								 if (tmp[s] < 0) { tmp[s] *= -1; }
+								 if (tmp[s] > val) { val = tmp[s]; }
+							 }
+							 sot2[dis] = val;
 						 }
 					}
 				}
 			}
 		}
-
-		for (std::map<float, Figure*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+		{
+			float dis = glm::length(cameraPosition - glm::vec3(cubeRot * glm::vec4(b->GetNowMidPosVec(), 1.0f)));
+			sorted[dis] = b;
+			sot2[dis] = -1;
+		}
+		std::map<float, int>::reverse_iterator it2 = sot2.rbegin();
+		for (std::map<float, Figure*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it, ++it2) {
+			glUniform1f(alphaValueLocation, 1.0f / (it2->second + 2));
 			(it->second)->Draw(transformLocation, cubeRot);
 		}
 
