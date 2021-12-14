@@ -67,3 +67,34 @@ float dot(glm::vec3 v_1, glm::vec3 v_2) {
 float dot(glm::vec4 v_1, glm::vec4 v_2) {
 	return v_1.x * v_2.x + v_1.y * v_2.y + v_1.z * v_2.z;
 }
+
+glm::vec3 cross(glm::vec3 a, glm::vec3 b)
+{
+	float cube_sideSelecter_i[3];
+	static const int x = 0;
+	static const int y = 1;
+	static const int z = 2;
+
+	cube_sideSelecter_i[x] = a.y * b.z - a.z * b.y;
+	cube_sideSelecter_i[y] = a.z * b.x - a.x * b.z;
+	cube_sideSelecter_i[z] = a.x * b.y - a.y * b.x;
+
+	float tlen = (float)sqrt(cube_sideSelecter_i[x] * cube_sideSelecter_i[x] + cube_sideSelecter_i[y] * cube_sideSelecter_i[y] + cube_sideSelecter_i[z] * cube_sideSelecter_i[z]);
+
+	return glm::vec3(cube_sideSelecter_i[x] / tlen, cube_sideSelecter_i[y] / tlen, cube_sideSelecter_i[z] / tlen);
+}
+glm::vec4 cross(glm::vec4 a, glm::vec4 b)
+{
+	float cube_sideSelecter_i[3];
+	static const int x = 0;
+	static const int y = 1;
+	static const int z = 2;
+
+	cube_sideSelecter_i[x] = a.y * b.z - a.z * b.y;
+	cube_sideSelecter_i[y] = a.z * b.x - a.x * b.z;
+	cube_sideSelecter_i[z] = a.x * b.y - a.y * b.x;
+
+	float tlen = (float)sqrt(cube_sideSelecter_i[x] * cube_sideSelecter_i[x] + cube_sideSelecter_i[y] * cube_sideSelecter_i[y] + cube_sideSelecter_i[z] * cube_sideSelecter_i[z]);
+
+	return glm::vec4(cube_sideSelecter_i[x] / tlen, cube_sideSelecter_i[y] / tlen, cube_sideSelecter_i[z] / tlen, 1.0f);
+}
