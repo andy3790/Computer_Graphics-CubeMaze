@@ -492,15 +492,16 @@ GLvoid Timer(int value)
 		//	std::cout << cube_normal_v4[i].x << ' ' << cube_normal_v4[i].y << ' ' << cube_normal_v4[i].z << std::endl;
 
 		// 걍 6개 나눠서 부여
-		switch (cube_sideSelecter_i)
-		{
-		case 1: use_compare_v4 = glm::vec4(camera_startPos_v3.x, camera_startPos_v3.y, camera_startPos_v3.z, 1.0); break;
-		case 2: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, -camera_startPos_v3.y, -camera_startPos_v3.z, 1.0); break;
-		case 3: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], -camera_startPos_v3.z, 1.0); break;// or 1,5 를 외적
-		case 4: use_compare_v4 = glm::vec4(camera_startPos_v3.x, -(pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], camera_startPos_v3.z, 1.0); break;
-		case 5: use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0); break;// or x,-y,z 와 외적
-		case 6: use_compare_v4 = glm::vec4(-camera_startPos_v3.z, 0.0, camera_startPos_v3.x, 1.0); break;
-		}
+		//switch (cube_sideSelecter_i)
+		//{
+		//case 1: use_compare_v4 = glm::vec4(camera_startPos_v3.x, camera_startPos_v3.y, camera_startPos_v3.z, 1.0); break;
+		//case 2: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, -camera_startPos_v3.y, -camera_startPos_v3.z, 1.0); break;
+		//case 3: use_compare_v4 = glm::vec4(-camera_startPos_v3.x, (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], -camera_startPos_v3.z, 1.0); break;// or 1,5 를 외적
+		//case 4: use_compare_v4 = glm::vec4(camera_startPos_v3.x, -(pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], camera_startPos_v3.z, 1.0); break;
+		//case 5: use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0); break;// or x,-y,z 와 외적
+		//case 6: use_compare_v4 = glm::vec4(-camera_startPos_v3.z, 0.0, camera_startPos_v3.x, 1.0); break;
+		//}
+
 		//switch (cube_sideSelecter_i)
 		//{
 		//case 1: use_compare_v4 = glm::vec4(0.0, 0.0, 1.0, 1.0); break;
@@ -513,7 +514,12 @@ GLvoid Timer(int value)
 
 		float max_dotVal_f = -1;
 		float tmp_dotVal_f;
+		int side_num_i[3];
+		bool is_selected[6];
+		for (int i = 0; i < 6; i++)
+			is_selected[i] = false;
 		int selected_side_i;
+		use_compare_v4 = glm::vec4(camera_startPos_v3.x, camera_startPos_v3.y, camera_startPos_v3.z, 1.0);
 		for (int i = 0; i < 6; i++)
 		{
 			tmp_dotVal_f = dot(camera_rot_m4 * cube_normal_v4[i], use_compare_v4);
@@ -521,14 +527,65 @@ GLvoid Timer(int value)
 			if (tmp_dotVal_f > max_dotVal_f)
 			{
 				max_dotVal_f = tmp_dotVal_f;
-				selected_side_i = i + 1;
+				side_num_i[0] = i + 1;
 			}
+		}
+		is_selected[side_num_i[0] - 1] = true;
+		if (side_num_i[0] % 2 == 0)
+			is_selected[side_num_i[0] - 2] = true;
+		else
+			is_selected[side_num_i[0]] = true;
+
+		max_dotVal_f = -1;
+		use_compare_v4 = glm::vec4(-camera_startPos_v3.x, (pow(camera_startPos_v3[0], 2) + pow(camera_startPos_v3[2], 2)) / camera_startPos_v3[1], -camera_startPos_v3.z, 1.0);
+		for (int i = 0; i < 6; i++)
+		{
+			tmp_dotVal_f = dot(camera_rot_m4 * cube_normal_v4[i], use_compare_v4);
+			//std::cout << i << ' : ' << tmp_dotVal_f << std::endl;
+			if (tmp_dotVal_f > max_dotVal_f && !is_selected[i])
+			{
+				max_dotVal_f = tmp_dotVal_f;
+				side_num_i[1] = i + 1;
+			}
+		}
+		is_selected[side_num_i[1] - 1] = true;
+		if (side_num_i[1] % 2 == 0)
+			is_selected[side_num_i[1] - 2] = true;
+		else
+			is_selected[side_num_i[1]] = true;
+
+		max_dotVal_f = -1;
+		use_compare_v4 = glm::vec4(camera_startPos_v3.z, 0.0, -camera_startPos_v3.x, 1.0);
+		for (int i = 0; i < 6; i++)
+		{
+			tmp_dotVal_f = dot(camera_rot_m4 * cube_normal_v4[i], use_compare_v4);
+			//std::cout << i << ' : ' << tmp_dotVal_f << std::endl;
+			if (tmp_dotVal_f > max_dotVal_f && !is_selected[i])
+			{
+				max_dotVal_f = tmp_dotVal_f;
+				side_num_i[2] = i + 1;
+			}
+		}
+
+		int tmp_adr_i = 0;
+		switch (cube_sideSelecter_i)
+		{
+		case 5: selected_side_i = side_num_i[2]; break;
+		case 3: selected_side_i = side_num_i[1]; break;
+		case 1: selected_side_i = side_num_i[0]; break;
+		case 6:	tmp_adr_i++;
+		case 4:	tmp_adr_i++;
+		case 2:
+			if (side_num_i[tmp_adr_i] % 2 == 0)
+				selected_side_i = side_num_i[tmp_adr_i] - 1;
+			else
+				selected_side_i = side_num_i[tmp_adr_i] + 1;
 		}
 		//std::cout << std::endl;
 
 		if (dot(use_compare_v4, camera_rot_m4 * Cube_mainObject.get_cubeRot() * glm::vec4(camera_pos_v3, 1.0f)) > 0)
 		{
-			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, -cube_rotVal_f * 5.0f) == CUBE_SEQUENCE_END) { cube_sideSelecter_i = -1; }
+			if (is_cube_canRotate = Cube_mainObject.Rotate_Specific_Side_Check_Rot((selected_side_i - 1) / 2, (selected_side_i - 1) % 2 + (selected_side_i - 1) % 2, false, -cube_rotVal_f * 5.0f) == CUBE_SEQUENCE_END) { cube_sideSelecter_i = -1; }
 		}
 		else
 		{
