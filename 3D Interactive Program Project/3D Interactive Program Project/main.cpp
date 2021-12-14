@@ -74,6 +74,7 @@ int cube_sideSelecter_i; // 큐브 면 선택 변수
 int cube_drawType_i; // 큐브 길 출력 or 벽 출력
 int cube_colorType_i; // 큐브 생성 색 타입
 int cube_mazeSelecter_i; // 큐브 미로 생성 알고리즘 선택 변수 0=윌슨 1=크루스컬
+int cube_printAnimation_count; // 큐브 생성 애니메이션 한번에 생성 갯수
 bool is_cube_canRotate; // 큐브 면 회전용 flag
 bool is_cube_suffle; // 큐브 섞기 flag
 bool is_print_line; // 선출력 / 면출력
@@ -81,6 +82,8 @@ bool is_cube_exist; // 시작 플래그
 bool is_cube_autoSolve; // 큐브 자동 풀기 플래그
 bool is_cube_undoRot; // 큐브 언두 플래그
 bool is_cube_correctOrder; // 큐브가 옳은 모양인가
+bool is_cube_printAnimation_clear; // 큐브 애니메이션을 모두 그렸는가
+bool is_cube_printAnimation_once; // 큐브 애니메이션을 한번 그렸는가
 float cube_rotVal_f; // 큐브 회전 각도
 
 bool is_leftButten_up;
@@ -138,6 +141,7 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	cube_drawType_i = 0;
 	cube_colorType_i = 7;
 	cube_mazeSelecter_i = 0;
+	cube_printAnimation_count = 10;
 	is_cube_canRotate = true;
 	is_cube_suffle = CUBE_SEQUENCE_END;
 	is_print_line = true;
@@ -145,6 +149,8 @@ void main(int argc, char** argv) //--- 윈도우 출력하고 콜백함수 설정
 	is_cube_autoSolve = CUBE_SEQUENCE_END;
 	is_cube_undoRot = CUBE_SEQUENCE_END;
 	is_cube_correctOrder = true;
+	is_cube_printAnimation_clear = false;
+	is_cube_printAnimation_once = false;
 	cube_rotVal_f = 1.0f;
 
 	is_leftButten_up = true;
@@ -217,12 +223,18 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 
 		if (is_cube_exist && is_cube_correctOrder) {
-			glDisable(GL_CULL_FACE);
-			Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 2, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
+			if (cube_drawType_i == CUBE_PRINT_ROAD) {
+				glDisable(GL_CULL_FACE);
+				Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 2, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4), cube_drawType_i, is_print_line);
+			}
+			else if (cube_drawType_i == CUBE_PRINT_WALL) {
+				glEnable(GL_CULL_FACE);
+				Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, CUBE_PRINT_ROAD, CUBE_ANIMATION_MAZE, cube_printAnimation_count);
+			}
 		}
 		else {
 			glEnable(GL_CULL_FACE);
-			Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
+			Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, cube_printAnimation_count);
 
 		}
 	}
@@ -274,6 +286,8 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		if (is_cube_exist) { // 초기화면으로
 			Cube_mainObject.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
 			is_print_line = true; is_cube_exist = false; is_cube_suffle = false;
+			is_cube_printAnimation_clear = false;
+			is_cube_printAnimation_once = false;
 		}
 		else { exit(0); }
 		break;
@@ -665,6 +679,17 @@ GLvoid Timer(int value)
 		}
 	}
 
+	if (!is_cube_printAnimation_once && Cube_mainObject.get_drawCountEnd(cube_mazeSelecter_i)) {
+		is_cube_printAnimation_once = true;
+		is_cube_printAnimation_clear = true;
+	}
+	if (is_cube_printAnimation_clear) {
+		is_cube_suffle = true;
+		is_cube_printAnimation_clear = false;
+		
+		Cube_mainObject.Rotate_Specific_Side_Check_Rot(0, 1, 90.0f);
+	}
+
 	glutPostRedisplay();
 	glutTimerFunc(10, Timer, 1);
 }
@@ -687,4 +712,9 @@ void SetObject(int size) {
 		Cube_mainObject.InputMaze(maze_route_i);
 	}
 	is_cube_exist = true;
+
+	is_cube_printAnimation_clear = false;
+	is_cube_printAnimation_once = false;
+	int temp = (size / 2);
+	cube_printAnimation_count = temp * temp;
 }

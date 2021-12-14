@@ -1845,12 +1845,22 @@ public:
 		return false;
 	}
 
-	Figure* GetSpecificFigure(int posx, int posy, int posz) {
-		if (mazeWall[posz][posy][posx] != -1) {
-			return &blocks[posz][posy][posx];
+	Figure* GetSpecificFigure(int posx, int posy, int posz, int printType) {
+		if (printType == CUBE_PRINT_ROAD) {
+			if (mazeWall[posz][posy][posx] != -1) {
+				return &blocks[posz][posy][posx];
+			}
+			else {
+				return NULL;
+			}
 		}
-		else {
-			return NULL;
+		else if (printType == CUBE_PRINT_WALL) {
+			if (mazeWall[posz][posy][posx] == -1) {
+				return &blocks[posz][posy][posx];
+			}
+			else {
+				return NULL;
+			}
 		}
 	}
 
@@ -2575,7 +2585,7 @@ public:
 
 
 	}
-	GLvoid DrawAroundWithAlpha(unsigned int transformLocation, unsigned int alphaValueLocation, Figure* b, int range, glm::vec3 cameraPosition) {
+	GLvoid DrawAroundWithAlpha(unsigned int transformLocation, unsigned int alphaValueLocation, Figure* b, int range, glm::vec3 cameraPosition, int printType, bool is_print_line) {
 		float* temp = b->GetMidPos();
 		float cubeSize = cube_blockSize[x] * cube_blockCount[x] * 2.0f;
 		float figureSize = blockSize[x] * 2.0f;
@@ -2615,7 +2625,7 @@ public:
 					}
 					else {
 						 Figure* t = cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
-											GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+											GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z], printType);
 						 if (t != NULL) {
 							 float dis = glm::length(cameraPosition - glm::vec3(cubeRot * glm::vec4(t->GetNowMidPosVec(), 1.0f)));
 							 sorted[dis] = t;
@@ -2645,6 +2655,12 @@ public:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		std::map<float, int>::reverse_iterator it2 = sot2.rbegin();
 		for (std::map<float, Figure*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it, ++it2) {
+			if (it->second == b) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			}
+			else if (is_print_line) {
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			}
 			glUniform1f(alphaValueLocation, 1.0f / (it2->second + 2));
 			(it->second)->Draw(transformLocation, cubeRot);
 		}
@@ -2880,6 +2896,17 @@ public:
 			tnormal[i] = cubeRot * tnormal[i];
 		}
 		return tnormal;
+	}
+	bool get_drawCountEnd(int cube_mazeSelecter) {
+		if (cube_mazeSelecter == 0) {
+			return draw_count > (cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z] * blockCount[x] * blockCount[y] * blockCount[z]) / 4;
+		}
+		else if (cube_mazeSelecter == 1) {
+			return draw_count > (cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z] * blockCount[x] * blockCount[y] * blockCount[z]) / 2.5f;
+		}
+		else {
+			return draw_count > (cube_blockCount[x] * cube_blockCount[y] * cube_blockCount[z] * blockCount[x] * blockCount[y] * blockCount[z]) / 4;
+		}
 	}
 
 	~Cube() {
