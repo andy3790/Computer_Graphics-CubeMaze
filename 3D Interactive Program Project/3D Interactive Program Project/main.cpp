@@ -286,6 +286,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		if (is_cube_exist) { // 초기화면으로
 			Cube_mainObject.MakeCube(1, 1, 1, 1, 1, 1, 0.0, 0.0, 0.0, 3.0, 3.0, 3.0, CUBE_COLOR_POINT_RAND);
 			is_print_line = true; is_cube_exist = false; is_cube_suffle = false;
+			cube_drawType_i = CUBE_PRINT_WALL;
 			is_cube_printAnimation_clear = false;
 			is_cube_printAnimation_once = false;
 		}
