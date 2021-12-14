@@ -18,6 +18,8 @@ uniform vec3 viewPos; //--- 카메라 위치
 uniform bool lightOn;
 uniform bool textureOn;
 
+uniform float alphaValue;
+
 void main(void) 
 {
 	float ambientLight = 0.3;
@@ -42,7 +44,7 @@ void main(void)
 			FragColor = texture(outTexture, TexCoord) * vec4((ambient + diffuse + specular), 1.0);
 		}
 		else{
-			FragColor = vec4 (result, out_Color.a);
+			FragColor = vec4 (result, out_Color.a * alphaValue);
 		}
 	}
 	else {
@@ -51,7 +53,7 @@ void main(void)
 			FragColor = texture(outTexture, TexCoord) * vec4(ambient, 1.0);
 		}
 		else{
-			FragColor = vec4 (result, out_Color.a);
+			FragColor = vec4 (result, out_Color.a * alphaValue);
 		}
 	}
 }

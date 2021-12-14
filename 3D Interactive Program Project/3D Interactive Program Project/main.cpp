@@ -194,6 +194,9 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 	unsigned int textureOnLocation = glGetUniformLocation(s_program, "textureOn");
 	glUniform1i(textureOnLocation, is_texture_on);
 
+	unsigned int alphaValueLocation = glGetUniformLocation(s_program, "alphaValue");
+	glUniform1f(alphaValueLocation, 1.0f);
+
 	glm::mat4 viewMat_m4 = glm::mat4(1.0f);
 	glm::mat4 projMat_m4 = glm::mat4(1.0f);
 	viewMat_m4 =glm::lookAt(camera_pos_v3, camera_direction_v3, camera_up_v3) * camera_trans_m4 * camera_rot_m4;
@@ -209,8 +212,8 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
 
-		Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
-		//Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
+		//Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
+		Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
 
 		if (is_cube_exist && is_cube_correctOrder) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
