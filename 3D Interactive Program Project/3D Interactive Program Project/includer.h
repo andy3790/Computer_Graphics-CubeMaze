@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <random>
 #include <math.h>
+#include <map>
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>

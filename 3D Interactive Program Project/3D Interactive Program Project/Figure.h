@@ -1352,6 +1352,7 @@ public:
 		return TR;
 	}
 	float* GetMidPos() { return midPoint; }
+	glm::vec3 GetNowMidPosVec() { return glm::vec3(TR * glm::vec4(midPoint[0], midPoint[1], midPoint[2], 1.0f)); }
 	float* GetSize() { return size; }
 
 	GLuint InitBuffer()
@@ -1842,6 +1843,15 @@ public:
 			return blocks[posz][posy][posx].CrashCheck(b);
 		}
 		return false;
+	}
+
+	Figure* GetSpecificFigure(int posx, int posy, int posz) {
+		if (mazeWall[posz][posy][posx] != -1) {
+			return &blocks[posz][posy][posx];
+		}
+		else {
+			return NULL;
+		}
 	}
 
 	~Block() {
@@ -2563,6 +2573,60 @@ public:
 		//}
 
 
+	}
+	GLvoid DrawAroundWithAlpha(unsigned int transformLocation, unsigned int alphaValueLocation, Figure* b, int range, glm::vec3 cameraPosition) {
+		float* temp = b->GetMidPos();
+		float cubeSize = cube_blockSize[x] * cube_blockCount[x] * 2.0f;
+		float figureSize = blockSize[x] * 2.0f;
+		glm::vec4 mypos = b->GetTransformMat() * glm::translate(glm::mat4(1.0f), glm::vec3(cubeSize / 2, cubeSize / 2, cubeSize / 2)) * glm::vec4(temp[x], temp[y], temp[z], 1.0f);
+
+		int blockPos[3];
+		blockPos[x] = mypos.x / figureSize;
+		blockPos[y] = mypos.y / figureSize;
+		blockPos[z] = mypos.z / figureSize;
+
+		int maxCount = cube_blockCount[x] * blockCount[x];
+		int tpos[3];
+		tpos[x] = blockPos[x];
+		tpos[y] = blockPos[y];
+		tpos[z] = blockPos[z];
+		if (tpos[x] < 0 || tpos[x] >= maxCount ||
+			tpos[y] < 0 || tpos[y] >= maxCount ||
+			tpos[z] < 0 || tpos[z] >= maxCount) {
+			return;
+		}
+
+		//Figure** figurelist = new Figure * [(range * 2 + 1) * 3];
+		std::map<float, Figure*> sorted;
+
+		int counter = 0;
+		for (int i = -range; i <= range; i++) {
+			for (int j = -range; j <= range; j++) {
+				for (int k = -range; k <= range; k++) {
+					tpos[x] = blockPos[x] + i;
+					tpos[y] = blockPos[y] + j;
+					tpos[z] = blockPos[z] + k;
+					if (tpos[x] < 0 || tpos[x] >= maxCount ||
+						tpos[y] < 0 || tpos[y] >= maxCount ||
+						tpos[z] < 0 || tpos[z] >= maxCount) {
+					}
+					else {
+						 Figure* t = cube_blocks[tpos[z] / blockCount[z]][tpos[y] / blockCount[y]][tpos[x] / blockCount[x]].
+											GetSpecificFigure(tpos[x] % blockCount[x], tpos[y] % blockCount[y], tpos[z] % blockCount[z]);
+						 if (t != NULL) {
+							 float dis = glm::length(cameraPosition - t->GetNowMidPosVec());
+							 sorted[dis] = t;
+						 }
+					}
+				}
+			}
+		}
+
+		for (std::map<float, Figure*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it) {
+			(it->second)->Draw(transformLocation, cubeRot);
+		}
+
+		//delete[] figurelist;
 	}
 
 	void InputMaze(int*** maze) {

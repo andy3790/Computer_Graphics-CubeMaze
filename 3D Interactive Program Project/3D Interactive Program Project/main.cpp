@@ -191,11 +191,11 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 	glUniform3f(lightColorLocation_ui, 1.0, 1.0, 1.0);
 	glUniform3f(viewPosLocation_ui, camera_pos_v3.x, camera_pos_v3.y, camera_pos_v3.z);
 
-	unsigned int textureOnLocation = glGetUniformLocation(s_program, "textureOn");
-	glUniform1i(textureOnLocation, is_texture_on);
+	unsigned int textureOnLocation_ui = glGetUniformLocation(s_program, "textureOn");
+	glUniform1i(textureOnLocation_ui, is_texture_on);
 
-	unsigned int alphaValueLocation = glGetUniformLocation(s_program, "alphaValue");
-	glUniform1f(alphaValueLocation, 1.0f);
+	unsigned int alphaValueLocation_ui = glGetUniformLocation(s_program, "alphaValue");
+	glUniform1f(alphaValueLocation_ui, 1.0f);
 
 	glm::mat4 viewMat_m4 = glm::mat4(1.0f);
 	glm::mat4 projMat_m4 = glm::mat4(1.0f);
@@ -213,7 +213,8 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 
 
 		//Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
-		Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
+		//Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
+		Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 1, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
 
 		if (is_cube_exist && is_cube_correctOrder) {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -581,9 +582,9 @@ GLvoid Timer(int value)
 		//}
 
 		player_accel_v4 += Cube_mainObject.get_gravityVec() * 9.8f / 10000.0f;
-		if (player_accel_v4.x > 0.5f) { player_accel_v4.x = 0.5f; }
-		if (player_accel_v4.y > 0.5f) { player_accel_v4.y = 0.5f; }
-		if (player_accel_v4.z > 0.5f) { player_accel_v4.z = 0.5f; }
+		if (player_accel_v4.x > 0.05f) { player_accel_v4.x = 0.05f; }
+		if (player_accel_v4.y > 0.05f) { player_accel_v4.y = 0.05f; }
+		if (player_accel_v4.z > 0.05f) { player_accel_v4.z = 0.05f; }
 		Figure_player.Translate(player_accel_v4.x, player_accel_v4.y, player_accel_v4.z);
 		//camera_trans_m4 = glm::translate(camera_trans_m4, glm::vec3(temp.x / 100, temp.y / 100, temp.z / 100));
 		if (Cube_mainObject.CrashCheck(CUBE_X, &Figure_player)) {
