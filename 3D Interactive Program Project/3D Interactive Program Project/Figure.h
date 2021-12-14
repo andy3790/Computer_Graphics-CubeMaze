@@ -1883,6 +1883,7 @@ private:
 	float nowRotDegree;
 	glm::mat4 cubeRot;
 	Figure gravity;
+	Figure myObject;
 	CubeQueue rotReverseDirQueue;
 public:
 	Cube() {
@@ -2638,6 +2639,10 @@ public:
 			sorted[dis] = b;
 			sot2[dis] = -1;
 		}
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		myObject.Draw(transformLocation, cubeRot);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		std::map<float, int>::reverse_iterator it2 = sot2.rbegin();
 		for (std::map<float, Figure*>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it, ++it2) {
 			glUniform1f(alphaValueLocation, 1.0f / (it2->second + 2));
@@ -2693,6 +2698,8 @@ public:
 				}
 			}
 		}
+
+		myObject.MakeCube(midx, midy, midz, size_x, size_y, size_z);
 
 		cube_blockSize[x] = size_x / (float)cube_blockCount[x];
 		cube_blockSize[y] = size_y / (float)cube_blockCount[y];

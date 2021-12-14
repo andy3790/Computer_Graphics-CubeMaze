@@ -215,19 +215,15 @@ GLvoid DrawScene() //--- 콜백 함수: 그리기 콜백 함수
 		glUniformMatrix4fv(viewLocation_ui, 1, GL_FALSE, &viewMat_m4[0][0]);
 		glUniformMatrix4fv(projectionLocation_ui, 1, GL_FALSE, glm::value_ptr(projMat_m4));
 
-		glDisable(GL_CULL_FACE);
-
-		//Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
-		//Cube_mainObject.DrawTest(transformLocation_ui, &Figure_player);
-		Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 2, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
 
 		if (is_cube_exist && is_cube_correctOrder) {
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glDisable(GL_CULL_FACE);
+			Cube_mainObject.DrawAroundWithAlpha(transformLocation_ui, alphaValueLocation_ui, &Figure_player, 2, glm::vec3(glm::vec4(camera_pos_v3, 1.0f) * camera_trans_m4 * camera_rot_m4));
+		}
+		else {
 			glEnable(GL_CULL_FACE);
+			Cube_mainObject.Draw_Use_CubeMat(transformLocation_ui, cube_drawType_i, CUBE_ANIMATION_MAZE, 10);
 
-			//glUniform1f(alphaValueLocation_ui, 1.0f);
-			//glUniformMatrix4fv(transformLocation_ui, 1, GL_FALSE, glm::value_ptr(Cube_mainObject.get_cubeRot() * Figure_player.GetTransformMat()));
-			//Figure_player.Draw();
 		}
 	}
 
